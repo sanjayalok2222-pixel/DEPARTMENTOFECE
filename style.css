@@ -116,6 +116,12 @@ header {
     margin-top: 0.2rem;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 .dept-badge {
     display: flex;
     align-items: center;
@@ -135,20 +141,39 @@ header {
     height: 22px;
 }
 
+.btn-admin {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-admin:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: var(--text-glow);
+    background: rgba(0, 210, 255, 0.05);
+}
+
 /* Sticky Secondary Sub-nav */
 .sub-nav {
     background: rgba(8, 12, 23, 0.9);
     border-bottom: 1px solid rgba(0, 210, 255, 0.1);
     position: sticky;
-    top: 123px; /* adjusted depending on main header height */
+    top: 123px; 
     z-index: 99;
     transition: top 0.3s ease;
 }
 
-/* Let's adjust top offset dynamically in JS to prevent overlapping headers on mobile */
 @media (max-width: 900px) {
     .sub-nav {
-        top: 0; /* sticky to top when header wraps on mobile */
+        top: 0; 
     }
 }
 
@@ -160,11 +185,11 @@ header {
     list-style: none;
     padding: 0 1rem;
     overflow-x: auto;
-    scrollbar-width: none; /* Hide scrollbars on Firefox */
+    scrollbar-width: none; 
 }
 
 .nav-links::-webkit-scrollbar {
-    display: none; /* Hide scrollbars on Webkit */
+    display: none; 
 }
 
 .nav-links li a {
@@ -706,7 +731,7 @@ tr:hover td {
 
 @media (min-width: 900px) {
     .coordinators-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr); /* Adaptive size for 5 coordinators */
     }
 }
 
@@ -841,43 +866,121 @@ tr:hover td {
     border-color: var(--accent-cyan);
 }
 
-/* Footer Section */
-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    background: #04050a;
-    padding: 3rem 2rem;
-    text-align: center;
-}
+/* ==========================================================================
+   ADMIN MODE STYLES
+   ========================================================================== */
 
-.footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
+/* Floating Admin Controls Panel style */
+.admin-controls-panel {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(150px);
+    background: rgba(8, 12, 23, 0.95);
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 5px 30px rgba(0, 210, 255, 0.4);
+    padding: 0.75rem 1.75rem;
+    border-radius: 50px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
-.footer-content p {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
+.admin-controls-panel.active {
+    transform: translateX(-50%) translateY(0);
 }
 
-.footer-links {
+.admin-badge-indicator {
     display: flex;
-    gap: 2rem;
-    list-style: none;
-}
-
-.footer-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
+    align-items: center;
+    gap: 0.5rem;
     color: var(--accent-cyan);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #4ade80;
+    animation: adminPulse 1.5s infinite;
+}
+
+.admin-actions-btns {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-save-changes {
+    background: #00d2ff;
+    color: #05070e;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 30px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-save-changes:hover {
+    background: #fff;
+    box-shadow: var(--text-glow);
+}
+
+.btn-admin-logout {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 0.5rem 1.25rem;
+    border-radius: 30px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-logout:hover {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* Editability indicator styles when admin mode active */
+body.admin-mode [contenteditable="true"] {
+    border: 1px dashed rgba(0, 210, 255, 0.4);
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: text;
+    transition: all 0.3s ease;
+}
+
+body.admin-mode [contenteditable="true"]:hover {
+    border-color: var(--accent-cyan);
+    background: rgba(0, 210, 255, 0.05);
+}
+
+body.admin-mode [contenteditable="true"]:focus {
+    outline: none;
+    border-color: var(--accent-cyan);
+    border-style: solid;
+    background: rgba(0, 210, 255, 0.1);
+    box-shadow: var(--text-glow);
+}
+
+@keyframes adminPulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.6; }
 }
 
 /* ==========================================================================
@@ -914,6 +1017,10 @@ footer {
     section {
         padding: 4rem 1.5rem;
     }
+
+    .coordinators-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 /* Mobile Phones (max-width: 600px) */
@@ -930,9 +1037,22 @@ footer {
         font-size: 0.75rem;
     }
 
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
     .dept-badge {
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-admin {
+        width: 100%;
+        text-align: center;
     }
 
     .nav-links li a {
@@ -1020,6 +1140,27 @@ footer {
         grid-template-columns: 1fr;
         gap: 1.25rem;
         text-align: left;
+    }
+
+    .coordinators-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-controls-panel {
+        width: 90%;
+        flex-direction: column;
+        border-radius: 16px;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .admin-actions-btns {
+        width: 100%;
+    }
+
+    .btn-save-changes, .btn-admin-logout {
+        flex-grow: 1;
+        text-align: center;
     }
 
     .footer-links {

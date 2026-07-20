@@ -20,13 +20,17 @@
                 <!-- Using live VSB main logo for authentication -->
                 <img src="https://vsbec.edu.in/wp-content/uploads/2023/10/Framelogo27062024.jpg" alt="VSB Engineering College Logo" class="vsb-logo">
                 <div class="college-title">
-                    <h1>V.S.B. Engineering College</h1>
-                    <p>Karur, Tamil Nadu</p>
+                    <h1 id="college-name-header">V.S.B. Engineering College</h1>
+                    <p id="college-loc-header">Karur, Tamil Nadu</p>
                 </div>
             </div>
-            <div class="dept-badge">
-                <img src="assets/ece-logo.png" alt="ECE Chip Logo">
-                <span>ECE Department</span>
+            <div class="header-actions">
+                <div class="dept-badge">
+                    <img src="assets/ece-logo.png" alt="ECE Chip Logo">
+                    <span>ECE Department</span>
+                </div>
+                <!-- Admin Login Button -->
+                <button class="btn-admin" id="admin-login-btn" onclick="openLoginModal()">Admin Login</button>
             </div>
         </div>
     </header>
@@ -46,8 +50,8 @@
     <div class="hero">
         <div class="hero-content">
             <img src="assets/ece-logo.png" alt="ECE Logo" class="hero-logo">
-            <h2>Shaping Tomorrow with ECE Innovations</h2>
-            <p>Welcome to the Department of Electronics and Communication Engineering at VSB Engineering College. Established in 2002, we empower students to explore, create, and engineer the future.</p>
+            <h2 id="hero-title">Shaping Tomorrow with ECE Innovations</h2>
+            <p id="hero-subtitle">Welcome to the Department of Electronics and Communication Engineering at VSB Engineering College. Established in 2002, we empower students to explore, create, and engineer the future.</p>
             <a href="#dept-info" class="btn-primary">Get Started</a>
         </div>
     </div>
@@ -57,7 +61,7 @@
         <h2 class="section-title">Department Information</h2>
         
         <div class="info-grid">
-            <div class="about-card tilt-card">
+            <div class="about-card tilt-card" id="about-card-text">
                 <p>The Department of Electronics and Communication Engineering was established in the Year 2002. The department has well-equipped state-of-the-art laboratories including Circuits and Devices Lab, Analog and Digital Circuits Lab, Circuits Design and Simulation Lab, Linear Integrated Circuits Lab, Communication Systems Lab, Communication Networks Lab, Digital Signal Processing Lab, Microprocessor and Microcontroller Lab, VLSI Design Lab, Advanced Communication Lab, and Embedded Lab.</p>
                 <p>We boast highly educated faculty members with vast experience in academics and industry. With a symbiosis between our placement cell and the department, students achieve the best jobs for their careers. Exposure and training are provided for advanced studies, guest lectures, and mock campus interviews.</p>
                 <p>Industrial visits are organized frequently to organizations such as JVS Electronics, Embuzz Technologies, HAL Museum, and ISRO to provide practical engineering exposure.</p>
@@ -66,11 +70,11 @@
             <div class="vision-mission">
                 <div class="vm-box tilt-card">
                     <h3>👁️ Our Vision</h3>
-                    <p>To produce academically excellent and socially responsible engineers in Electronics and Communication Engineering.</p>
+                    <p id="vision-text">To produce academically excellent and socially responsible engineers in Electronics and Communication Engineering.</p>
                 </div>
                 <div class="vm-box tilt-card">
                     <h3>🚀 Our Mission</h3>
-                    <ul>
+                    <ul id="mission-list">
                         <li>Provide good fundamental knowledge in ECE sub-domains.</li>
                         <li>Offer efficient teaching-learning with focus on problem-solving, analytical, and technical skills.</li>
                         <li>Inculcate competency, innovative spirit, communication, and managerial skills.</li>
@@ -93,12 +97,12 @@
             <div id="tab-intake" class="tab-content active">
                 <div class="intake-cards">
                     <div class="intake-card tilt-card">
-                        <h4>B.E. in Electronics & Communication Engineering (UG)</h4>
-                        <p>Established in 2002 with 60 seats. Due to high demand and quality education, intake increased to 120 in 2006, 180 in 2012, and 240 in 2023.</p>
+                        <h4 id="intake-ug-title">B.E. in Electronics & Communication Engineering (UG)</h4>
+                        <p id="intake-ug-text">Established in 2002 with 60 seats. Due to high demand and quality education, intake increased to 120 in 2006, 180 in 2012, and 240 in 2023.</p>
                     </div>
                     <div class="intake-card tilt-card">
-                        <h4>M.E. in Applied Electronics (PG)</h4>
-                        <p>Postgraduate program started in 2011 with an intake of 18 seats to facilitate research and core industry alignment.</p>
+                        <h4 id="intake-pg-title">M.E. in Applied Electronics (PG)</h4>
+                        <p id="intake-pg-text">Postgraduate program started in 2011 with an intake of 18 seats to facilitate research and core industry alignment.</p>
                     </div>
                 </div>
             </div>
@@ -106,7 +110,7 @@
             <!-- Tab 2: Strength -->
             <div id="tab-strength" class="tab-content">
                 <div class="table-container tilt-card">
-                    <table>
+                    <table id="table-strength-data">
                         <thead>
                             <tr>
                                 <th>Academic Year (2024-25)</th>
@@ -148,7 +152,7 @@
             <!-- Tab 3: MOUs -->
             <div id="tab-mous" class="tab-content">
                 <div class="table-container tilt-card">
-                    <table>
+                    <table id="table-mou-data">
                         <thead>
                             <tr>
                                 <th>S.No</th>
@@ -162,55 +166,55 @@
                                 <td>1</td>
                                 <td>Tessolve Semiconductor Private Ltd., Bangalore</td>
                                 <td>01.12.2019</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>2</td>
                                 <td>Larsen & Toubro Limited (L&T)</td>
                                 <td>21.10.2021</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>3</td>
                                 <td>Capgemini Technology Services India Limited</td>
                                 <td>25.11.2021</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>4</td>
                                 <td>ERA Interfaces Private Ltd</td>
                                 <td>25.10.2021</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>5</td>
                                 <td>Embuzz Technology Pvt. Ltd., Madurai</td>
                                 <td>25.11.2019</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>6</td>
                                 <td>Breathe Electronics, Chennai</td>
                                 <td>16.10.2018</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>7</td>
                                 <td>Prolific Systems and Technologies Pvt. Ltd., Bangalore</td>
                                 <td>10.03.2016</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>8</td>
                                 <td>Frenzoft Consultancy Services, Chennai</td>
                                 <td>16.05.2023</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                             <tr>
                                 <td>9</td>
                                 <td>Maven Silicon Softech Pvt. Ltd., Bangalore</td>
                                 <td>10.01.2022</td>
-                                <td><span style="color: #4ade80;">● Active</span></td>
+                                <td>● Active</td>
                             </tr>
                         </tbody>
                     </table>
@@ -220,7 +224,7 @@
             <!-- Tab 4: Memberships -->
             <div id="tab-memberships" class="tab-content">
                 <div class="table-container tilt-card">
-                    <table>
+                    <table id="table-iste-data">
                         <thead>
                             <tr>
                                 <th>S.No</th>
@@ -275,8 +279,8 @@
             <div class="event-card tilt-card" style="text-align: center; align-items: center;">
                 <div style="width: 100%;">
                     <div class="event-icon">🔌</div>
-                    <h3>Electronics Club</h3>
-                    <p style="margin-bottom: 2rem;">Learn to design hardware circuits, test analog/digital components, and manufacture custom PCBs. Hosts technical project expos annually.</p>
+                    <h3 id="club-title-card">Electronics Club</h3>
+                    <p id="club-desc-card" style="margin-bottom: 2rem;">Learn to design hardware circuits, test analog/digital components, and manufacture custom PCBs. Hosts technical project expos annually.</p>
                 </div>
                 <button class="btn-primary" style="width: 80%;" onclick="openClubInterface('electronics')">Activity</button>
             </div>
@@ -292,8 +296,8 @@
                 <div class="file-info">
                     <div class="file-icon">📄</div>
                     <div class="file-details">
-                        <h4>ECE Curriculum Syllabus 2025-26</h4>
-                        <p>Official PDF Document • 120 KB</p>
+                        <h4 id="dl-syllabus-title">ECE Curriculum Syllabus 2025-26</h4>
+                        <p id="dl-syllabus-meta">Official PDF Document • 120 KB</p>
                     </div>
                 </div>
                 <!-- Real download link -->
@@ -304,8 +308,8 @@
                 <div class="file-info">
                     <div class="file-icon">📰</div>
                     <div class="file-details">
-                        <h4>ECE Department Newsletter (Vol. X)</h4>
-                        <p>Official PDF Document • 135 KB</p>
+                        <h4 id="dl-newsletter-title">ECE Department Newsletter (Vol. X)</h4>
+                        <p id="dl-newsletter-meta">Official PDF Document • 135 KB</p>
                     </div>
                 </div>
                 <!-- Real download link -->
@@ -317,8 +321,8 @@
                 <div class="file-info">
                     <div class="file-icon">📊</div>
                     <div class="file-details">
-                        <h4>Academic Planning Template (Excel)</h4>
-                        <p>Spreadsheet Template • 5 KB</p>
+                        <h4 id="dl-planner-title">Academic Planning Template (Excel)</h4>
+                        <p id="dl-planner-meta">Spreadsheet Template • 5 KB</p>
                     </div>
                 </div>
                 <!-- Real download link -->
@@ -330,8 +334,8 @@
                 <div class="file-info">
                     <div class="file-icon">🏆</div>
                     <div class="file-details">
-                        <h4>Previous ECE Events Summary Report</h4>
-                        <p>PDF Summary Report • 150 KB</p>
+                        <h4 id="dl-report-title">Previous ECE Events Summary Report</h4>
+                        <p id="dl-report-meta">PDF Summary Report • 150 KB</p>
                     </div>
                 </div>
                 <!-- Real download link -->
@@ -350,18 +354,18 @@
             </div>
             
             <div class="hod-details">
-                <h3>Mr. P. Anandhakumar</h3>
-                <p class="hod-title">Assistant Professor & Head of Department (ECE)</p>
-                <p class="hod-message">"Our mission is to foster technical excellence and encourage active participation in engineering research. We work tirelessly to align our students with the industry standards so they can solve real-world problems in the electronics and communication domains."</p>
+                <h3 id="hod-name">Mr. P. Anandhakumar</h3>
+                <p class="hod-title" id="hod-designation">Assistant Professor & Head of Department (ECE)</p>
+                <p class="hod-message" id="hod-msg-text">"Our mission is to foster technical excellence and encourage active participation in engineering research. We work tirelessly to align our students with the industry standards so they can solve real-world problems in the electronics and communication domains."</p>
                 
                 <div class="hod-meta">
                     <div class="meta-item">
                         <h5>Research Areas</h5>
-                        <p>Wavelet-based Voice Conversion, Smart Attendance systems via AI & IoT.</p>
+                        <p id="hod-research">Wavelet-based Voice Conversion, Smart Attendance systems via AI & IoT.</p>
                     </div>
                     <div class="meta-item">
                         <h5>Contact / Office</h5>
-                        <p>hod.ece@vsbec.edu.in</p>
+                        <p id="hod-email">hod.ece@vsbec.edu.in</p>
                     </div>
                 </div>
             </div>
@@ -372,36 +376,62 @@
     <section id="coordinators">
         <h2 class="section-title">Student Coordinators</h2>
         
-        <div class="coordinators-grid">
-            <div class="coord-card tilt-card">
+        <div class="coordinators-grid" id="coordinators-container">
+            <div class="coord-card tilt-card" id="coord-1">
                 <div class="coord-avatar">⚡</div>
-                <h4>Sanjay B</h4>
+                <h4 id="coord-name-1">Sanjay B</h4>
                 <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
 
-            <div class="coord-card tilt-card">
+            <div class="coord-card tilt-card" id="coord-2">
                 <div class="coord-avatar">⚙️</div>
-                <h4>Ragul S</h4>
+                <h4 id="coord-name-2">Ragul S</h4>
                 <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
 
-            <div class="coord-card tilt-card">
+            <div class="coord-card tilt-card" id="coord-3">
                 <div class="coord-avatar">💡</div>
-                <h4>Sivasradeep S</h4>
+                <h4 id="coord-name-3">Sivasradeep S</h4>
                 <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
 
-            <div class="coord-card tilt-card">
+            <div class="coord-card tilt-card" id="coord-4">
                 <div class="coord-avatar">🔮</div>
-                <h4>Kishorekumar K T</h4>
+                <h4 id="coord-name-4">Kishorekumar K T</h4>
+                <p class="coord-role">Student Coordinator</p>
+                <p class="coord-year">III Year ECE</p>
+            </div>
+
+            <div class="coord-card tilt-card" id="coord-5">
+                <div class="coord-avatar">🚀</div>
+                <h4 id="coord-name-5">Rubahan P</h4>
                 <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
         </div>
     </section>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeLoginModal()">×</button>
+            <h3>Admin System Login</h3>
+            <form id="adminLoginForm" onsubmit="submitAdminLogin(event)">
+                <div class="form-group">
+                    <label for="admin-user">Username</label>
+                    <input type="text" id="admin-user" required placeholder="Enter admin username">
+                </div>
+                <div class="form-group">
+                    <label for="admin-pass">Password</label>
+                    <input type="password" id="admin-pass" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Club Detail Overlay Interface (Dynamic Inner Portal) -->
     <div id="clubInterfaceModal" class="modal">
@@ -416,6 +446,18 @@
     <!-- Notification Toast for Downloads -->
     <div id="toast-notify" style="display:none; position:fixed; bottom: 2rem; right: 2rem; background: #00d2ff; color: #070a13; padding: 1rem 2rem; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 5px 15px rgba(0,210,255,0.4); transition: all 0.3s ease;">
         File download started!
+    </div>
+
+    <!-- Floating Admin Controls Bar (Only visible after login) -->
+    <div id="admin-controls-bar" class="admin-controls-panel">
+        <div class="admin-badge-indicator">
+            <span class="pulse-dot"></span>
+            <span>Admin Active Mode</span>
+        </div>
+        <div class="admin-actions-btns">
+            <button class="btn-save-changes" onclick="saveWebChanges()">Save & Sync Changes</button>
+            <button class="btn-admin-logout" onclick="logoutAdmin()">Logout</button>
+        </div>
     </div>
 
     <!-- Footer -->

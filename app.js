@@ -40,7 +40,7 @@ function init3DBackground() {
     starGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
     const starMaterial = new THREE.PointsMaterial({
-        size: 0.008, // slightly larger, clearer particles
+        size: 0.008, 
         vertexColors: true,
         transparent: true,
         opacity: 0.8,
@@ -90,6 +90,10 @@ function apply3DTilt() {
 
     cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
+            // Disable tilts when text is focused to avoid cursor shift stutters
+            if (document.activeElement && card.contains(document.activeElement)) {
+                return;
+            }
             const cardRect = card.getBoundingClientRect();
             const cardWidth = cardRect.width;
             const cardHeight = cardRect.height;
@@ -97,7 +101,6 @@ function apply3DTilt() {
             const mouseX = e.clientX - cardRect.left - cardWidth / 2;
             const mouseY = e.clientY - cardRect.top - cardHeight / 2;
             
-            // Highly smooth tilt calculation (up to 14 degrees max)
             const tiltX = (mouseY / (cardHeight / 2)) * -14;
             const tiltY = (mouseX / (cardWidth / 2)) * 14;
 
@@ -205,13 +208,6 @@ function showDownloadNotify(fileName) {
     }, 2500);
 }
 
-// Close modals on clicking backdrop
-window.onclick = function(event) {
-    if (event.target === clubModal) {
-        closeClubModal();
-    }
-}
-
 
 // === 6. Dynamic Navigation Link Highlighting ===
 window.addEventListener('scroll', () => {
@@ -235,3 +231,135 @@ window.addEventListener('scroll', () => {
         }
     });
 });
+
+
+// === 7. Real Admin Controls & Editing Logic ===
+const loginModal = document.getElementById('adminLoginModal');
+const loginBtn = document.getElementById('admin-login-btn');
+const adminControlsBar = document.getElementById('admin-controls-bar');
+
+// Fields list that will be saved and restored dynamically
+const editableElements = [
+    'college-name-header', 'college-loc-header', 'hero-title', 'hero-subtitle',
+    'about-card-text', 'vision-text', 'mission-list', 'intake-ug-title',
+    'intake-ug-text', 'intake-pg-title', 'intake-pg-text', 'table-strength-data',
+    'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
+    'dl-syllabus-title', 'dl-syllabus-meta', 'dl-newsletter-title',
+    'dl-newsletter-meta', 'dl-planner-title', 'dl-planner-meta',
+    'dl-report-title', 'dl-report-meta', 'hod-name', 'hod-designation',
+    'hod-msg-text', 'hod-research', 'hod-email', 'coordinators-container'
+];
+
+function openLoginModal() {
+    loginModal.classList.add('active');
+}
+
+function closeLoginModal() {
+    loginModal.classList.remove('active');
+    document.getElementById('adminLoginForm').reset();
+}
+
+function submitAdminLogin(event) {
+    event.preventDefault();
+    const user = document.getElementById('admin-user').value;
+    const pass = document.getElementById('admin-pass').value;
+
+    if (user === 'ece_1234' && pass === 'ECE1234') {
+        localStorage.setItem('vsb_ece_is_admin', 'true');
+        closeLoginModal();
+        enableAdminMode();
+    } else {
+        alert('Incorrect Admin credentials! Try again.');
+    }
+}
+
+function enableAdminMode() {
+    document.body.classList.add('admin-mode');
+    adminControlsBar.classList.add('active');
+    loginBtn.textContent = 'Admin Mode Active';
+    loginBtn.disabled = true;
+
+    // Enable editing on all predefined fields
+    editableElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.setAttribute('contenteditable', 'true');
+        }
+    });
+
+    // Make table td and th elements contenteditable individually for exact cell edit
+    const tableCells = document.querySelectorAll('table th, table td');
+    tableCells.forEach(cell => {
+        cell.setAttribute('contenteditable', 'true');
+    });
+}
+
+function logoutAdmin() {
+    localStorage.removeItem('vsb_ece_is_admin');
+    document.body.classList.remove('admin-mode');
+    adminControlsBar.classList.remove('active');
+    loginBtn.textContent = 'Admin Login';
+    loginBtn.disabled = false;
+
+    // Disable editing
+    editableElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.setAttribute('contenteditable', 'false');
+        }
+    });
+
+    const tableCells = document.querySelectorAll('table th, table td');
+    tableCells.forEach(cell => {
+        cell.setAttribute('contenteditable', 'false');
+    });
+
+    alert('Logged out from admin system successfully.');
+    window.location.reload();
+}
+
+// Save web updates locally
+function saveWebChanges() {
+    const edits = {};
+    
+    editableElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            edits[id] = el.innerHTML;
+        }
+    });
+
+    localStorage.setItem('vsb_ece_web_edits', JSON.stringify(edits));
+    alert('All website edits saved successfully to local storage!');
+}
+
+// Load and apply edits on page load
+function loadWebEdits() {
+    const saved = localStorage.getItem('vsb_ece_web_edits');
+    if (saved) {
+        const edits = JSON.parse(saved);
+        for (const [id, html] of Object.entries(edits)) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerHTML = html;
+            }
+        }
+    }
+
+    // Auto log in if admin state persists
+    if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
+        enableAdminMode();
+    }
+}
+
+// Run loader on load
+window.addEventListener('DOMContentLoaded', loadWebEdits);
+
+// Close overlay modal backdrop clicks
+window.onclick = function(event) {
+    if (event.target === loginModal) {
+        closeLoginModal();
+    } else if (event.target === clubModal) {
+        closeClubModal();
+    }
+}
