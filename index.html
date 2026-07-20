@@ -35,10 +35,10 @@
     <nav class="sub-nav">
         <ul class="nav-links">
             <li><a href="#dept-info" class="active">Department Information</a></li>
-            <li><a href="#events">Events</a></li>
-            <li><a href="#event-file">Event File</a></li>
+            <li><a href="#events">Club Activities</a></li>
+            <li><a href="#event-file">Downloads</a></li>
             <li><a href="#hod">HOD</a></li>
-            <li><a href="#coordinators">Student Coordinators</a></li>
+            <li><a href="#coordinators">Coordinators</a></li>
         </ul>
     </nav>
 
@@ -266,43 +266,46 @@
         </div>
     </section>
 
-    <!-- 2. Events Section -->
+    <!-- 2. Events / Club Activities Section -->
     <section id="events">
-        <h2 class="section-title">Department Events</h2>
+        <h2 class="section-title">Club Activities</h2>
         
         <div class="events-container">
+            <!-- Club 1: Electronics Club -->
             <div class="event-card tilt-card">
                 <div>
-                    <div class="event-icon">🏆</div>
-                    <h3>Technical Symposium</h3>
-                    <p>National-level symposium containing paper presentation, project expo, circuit debugging (Circuitrix), and line-follower robot competitions.</p>
+                    <div class="event-icon">🔌</div>
+                    <h3>Electronics Club</h3>
+                    <p>Learn to design hardware circuits, test analog/digital components, and manufacture custom PCBs. Hosts technical project expos annually.</p>
                 </div>
-                <button class="btn-primary" onclick="openRegisterModal('National Technical Symposium')">Register Now</button>
+                <button class="btn-primary" onclick="openClubInterface('electronics')">Explore Club Details</button>
             </div>
             
+            <!-- Club 2: Coding Club -->
             <div class="event-card tilt-card">
                 <div>
-                    <div class="event-icon">⚙️</div>
-                    <h3>Hands-on Workshops</h3>
-                    <p>Interactive industry-ready workshops on Internet of Things (IoT), Embedded Systems Design, and VLSI circuit prototyping.</p>
+                    <div class="event-icon">💻</div>
+                    <h3>Coding Club</h3>
+                    <p>Sharpen coding logic, build algorithms, and program microcontrollers/IoT systems. Hosts regular coding sprints & hackathons.</p>
                 </div>
-                <button class="btn-primary" onclick="openRegisterModal('Hands-on Workshops (IoT & VLSI)')">Register Now</button>
+                <button class="btn-primary" onclick="openClubInterface('coding')">Explore Club Details</button>
             </div>
             
+            <!-- Club 3: Robotics Club -->
             <div class="event-card tilt-card">
                 <div>
-                    <div class="event-icon">🎤</div>
-                    <h3>Guest Lectures</h3>
-                    <p>Eminent professionals from premier research institutes and industries discussing emerging trends in AI, 5G, and beyond.</p>
+                    <div class="event-icon">🤖</div>
+                    <h3>Robotics Club</h3>
+                    <p>Build line follower robots, autonomous hover drones, and mechanical systems. Hands-on integration of sensors and actuators.</p>
                 </div>
-                <button class="btn-primary" onclick="openRegisterModal('Industry Guest Lectures')">Join Session</button>
+                <button class="btn-primary" onclick="openClubInterface('robotics')">Explore Club Details</button>
             </div>
         </div>
     </section>
 
-    <!-- 3. Event File Section -->
+    <!-- 3. Event File (Download Center) Section -->
     <section id="event-file">
-        <h2 class="section-title">Event File Download Center</h2>
+        <h2 class="section-title">Department Downloads</h2>
         
         <div class="download-grid">
             <div class="download-card tilt-card">
@@ -310,21 +313,11 @@
                     <div class="file-icon">📄</div>
                     <div class="file-details">
                         <h4>ECE Curriculum Syllabus 2025-26</h4>
-                        <p>PDF Document • 1.4 MB</p>
+                        <p>Official PDF Document • 120 KB</p>
                     </div>
                 </div>
-                <button class="btn-download" onclick="mockDownload('ECE_Syllabus_2025_26.pdf')">↓</button>
-            </div>
-
-            <div class="download-card tilt-card">
-                <div class="file-info">
-                    <div class="file-icon">📅</div>
-                    <div class="file-details">
-                        <h4>Symposium Event Brochure & Schedule</h4>
-                        <p>PDF Document • 2.8 MB</p>
-                    </div>
-                </div>
-                <button class="btn-download" onclick="mockDownload('Symposium_Brochure.pdf')">↓</button>
+                <!-- Real download link -->
+                <a href="ECE_Syllabus_2025_26.pdf" download="ECE_Syllabus_2025_26.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Syllabus_2025_26.pdf')">↓</a>
             </div>
 
             <div class="download-card tilt-card">
@@ -332,21 +325,11 @@
                     <div class="file-icon">📰</div>
                     <div class="file-details">
                         <h4>ECE Department Newsletter (Vol. X)</h4>
-                        <p>PDF Document • 4.1 MB</p>
+                        <p>Official PDF Document • 135 KB</p>
                     </div>
                 </div>
-                <button class="btn-download" onclick="mockDownload('ECE_Newsletter_V10.pdf')">↓</button>
-            </div>
-
-            <div class="download-card tilt-card">
-                <div class="file-info">
-                    <div class="file-icon">📦</div>
-                    <div class="file-details">
-                        <h4>Workshop Code templates & Lab guides</h4>
-                        <p>ZIP Archive • 12.5 MB</p>
-                    </div>
-                </div>
-                <button class="btn-download" onclick="mockDownload('ECE_Workshop_Materials.zip')">↓</button>
+                <!-- Real download link -->
+                <a href="ECE_Newsletter_V10.pdf" download="ECE_Newsletter_V10.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Newsletter_V10.pdf')">↓</a>
             </div>
         </div>
     </section>
@@ -385,61 +368,41 @@
         
         <div class="coordinators-grid">
             <div class="coord-card tilt-card">
-                <div class="coord-avatar">👨‍💻</div>
+                <div class="coord-avatar">⚡</div>
                 <h4>Sanjay B</h4>
-                <p class="coord-role">Student President</p>
-                <p class="coord-year">IV Year ECE</p>
-            </div>
-
-            <div class="coord-card tilt-card">
-                <div class="coord-avatar">👩‍💻</div>
-                <h4>Priya K</h4>
-                <p class="coord-role">Vice President</p>
+                <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
 
             <div class="coord-card tilt-card">
-                <div class="coord-avatar">👨‍💻</div>
-                <h4>Rahul R</h4>
-                <p class="coord-role">Secretary</p>
-                <p class="coord-year">IV Year ECE</p>
+                <div class="coord-avatar">⚙️</div>
+                <h4>Ragul S</h4>
+                <p class="coord-role">Student Coordinator</p>
+                <p class="coord-year">III Year ECE</p>
             </div>
 
             <div class="coord-card tilt-card">
-                <div class="coord-avatar">👩‍💻</div>
-                <h4>Abirami S</h4>
-                <p class="coord-role">Joint Secretary</p>
+                <div class="coord-avatar">💡</div>
+                <h4>Sivasradeep S</h4>
+                <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
         </div>
     </section>
 
-    <!-- Interactive Event Registration Modal -->
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">×</button>
-            <h3 id="modalEventTitle">Event Registration</h3>
-            <form id="registrationForm" onsubmit="submitRegistration(event)">
-                <div class="form-group">
-                    <label for="reg-name">Full Name</label>
-                    <input type="text" id="reg-name" required placeholder="Enter your name">
-                </div>
-                <div class="form-group">
-                    <label for="reg-email">Email Address</label>
-                    <input type="email" id="reg-email" required placeholder="Enter email">
-                </div>
-                <div class="form-group">
-                    <label for="reg-year">Year of Study</label>
-                    <select id="reg-year">
-                        <option value="I Year">I Year</option>
-                        <option value="II Year">II Year</option>
-                        <option value="III Year">III Year</option>
-                        <option value="IV Year">IV Year</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Submit Registration</button>
-            </form>
+    <!-- Club Detail Overlay Interface (Dynamic Inner Portal) -->
+    <div id="clubInterfaceModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="modal-close" onclick="closeClubModal()">×</button>
+            <div id="club-portal-content">
+                <!-- Dynamically populated by app.js -->
+            </div>
         </div>
+    </div>
+
+    <!-- Notification Toast for Downloads -->
+    <div id="toast-notify" style="display:none; position:fixed; bottom: 2rem; right: 2rem; background: #00d2ff; color: #070a13; padding: 1rem 2rem; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 5px 15px rgba(0,210,255,0.4); transition: all 0.3s ease;">
+        File download started!
     </div>
 
     <!-- Footer -->
@@ -448,7 +411,7 @@
             <p>© 2026 VSB Engineering College Karur | Department of Electronics and Communication Engineering.</p>
             <ul class="footer-links">
                 <li><a href="#dept-info">About</a></li>
-                <li><a href="#events">Events</a></li>
+                <li><a href="#events">Clubs</a></li>
                 <li><a href="#hod">HOD</a></li>
             </ul>
         </div>

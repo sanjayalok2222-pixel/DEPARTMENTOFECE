@@ -23,12 +23,11 @@ function init3DBackground() {
     const colorArray = new Float32Array(particleCount * 3);
 
     for (let i = 0; i < particleCount * 3; i += 3) {
-        // Position coordinates
         posArray[i] = (Math.random() - 0.5) * 5;
         posArray[i+1] = (Math.random() - 0.5) * 5;
         posArray[i+2] = (Math.random() - 0.5) * 5;
 
-        // Color values: gradient of electric blues and cyans
+        // Gradient of neon blues and cyans
         const r = 0.0;
         const g = Math.random() * 0.7 + 0.3; // 0.3 to 1.0
         const b = 1.0;
@@ -40,7 +39,6 @@ function init3DBackground() {
     starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     starGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
-    // Custom material for points
     const starMaterial = new THREE.PointsMaterial({
         size: 0.006,
         vertexColors: true,
@@ -52,34 +50,29 @@ function init3DBackground() {
     stars = new THREE.Points(starGeo, starMaterial);
     scene.add(stars);
 
-    // Run animation
     animate();
 }
 
-// Track mouse positioning to make 3D particles responsive to user cursor
 let mouseX = 0;
 let mouseY = 0;
 
 window.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX - window.innerWidth / 2) / 100;
-    mouseY = (e.clientY - window.innerHeight / 2) / 100;
+    mouseX = (e.clientX - window.innerWidth / 2) / 120;
+    mouseY = (e.clientY - window.innerHeight / 2) / 120;
 });
 
 function animate() {
     requestAnimationFrame(animate);
 
-    // Slowly rotate stars in space
-    stars.rotation.y += 0.0015;
-    stars.rotation.x += 0.0005;
+    stars.rotation.y += 0.0012;
+    stars.rotation.x += 0.0004;
 
-    // Fluid movement based on cursor coordinates
-    stars.rotation.y += (mouseX - stars.rotation.y) * 0.05;
-    stars.rotation.x += (-mouseY - stars.rotation.x) * 0.05;
+    stars.rotation.y += (mouseX - stars.rotation.y) * 0.04;
+    stars.rotation.x += (-mouseY - stars.rotation.x) * 0.04;
 
     renderer.render(scene, camera);
 }
 
-// Handle browser window scaling
 window.addEventListener('resize', () => {
     if (camera && renderer) {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -88,39 +81,43 @@ window.addEventListener('resize', () => {
     }
 });
 
-// Initialize Three.js on page load
 window.addEventListener('DOMContentLoaded', init3DBackground);
 
 
 // === 2. Interactive 3D Card Hover Tilt Effect ===
-const cards = document.querySelectorAll('.tilt-card');
+// Re-run this setup function to bind new elements dynamically if needed
+function apply3DTilt() {
+    const cards = document.querySelectorAll('.tilt-card');
 
-cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-        const cardRect = card.getBoundingClientRect();
-        const cardWidth = cardRect.width;
-        const cardHeight = cardRect.height;
-        
-        // Find cursor relative coords inside the element
-        const mouseX = e.clientX - cardRect.left - cardWidth / 2;
-        const mouseY = e.clientY - cardRect.top - cardHeight / 2;
-        
-        // Calculate tilt percentages (-15 to 15 degrees max)
-        const tiltX = (mouseY / (cardHeight / 2)) * -12;
-        const tiltY = (mouseX / (cardWidth / 2)) * 12;
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const cardRect = card.getBoundingClientRect();
+            const cardWidth = cardRect.width;
+            const cardHeight = cardRect.height;
+            
+            const mouseX = e.clientX - cardRect.left - cardWidth / 2;
+            const mouseY = e.clientY - cardRect.top - cardHeight / 2;
+            
+            // Smoother and slightly higher tilt (up to 15 degrees)
+            const tiltX = (mouseY / (cardHeight / 2)) * -14;
+            const tiltY = (mouseX / (cardWidth / 2)) * 14;
 
-        card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.03, 1.03, 1.03)`;
-        card.style.boxShadow = `0 15px 45px rgba(0, 210, 255, 0.25)`;
+            card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.04, 1.04, 1.04)`;
+            card.style.boxShadow = `0 18px 45px rgba(0, 210, 255, 0.3)`;
+            card.style.borderColor = `var(--accent-cyan)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            card.style.boxShadow = `0 10px 40px rgba(0, 0, 0, 0.55)`;
+            card.style.borderColor = `var(--border-card)`;
+        });
     });
-
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-        card.style.boxShadow = `0 10px 40px rgba(0, 0, 0, 0.55)`;
-    });
-});
+}
+window.addEventListener('DOMContentLoaded', apply3DTilt);
 
 
-// === 3. Details Navigation Tabs & Table Switching ===
+// === 3. Details Navigation Tabs ===
 function switchTab(event, tabId) {
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.remove('active'));
@@ -130,42 +127,117 @@ function switchTab(event, tabId) {
 
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
+    
+    // Reapply tilt bindings to new active tab elements
+    apply3DTilt();
 }
 
 
-// === 4. Popups Modals ===
-const modal = document.getElementById('registerModal');
-const modalTitle = document.getElementById('modalEventTitle');
+// === 4. Club Interactive Portal Interface ===
+const clubModal = document.getElementById('clubInterfaceModal');
+const portalContent = document.getElementById('club-portal-content');
 
-function openRegisterModal(eventName) {
-    modalTitle.textContent = `${eventName} Registration`;
-    modal.classList.add('active');
+const clubData = {
+    electronics: {
+        title: "🔌 Electronics Club Portal",
+        faculty: "Mr. P. Anandhakumar (HoD ECE)",
+        overview: "Dedicated to designing microelectronic layouts, debugging circuit faults, and mastering PCB printing technology.",
+        activities: [
+            "Circuitrix Debugging Contest (National Level)",
+            "PCB Design bootcamps using KiCad",
+            "Soldering & components assembly training labs"
+        ],
+        projects: "Smart Agriculture IoT kit, Wearable health monitoring sensors."
+    },
+    coding: {
+        title: "💻 Coding Club Portal",
+        faculty: "Dr. K. Rajesh (Associate Professor)",
+        overview: "Focused on solving algorithmic problems, writing firmware codes, and developing web integrations for IoT networks.",
+        activities: [
+            "Annual Code-a-Thon & Hackathon",
+            "Embedded C & Python firmware bootcamps",
+            "Competitive programming sprints on HackerRank"
+        ],
+        projects: "AI smart attendance logging systems, cloud-integrated home server."
+    },
+    robotics: {
+        title: "🤖 Robotics Club Portal",
+        faculty: "Mr. S. Gokul (Assistant Professor)",
+        overview: "Explores the synthesis of mechanical, control systems, sensor fusion, and microcontrollers to engineer autonomous bots.",
+        activities: [
+            "Line Follower & Obstacle Avoidance contests",
+            "Robo-Soccer tournament",
+            "Autonomous Quadcopter flight control lectures"
+        ],
+        projects: "Self-stabilizing robotic arm, autonomous navigation land rover."
+    }
+};
+
+function openClubInterface(clubType) {
+    const data = clubData[clubType];
+    if (!data) return;
+
+    portalContent.innerHTML = `
+        <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.25rem;">${data.title}</h3>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Faculty Advisor</span>
+            <strong style="color: var(--text-primary); font-size: 1rem;">${data.faculty}</strong>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">${data.overview}</p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.6rem;">Key Core Activities</span>
+            <ul style="list-style: none; padding: 0;">
+                ${data.activities.map(act => `
+                    <li style="position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-primary);">
+                        <span style="position: absolute; left: 0; color: var(--accent-cyan);">✦</span> ${act}
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+
+        <div>
+            <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Recent Student Projects</span>
+            <p style="color: var(--accent-cyan); font-weight: 500; font-size: 0.9rem;">${data.projects}</p>
+        </div>
+    `;
+    
+    clubModal.classList.add('active');
 }
 
-function closeModal() {
-    modal.classList.remove('active');
-    document.getElementById('registrationForm').reset();
+function closeClubModal() {
+    clubModal.classList.remove('active');
 }
 
-function submitRegistration(event) {
-    event.preventDefault();
-    const name = document.getElementById('reg-name').value;
-    alert(`Thank you, ${name}! Your registration for ${modalTitle.textContent.replace(' Registration', '')} was successful.`);
-    closeModal();
+
+// === 5. Real PDF Download Toast Notification ===
+function showDownloadNotify(fileName) {
+    const toast = document.getElementById('toast-notify');
+    toast.textContent = `Downloading ${fileName}...`;
+    toast.style.display = 'block';
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            toast.style.display = 'none';
+            toast.style.opacity = '1';
+        }, 300);
+    }, 2500);
 }
 
-function mockDownload(fileName) {
-    alert(`Starting download: ${fileName}\nThe file will download in the background.`);
-}
-
+// Close modals on clicking backdrop
 window.onclick = function(event) {
-    if (event.target === modal) {
-        closeModal();
+    if (event.target === clubModal) {
+        closeClubModal();
     }
 }
 
 
-// === 5. Dynamic Navigation Link Highlighting ===
+// === 6. Dynamic Navigation Link Highlighting ===
 window.addEventListener('scroll', () => {
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-links li a');
