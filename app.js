@@ -16,9 +16,9 @@ function init3DBackground() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    // Create 3D particles geometry
+    // Optimized particle count to prevent scroll lags and stutters on all devices
     starGeo = new THREE.BufferGeometry();
-    const particleCount = 1500;
+    const particleCount = 800; 
     const posArray = new Float32Array(particleCount * 3);
     const colorArray = new Float32Array(particleCount * 3);
 
@@ -27,9 +27,9 @@ function init3DBackground() {
         posArray[i+1] = (Math.random() - 0.5) * 5;
         posArray[i+2] = (Math.random() - 0.5) * 5;
 
-        // Gradient of neon blues and cyans
+        // Custom gradient of neon blues and cyans
         const r = 0.0;
-        const g = Math.random() * 0.7 + 0.3; // 0.3 to 1.0
+        const g = Math.random() * 0.7 + 0.3; 
         const b = 1.0;
         colorArray[i] = r;
         colorArray[i+1] = g;
@@ -40,10 +40,10 @@ function init3DBackground() {
     starGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
 
     const starMaterial = new THREE.PointsMaterial({
-        size: 0.006,
+        size: 0.008, // slightly larger, clearer particles
         vertexColors: true,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.8,
         blending: THREE.AdditiveBlending
     });
 
@@ -57,18 +57,18 @@ let mouseX = 0;
 let mouseY = 0;
 
 window.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX - window.innerWidth / 2) / 120;
-    mouseY = (e.clientY - window.innerHeight / 2) / 120;
+    mouseX = (e.clientX - window.innerWidth / 2) / 150;
+    mouseY = (e.clientY - window.innerHeight / 2) / 150;
 });
 
 function animate() {
     requestAnimationFrame(animate);
 
-    stars.rotation.y += 0.0012;
-    stars.rotation.x += 0.0004;
+    stars.rotation.y += 0.001;
+    stars.rotation.x += 0.0003;
 
-    stars.rotation.y += (mouseX - stars.rotation.y) * 0.04;
-    stars.rotation.x += (-mouseY - stars.rotation.x) * 0.04;
+    stars.rotation.y += (mouseX - stars.rotation.y) * 0.03;
+    stars.rotation.x += (-mouseY - stars.rotation.x) * 0.03;
 
     renderer.render(scene, camera);
 }
@@ -85,7 +85,6 @@ window.addEventListener('DOMContentLoaded', init3DBackground);
 
 
 // === 2. Interactive 3D Card Hover Tilt Effect ===
-// Re-run this setup function to bind new elements dynamically if needed
 function apply3DTilt() {
     const cards = document.querySelectorAll('.tilt-card');
 
@@ -98,7 +97,7 @@ function apply3DTilt() {
             const mouseX = e.clientX - cardRect.left - cardWidth / 2;
             const mouseY = e.clientY - cardRect.top - cardHeight / 2;
             
-            // Smoother and slightly higher tilt (up to 15 degrees)
+            // Highly smooth tilt calculation (up to 14 degrees max)
             const tiltX = (mouseY / (cardHeight / 2)) * -14;
             const tiltY = (mouseX / (cardWidth / 2)) * 14;
 
@@ -128,7 +127,6 @@ function switchTab(event, tabId) {
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
     
-    // Reapply tilt bindings to new active tab elements
     apply3DTilt();
 }
 
@@ -148,28 +146,6 @@ const clubData = {
             "Soldering & components assembly training labs"
         ],
         projects: "Smart Agriculture IoT kit, Wearable health monitoring sensors."
-    },
-    coding: {
-        title: "💻 Coding Club Portal",
-        faculty: "Dr. K. Rajesh (Associate Professor)",
-        overview: "Focused on solving algorithmic problems, writing firmware codes, and developing web integrations for IoT networks.",
-        activities: [
-            "Annual Code-a-Thon & Hackathon",
-            "Embedded C & Python firmware bootcamps",
-            "Competitive programming sprints on HackerRank"
-        ],
-        projects: "AI smart attendance logging systems, cloud-integrated home server."
-    },
-    robotics: {
-        title: "🤖 Robotics Club Portal",
-        faculty: "Mr. S. Gokul (Assistant Professor)",
-        overview: "Explores the synthesis of mechanical, control systems, sensor fusion, and microcontrollers to engineer autonomous bots.",
-        activities: [
-            "Line Follower & Obstacle Avoidance contests",
-            "Robo-Soccer tournament",
-            "Autonomous Quadcopter flight control lectures"
-        ],
-        projects: "Self-stabilizing robotic arm, autonomous navigation land rover."
     }
 };
 

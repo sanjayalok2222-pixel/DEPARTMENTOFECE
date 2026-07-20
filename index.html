@@ -266,39 +266,19 @@
         </div>
     </section>
 
-    <!-- 2. Events / Club Activities Section -->
+    <!-- 2. Events / Club Activities Section (Only Electronics Club) -->
     <section id="events">
         <h2 class="section-title">Club Activities</h2>
         
-        <div class="events-container">
-            <!-- Club 1: Electronics Club -->
-            <div class="event-card tilt-card">
-                <div>
+        <div class="events-container" style="grid-template-columns: 1fr; max-width: 500px; margin: 0 auto;">
+            <!-- Club 1: Electronics Club Only -->
+            <div class="event-card tilt-card" style="text-align: center; align-items: center;">
+                <div style="width: 100%;">
                     <div class="event-icon">🔌</div>
                     <h3>Electronics Club</h3>
-                    <p>Learn to design hardware circuits, test analog/digital components, and manufacture custom PCBs. Hosts technical project expos annually.</p>
+                    <p style="margin-bottom: 2rem;">Learn to design hardware circuits, test analog/digital components, and manufacture custom PCBs. Hosts technical project expos annually.</p>
                 </div>
-                <button class="btn-primary" onclick="openClubInterface('electronics')">Explore Club Details</button>
-            </div>
-            
-            <!-- Club 2: Coding Club -->
-            <div class="event-card tilt-card">
-                <div>
-                    <div class="event-icon">💻</div>
-                    <h3>Coding Club</h3>
-                    <p>Sharpen coding logic, build algorithms, and program microcontrollers/IoT systems. Hosts regular coding sprints & hackathons.</p>
-                </div>
-                <button class="btn-primary" onclick="openClubInterface('coding')">Explore Club Details</button>
-            </div>
-            
-            <!-- Club 3: Robotics Club -->
-            <div class="event-card tilt-card">
-                <div>
-                    <div class="event-icon">🤖</div>
-                    <h3>Robotics Club</h3>
-                    <p>Build line follower robots, autonomous hover drones, and mechanical systems. Hands-on integration of sensors and actuators.</p>
-                </div>
-                <button class="btn-primary" onclick="openClubInterface('robotics')">Explore Club Details</button>
+                <button class="btn-primary" style="width: 80%;" onclick="openClubInterface('electronics')">Activity</button>
             </div>
         </div>
     </section>
@@ -384,6 +364,13 @@
             <div class="coord-card tilt-card">
                 <div class="coord-avatar">💡</div>
                 <h4>Sivasradeep S</h4>
+                <p class="coord-role">Student Coordinator</p>
+                <p class="coord-year">III Year ECE</p>
+            </div>
+
+            <div class="coord-card tilt-card">
+                <div class="coord-avatar">🔮</div>
+                <h4>Kishorekumar K T</h4>
                 <p class="coord-role">Student Coordinator</p>
                 <p class="coord-year">III Year ECE</p>
             </div>
