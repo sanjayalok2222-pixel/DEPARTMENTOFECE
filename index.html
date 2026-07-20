@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECE Department | VSB Engineering College Karur</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Main Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <!-- Using live VSB main logo for authentication -->
+                <img src="https://vsbec.edu.in/wp-content/uploads/2023/10/Framelogo27062024.jpg" alt="VSB Engineering College Logo" class="vsb-logo">
+                <div class="college-title">
+                    <h1>V.S.B. Engineering College</h1>
+                    <p>Karur, Tamil Nadu</p>
+                </div>
+            </div>
+            <div class="dept-badge">
+                <img src="assets/ece-logo.png" alt="ECE Chip Logo">
+                <span>ECE Department</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub-navigation links (Slides) -->
+    <nav class="sub-nav">
+        <ul class="nav-links">
+            <li><a href="#dept-info" class="active">Department Information</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#event-file">Event File</a></li>
+            <li><a href="#hod">HOD</a></li>
+            <li><a href="#coordinators">Student Coordinators</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-content">
+            <img src="assets/ece-logo.png" alt="ECE Logo" class="hero-logo">
+            <h2>Shaping Tomorrow with ECE Innovations</h2>
+            <p>Welcome to the Department of Electronics and Communication Engineering at VSB Engineering College. Established in 2002, we empower students to explore, create, and engineer the future.</p>
+            <a href="#dept-info" class="btn-primary">Get Started</a>
+        </div>
+    </div>
+
+    <!-- 1. Department Information Section -->
+    <section id="dept-info">
+        <h2 class="section-title">Department Information</h2>
+        
+        <div class="info-grid">
+            <div class="about-card">
+                <p>The Department of Electronics and Communication Engineering was established in the Year 2002. The department has well-equipped state-of-the-art laboratories including Circuits and Devices Lab, Analog and Digital Circuits Lab, Circuits Design and Simulation Lab, Linear Integrated Circuits Lab, Communication Systems Lab, Communication Networks Lab, Digital Signal Processing Lab, Microprocessor and Microcontroller Lab, VLSI Design Lab, Advanced Communication Lab, and Embedded Lab.</p>
+                <p>We boast highly educated faculty members with vast experience in academics and industry. With a symbiosis between our placement cell and the department, students achieve the best jobs for their careers. Exposure and training are provided for advanced studies, guest lectures, and mock campus interviews.</p>
+                <p>Industrial visits are organized frequently to organizations such as JVS Electronics, Embuzz Technologies, HAL Museum, and ISRO to provide practical engineering exposure.</p>
+            </div>
+            
+            <div class="vision-mission">
+                <div class="vm-box">
+                    <h3>👁️ Our Vision</h3>
+                    <p>To produce academically excellent and socially responsible engineers in Electronics and Communication Engineering.</p>
+                </div>
+                <div class="vm-box">
+                    <h3>🚀 Our Mission</h3>
+                    <ul>
+                        <li>Provide good fundamental knowledge in ECE sub-domains.</li>
+                        <li>Offer efficient teaching-learning with focus on problem-solving, analytical, and technical skills.</li>
+                        <li>Inculcate competency, innovative spirit, communication, and managerial skills.</li>
+                        <li>Encourage students to pursue higher studies and research activities.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details & Tables Tabs -->
+        <div class="details-tabs">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-intake')">Program Intake</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-strength')">Student Strength</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-mous')">Department MOUs</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-memberships')">ISTE Memberships</button>
+            </div>
+
+            <!-- Tab 1: Intake -->
+            <div id="tab-intake" class="tab-content active">
+                <div class="intake-cards">
+                    <div class="intake-card">
+                        <h4>B.E. in Electronics & Communication Engineering (UG)</h4>
+                        <p>Established in 2002 with 60 seats. Due to high demand and quality education, intake increased to 120 in 2006, 180 in 2012, and 240 in 2023.</p>
+                    </div>
+                    <div class="intake-card">
+                        <h4>M.E. in Applied Electronics (PG)</h4>
+                        <p>Postgraduate program started in 2011 with an intake of 18 seats to facilitate research and core industry alignment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Strength -->
+            <div id="tab-strength" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Academic Year (2024-25)</th>
+                                <th>Boys Count</th>
+                                <th>Girls Count</th>
+                                <th>Total Students</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>I Year ECE</td>
+                                <td>223</td>
+                                <td>154</td>
+                                <td>377</td>
+                            </tr>
+                            <tr>
+                                <td>II Year ECE</td>
+                                <td>170</td>
+                                <td>88</td>
+                                <td>258</td>
+                            </tr>
+                            <tr>
+                                <td>III Year ECE</td>
+                                <td>160</td>
+                                <td>86</td>
+                                <td>246</td>
+                            </tr>
+                            <tr>
+                                <td>IV Year ECE</td>
+                                <td>114</td>
+                                <td>69</td>
+                                <td>183</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: MOUs -->
+            <div id="tab-mous" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Industry / Company Name</th>
+                                <th>Collaboration Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Tessolve Semiconductor Private Ltd., Bangalore</td>
+                                <td>01.12.2019</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Larsen & Toubro Limited (L&T)</td>
+                                <td>21.10.2021</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Capgemini Technology Services India Limited</td>
+                                <td>25.11.2021</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>ERA Interfaces Private Ltd</td>
+                                <td>25.10.2021</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Embuzz Technology Pvt. Ltd., Madurai</td>
+                                <td>25.11.2019</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Breathe Electronics, Chennai</td>
+                                <td>16.10.2018</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Prolific Systems and Technologies Pvt. Ltd., Bangalore</td>
+                                <td>10.03.2016</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Frenzoft Consultancy Services, Chennai</td>
+                                <td>16.05.2023</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Maven Silicon Softech Pvt. Ltd., Bangalore</td>
+                                <td>10.01.2022</td>
+                                <td><span style="color: #4ade80;">● Active</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 4: Memberships -->
+            <div id="tab-memberships" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Professional Body</th>
+                                <th>Student Year Group</th>
+                                <th>Membership Count</th>
+                                <th>Validity Expiry</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Indian Society for Technical Education (ISTE)</td>
+                                <td>I Year ECE</td>
+                                <td>377</td>
+                                <td>2029</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Indian Society for Technical Education (ISTE)</td>
+                                <td>II Year ECE</td>
+                                <td>250</td>
+                                <td>2028</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Indian Society for Technical Education (ISTE)</td>
+                                <td>III Year ECE</td>
+                                <td>244</td>
+                                <td>2027</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Indian Society for Technical Education (ISTE)</td>
+                                <td>IV Year ECE</td>
+                                <td>183</td>
+                                <td>2026</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Events Section -->
+    <section id="events">
+        <h2 class="section-title">Department Events</h2>
+        
+        <div class="events-container">
+            <div class="event-card">
+                <div>
+                    <div class="event-icon">🏆</div>
+                    <h3>Technical Symposium</h3>
+                    <p>National-level symposium containing paper presentation, project expo, circuit debugging (Circuitrix), and line-follower robot competitions.</p>
+                </div>
+                <button class="btn-primary" onclick="openRegisterModal('National Technical Symposium')">Register Now</button>
+            </div>
+            
+            <div class="event-card">
+                <div>
+                    <div class="event-icon">⚙️</div>
+                    <h3>Hands-on Workshops</h3>
+                    <p>Interactive industry-ready workshops on Internet of Things (IoT), Embedded Systems Design, and VLSI circuit prototyping.</p>
+                </div>
+                <button class="btn-primary" onclick="openRegisterModal('Hands-on Workshops (IoT & VLSI)')">Register Now</button>
+            </div>
+            
+            <div class="event-card">
+                <div>
+                    <div class="event-icon">🎤</div>
+                    <h3>Guest Lectures</h3>
+                    <p>Eminent professionals from premier research institutes and industries discussing emerging trends in AI, 5G, and beyond.</p>
+                </div>
+                <button class="btn-primary" onclick="openRegisterModal('Industry Guest Lectures')">Join Session</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Event File Section -->
+    <section id="event-file">
+        <h2 class="section-title">Event File Download Center</h2>
+        
+        <div class="download-grid">
+            <div class="download-card">
+                <div class="file-info">
+                    <div class="file-icon">📄</div>
+                    <div class="file-details">
+                        <h4>ECE Curriculum Syllabus 2025-26</h4>
+                        <p>PDF Document • 1.4 MB</p>
+                    </div>
+                </div>
+                <button class="btn-download" onclick="mockDownload('ECE_Syllabus_2025_26.pdf')">↓</button>
+            </div>
+
+            <div class="download-card">
+                <div class="file-info">
+                    <div class="file-icon">📅</div>
+                    <div class="file-details">
+                        <h4>Symposium Event Brochure & Schedule</h4>
+                        <p>PDF Document • 2.8 MB</p>
+                    </div>
+                </div>
+                <button class="btn-download" onclick="mockDownload('Symposium_Brochure.pdf')">↓</button>
+            </div>
+
+            <div class="download-card">
+                <div class="file-info">
+                    <div class="file-icon">📰</div>
+                    <div class="file-details">
+                        <h4>ECE Department Newsletter (Vol. X)</h4>
+                        <p>PDF Document • 4.1 MB</p>
+                    </div>
+                </div>
+                <button class="btn-download" onclick="mockDownload('ECE_Newsletter_V10.pdf')">↓</button>
+            </div>
+
+            <div class="download-card">
+                <div class="file-info">
+                    <div class="file-icon">📦</div>
+                    <div class="file-details">
+                        <h4>Workshop Code templates & Lab guides</h4>
+                        <p>ZIP Archive • 12.5 MB</p>
+                    </div>
+                </div>
+                <button class="btn-download" onclick="mockDownload('ECE_Workshop_Materials.zip')">↓</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. HOD Section -->
+    <section id="hod">
+        <h2 class="section-title">Head of the Department</h2>
+        
+        <div class="hod-container">
+            <div class="hod-profile-wrapper">
+                <!-- Fallback to a placeholder icon or simple avatar, colored blue -->
+                <div class="coord-avatar" style="width: 180px; height: 180px; font-size: 5rem;">👨‍🏫</div>
+            </div>
+            
+            <div class="hod-details">
+                <h3>Mr. P. Anandhakumar</h3>
+                <p class="hod-title">Assistant Professor & Head of Department (ECE)</p>
+                <p class="hod-message">"Our mission is to foster technical excellence and encourage active participation in engineering research. We work tirelessly to align our students with the industry standards so they can solve real-world problems in the electronics and communication domains."</p>
+                
+                <div class="hod-meta">
+                    <div class="meta-item">
+                        <h5>Research Areas</h5>
+                        <p>Wavelet-based Voice Conversion, Smart Attendance systems via AI & IoT.</p>
+                    </div>
+                    <div class="meta-item">
+                        <h5>Contact / Office</h5>
+                        <p>hod.ece@vsbec.edu.in</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Student Coordinators Section -->
+    <section id="coordinators">
+        <h2 class="section-title">Student Coordinators</h2>
+        
+        <div class="coordinators-grid">
+            <div class="coord-card">
+                <div class="coord-avatar">👨‍💻</div>
+                <h4>Sanjay B</h4>
+                <p class="coord-role">Student President</p>
+                <p class="coord-year">IV Year ECE</p>
+            </div>
+
+            <div class="coord-card">
+                <div class="coord-avatar">👩‍💻</div>
+                <h4>Priya K</h4>
+                <p class="coord-role">Vice President</p>
+                <p class="coord-year">III Year ECE</p>
+            </div>
+
+            <div class="coord-card">
+                <div class="coord-avatar">👨‍💻</div>
+                <h4>Rahul R</h4>
+                <p class="coord-role">Secretary</p>
+                <p class="coord-year">IV Year ECE</p>
+            </div>
+
+            <div class="coord-card">
+                <div class="coord-avatar">👩‍💻</div>
+                <h4>Abirami S</h4>
+                <p class="coord-role">Joint Secretary</p>
+                <p class="coord-year">III Year ECE</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Event Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <h3 id="modalEventTitle">Event Registration</h3>
+            <form id="registrationForm" onsubmit="submitRegistration(event)">
+                <div class="form-group">
+                    <label for="reg-name">Full Name</label>
+                    <input type="text" id="reg-name" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" required placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label for="reg-year">Year of Study</label>
+                    <select id="reg-year">
+                        <option value="I Year">I Year</option>
+                        <option value="II Year">II Year</option>
+                        <option value="III Year">III Year</option>
+                        <option value="IV Year">IV Year</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Submit Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2026 VSB Engineering College Karur | Department of Electronics and Communication Engineering.</p>
+            <ul class="footer-links">
+                <li><a href="#dept-info">About</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#hod">HOD</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
