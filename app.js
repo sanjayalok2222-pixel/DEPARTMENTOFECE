@@ -238,16 +238,15 @@ const loginModal = document.getElementById('adminLoginModal');
 const loginBtn = document.getElementById('admin-login-btn');
 const adminControlsBar = document.getElementById('admin-controls-bar');
 
-// Fields list that will be saved and restored dynamically
+// Predefined list of editable element IDs in Admin Mode
 const editableElements = [
-    'college-name-header', 'college-loc-header', 'hero-title', 'hero-subtitle',
-    'about-card-text', 'vision-text', 'mission-list', 'intake-ug-title',
-    'intake-ug-text', 'intake-pg-title', 'intake-pg-text', 'table-strength-data',
-    'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
-    'dl-syllabus-title', 'dl-syllabus-meta', 'dl-newsletter-title',
-    'dl-newsletter-meta', 'dl-planner-title', 'dl-planner-meta',
-    'dl-report-title', 'dl-report-meta', 'hod-name', 'hod-designation',
-    'hod-msg-text', 'hod-research', 'hod-email', 'coordinators-container'
+    'college-name-header', 'college-auth-header', 'college-appr-header', 'college-nba-header',
+    'hero-title', 'hero-subtitle', 'about-card-text', 'vision-text', 'mission-list', 
+    'intake-ug-title', 'intake-ug-text', 'intake-pg-title', 'intake-pg-text', 
+    'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
+    'dl-syllabus-title', 'dl-syllabus-meta', 'dl-newsletter-title', 'dl-newsletter-meta', 
+    'dl-planner-title', 'dl-planner-meta', 'dl-report-title', 'dl-report-meta', 
+    'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email', 'coordinators-container'
 ];
 
 function openLoginModal() {
