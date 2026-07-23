@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-supabase-url="" data-supabase-key="">
 
     <!-- WebGL Canvas for 3D Background -->
     <canvas id="webgl-canvas"></canvas>
@@ -560,6 +560,13 @@
             <span class="pulse-dot"></span>
             <span>Admin Active Mode</span>
         </div>
+        
+        <!-- Supabase Live Cloud Integration Config (Values are written directly in HTML by save & sync) -->
+        <div class="admin-supabase-config" style="display: flex; gap: 0.5rem; align-items: center; margin-left: 1rem;">
+            <input type="text" id="admin-supabase-url" placeholder="Supabase URL" class="admin-text-field" style="width: 150px; border-color: rgba(255,255,255,0.15);" value="">
+            <input type="password" id="admin-supabase-key" placeholder="Supabase Anon Key" class="admin-text-field" style="width: 150px; border-color: rgba(255,255,255,0.15);" value="">
+        </div>
+
         <div class="admin-actions-btns">
             <button class="btn-save-changes" onclick="saveWebChanges()">Save & Sync Changes</button>
             <button class="btn-admin-logout" onclick="logoutAdmin()">Logout</button>

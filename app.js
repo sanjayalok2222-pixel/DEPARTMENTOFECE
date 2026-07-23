@@ -362,7 +362,7 @@ function logoutAdmin() {
     window.location.reload();
 }
 
-// Save web updates globally back to index.html on disk
+// Save web updates globally back to index.html on disk and to Supabase Cloud
 function saveWebChanges() {
     const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
 
@@ -397,38 +397,70 @@ function saveWebChanges() {
     // 2. Clone the clean HTML document
     const cleanHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
-    // Restore admin mode UI state immediately
+    // Collect JSON state to upsert to Supabase
+    const editsObj = {};
+    editableElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            editsObj[id] = el.innerHTML;
+        }
+    });
+
+    const coordPhotosArray = [];
+    for (let id = 1; id <= 5; id++) {
+        const img = document.getElementById(`coord-img-${id}`);
+        const emoji = document.getElementById(`coord-emoji-${id}`);
+        if (img && emoji) {
+            coordPhotosArray.push({
+                id: id,
+                src: img.src,
+                displayImg: img.style.display,
+                displayEmoji: emoji.style.display
+            });
+        }
+    }
+
+    const stateObj = {
+        edits: editsObj,
+        postersHtml: document.getElementById('posters-carousel-container').innerHTML,
+        downloadsHtml: document.getElementById('download-grid-container').innerHTML,
+        hodPhotoSrc: document.getElementById('hod-photo-img').src,
+        hodPhotoDisplay: document.getElementById('hod-photo-img').style.display,
+        hodEmojiDisplay: document.getElementById('hod-avatar-emoji').style.display,
+        coordPhotos: coordPhotosArray,
+        adminAvatarSrc: document.getElementById('admin-profile-pic').src
+    };
+
+    // Restore admin mode UI state immediately for admin session
     if (isAdmin) {
         enableAdminMode();
     }
 
-    // 3. Make HTTP POST request to Python Local Server
-    fetch('/save-html', {
+    // 3. Make HTTP POST request to local Python Server (Updates local disk files)
+    const localSavePromise = fetch('/save-html', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ html: cleanHtml })
-    })
-    .then(res => {
-        if (res.ok) {
-            alert('Website changes saved globally to disk successfully! Auto-sync to GitHub will happen in 5 minutes.');
-        } else {
-            throw new Error('Server returned non-200 status');
+    }).catch(err => {
+        console.warn('Local CMS server is offline. Writing to Supabase Cloud directly.');
+    });
+
+    // 4. Upsert to Supabase Cloud Database (Updates global web clients)
+    const supabaseSavePromise = saveToSupabase(stateObj);
+
+    Promise.all([localSavePromise, supabaseSavePromise])
+    .then(([localRes, supaRes]) => {
+        let msg = 'Website changes saved successfully!';
+        if (supaRes && supaRes.ok) {
+            msg += ' Live cloud updates synced to Supabase database!';
+        } else if (supaRes) {
+            msg += ' (Supabase table save failed - check SQL setup or credentials)';
         }
+        alert(msg);
     })
     .catch(err => {
-        console.warn('Save server is offline, saving to LocalStorage only:', err);
-        // Fallback to localStorage edits
-        const edits = {};
-        editableElements.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                edits[id] = el.innerHTML;
-            }
-        });
-        localStorage.setItem('vsb_ece_web_edits', JSON.stringify(edits));
-        alert('Changes saved to browser local storage. Start the Python backend server for global file synchronization!');
+        console.error('Save changes exception:', err);
+        alert('Exception saving changes. Check config parameters.');
     });
 }
 
@@ -689,12 +721,134 @@ function deleteCustomDownloadCard(btn) {
 }
 
 
-// === 12. Initializer Loader ===
-function loadAllWebData() {
-    // Auto log in if admin state persists
+// === 12. Supabase Integration Logic ===
+function loadFromSupabase() {
+    const url = document.getElementById('admin-supabase-url') ? document.getElementById('admin-supabase-url').value.trim() : '';
+    const key = document.getElementById('admin-supabase-key') ? document.getElementById('admin-supabase-key').value.trim() : '';
+
+    if (!url || !key) {
+        console.info('Supabase cloud parameters are not configured yet. Running in offline/file sync mode.');
+        return;
+    }
+
+    const selectUrl = `${url}/rest/v1/vsb_ece_state?key=eq.site_data`;
+
+    fetch(selectUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Network error loading data');
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.length > 0) {
+            applyFetchedState(data[0].value);
+            console.log('Successfully synced live web changes from Supabase Cloud!');
+        }
+    })
+    .catch(err => {
+        console.warn('Could not pull updates from Supabase database. Server RLS policy or setup error:', err);
+    });
+}
+
+function saveToSupabase(state) {
+    const url = document.getElementById('admin-supabase-url') ? document.getElementById('admin-supabase-url').value.trim() : '';
+    const key = document.getElementById('admin-supabase-key') ? document.getElementById('admin-supabase-key').value.trim() : '';
+
+    if (!url || !key) {
+        return Promise.resolve(null);
+    }
+
+    const upsertUrl = `${url}/rest/v1/vsb_ece_state`;
+
+    return fetch(upsertUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'site_data',
+            value: state
+        })
+    });
+}
+
+function applyFetchedState(state) {
+    if (!state) return;
+
+    // 1. Restore text edits
+    if (state.edits) {
+        for (const [id, html] of Object.entries(state.edits)) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerHTML = html;
+            }
+        }
+    }
+
+    // 2. Restore posters carousel HTML
+    if (state.postersHtml) {
+        document.getElementById('posters-carousel-container').innerHTML = state.postersHtml;
+    }
+
+    // 3. Restore downloads HTML
+    if (state.downloadsHtml) {
+        document.getElementById('download-grid-container').innerHTML = state.downloadsHtml;
+    }
+
+    // 4. Restore HOD Photo
+    if (state.hodPhotoSrc) {
+        const img = document.getElementById('hod-photo-img');
+        const emoji = document.getElementById('hod-avatar-emoji');
+        img.src = state.hodPhotoSrc;
+        img.style.display = state.hodPhotoDisplay || 'none';
+        emoji.style.display = state.hodEmojiDisplay || 'block';
+    }
+
+    // 5. Restore Coordinators Photos
+    if (state.coordPhotos && state.coordPhotos.length > 0) {
+        state.coordPhotos.forEach(p => {
+            const img = document.getElementById(`coord-img-${p.id}`);
+            const emoji = document.getElementById(`coord-emoji-${p.id}`);
+            if (img && emoji) {
+                img.src = p.src;
+                img.style.display = p.displayImg || 'none';
+                emoji.style.display = p.displayEmoji || 'block';
+            }
+        });
+    }
+
+    // 6. Restore Admin Avatar
+    if (state.adminAvatarSrc) {
+        document.getElementById('admin-profile-pic').src = state.adminAvatarSrc;
+    }
+
+    // Reapply hover 3D tilt effects
+    apply3DTilt();
+
+    // Re-verify login editing triggers if admin is still active
     if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
         enableAdminMode();
     }
+}
+
+
+// === 13. Initializer Loader ===
+function loadAllWebData() {
+    // 1. Auto log in if admin session persists
+    if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
+        enableAdminMode();
+    }
+
+    // 2. Query and sync live database state from Supabase Cloud
+    loadFromSupabase();
 }
 
 // Run loader on load
