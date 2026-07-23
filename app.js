@@ -365,17 +365,25 @@ function logoutAdmin() {
     window.location.reload();
 }
 
-// Save web updates locally
+// Save web updates globally back to index.html on disk
 function saveWebChanges() {
-    const edits = {};
-    
+    const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
+
+    // 1. Temporarily disable editing state for clean HTML serialization
     editableElements.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            edits[id] = el.innerHTML;
+            el.removeAttribute('contenteditable');
         }
     });
-    localStorage.setItem('vsb_ece_web_edits', JSON.stringify(edits));
+    
+    document.getElementById('event-title-text').removeAttribute('contenteditable');
+    document.getElementById('event-date-text').removeAttribute('contenteditable');
+
+    const tableCells = document.querySelectorAll('table th, table td');
+    tableCells.forEach(cell => {
+        cell.removeAttribute('contenteditable');
+    });
 
     // Save active poster details to active poster slot
     if (eventPosters.length > 0) {
@@ -384,7 +392,49 @@ function saveWebChanges() {
         localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
     }
 
-    alert('All website edits and posters saved successfully to local storage!');
+    // Hide edit panels in output html
+    document.body.classList.remove('admin-mode');
+    adminControlsBar.classList.remove('active');
+    adminLinkEditGroup.style.display = 'none';
+    adminPosterAddGroup.style.display = 'none';
+    adminDownloadAddGroup.style.display = 'none';
+
+    // 2. Clone the clean HTML document
+    const cleanHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+    // Restore admin mode UI state immediately
+    if (isAdmin) {
+        enableAdminMode();
+    }
+
+    // 3. Make HTTP POST request to Python Local Server
+    fetch('/save-html', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ html: cleanHtml })
+    })
+    .then(res => {
+        if (res.ok) {
+            alert('Website changes saved globally to disk successfully! Auto-sync to GitHub will happen in 5 minutes.');
+        } else {
+            throw new Error('Server returned non-200 status');
+        }
+    })
+    .catch(err => {
+        console.warn('Save server is offline, saving to LocalStorage only:', err);
+        // Fallback to localStorage edits
+        const edits = {};
+        editableElements.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                edits[id] = el.innerHTML;
+            }
+        });
+        localStorage.setItem('vsb_ece_web_edits', JSON.stringify(edits));
+        alert('Changes saved to browser local storage. Start the Python backend server for global file synchronization!');
+    });
 }
 
 
