@@ -65,8 +65,7 @@ header {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 100;
 }
 
@@ -174,16 +173,8 @@ header {
 .sub-nav {
     background: rgba(8, 12, 23, 0.9);
     border-bottom: 1px solid rgba(0, 210, 255, 0.1);
-    position: sticky;
-    top: 123px; 
+    position: relative;
     z-index: 99;
-    transition: top 0.3s ease;
-}
-
-@media (max-width: 900px) {
-    .sub-nav {
-        top: 0; 
-    }
 }
 
 .nav-links {

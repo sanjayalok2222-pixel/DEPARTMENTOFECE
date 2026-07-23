@@ -279,26 +279,27 @@
         <div class="registration-container">
             <div class="carousel-wrapper">
                 <button class="carousel-control prev" onclick="prevPoster()">❮</button>
-                <div class="poster-card-container">
-                    <div class="poster-card tilt-card" id="active-poster-card">
+                <div class="poster-card-container" id="posters-carousel-container">
+                    <!-- Default initial poster card -->
+                    <div class="poster-card tilt-card active">
                         <div class="poster-image-container">
                             <!-- 1:1 Poster Image -->
-                            <img id="event-poster-img" src="assets/vsb-ece-poster.jpg" alt="Event Poster" class="poster-1to1">
+                            <img class="poster-1to1" src="assets/vsb-ece-poster.jpg" alt="Event Poster">
                             <!-- Admin Edit Image Trigger -->
-                            <input type="file" id="admin-poster-upload" accept="image/*" style="display:none;" onchange="handlePosterUpload(event)">
-                            <button class="btn-admin-overlay" id="change-poster-btn" onclick="triggerPosterUpload()">📷 Change Image</button>
+                            <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
+                            <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
                         </div>
                         <div class="poster-details">
-                            <h3 id="event-title-text">VSB ECE Symposium 2026</h3>
-                            <p id="event-date-text">Date: September 15, 2026</p>
+                            <h3 class="event-title-text">VSB ECE Symposium 2026</h3>
+                            <p class="event-date-text">Date: September 15, 2026</p>
                             <!-- Custom Link Below Poster -->
                             <div class="link-action-container">
-                                <a id="event-reg-link" href="https://forms.gle/vsbece2026" target="_blank" class="btn-primary">Register Now</a>
+                                <a class="event-reg-link" href="https://forms.gle/vsbece2026" target="_blank">Register Now</a>
                                 <!-- Editable fields shown only to admin -->
-                                <div class="admin-input-group" id="admin-link-edit-fields" style="display:none; margin-top: 1rem; width: 100%;">
+                                <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
                                     <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
-                                    <input type="text" id="admin-link-url" placeholder="Paste Registration Form URL" class="admin-text-field" style="margin-bottom:0.5rem;" onchange="updateActivePosterLink(this.value)">
-                                    <input type="text" id="admin-poster-image-url" placeholder="Paste Image URL from other website directly" class="admin-text-field" onchange="updateActivePosterImageByUrl(this.value)">
+                                    <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://forms.gle/vsbece2026" onchange="updateActivePosterLink(this)">
+                                    <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/vsb-ece-poster.jpg" onchange="updateActivePosterImageByUrl(this)">
                                 </div>
                             </div>
                         </div>
@@ -337,7 +338,50 @@
         <h2 class="section-title">Department Downloads</h2>
         
         <div class="download-grid" id="download-grid-container">
-            <!-- Dynamic and Default files are loaded here -->
+            <!-- Default downloads are hardcoded so they are natively available globally -->
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">📄</div>
+                    <div class="file-details">
+                        <h4 id="dl-syllabus-title">ECE Curriculum Syllabus 2025-26</h4>
+                        <p id="dl-syllabus-meta">Official PDF Document • 120 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Syllabus_2025_26.pdf" download="ECE_Syllabus_2025_26.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Syllabus_2025_26.pdf')">↓</a>
+            </div>
+
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">📰</div>
+                    <div class="file-details">
+                        <h4 id="dl-newsletter-title">ECE Department Newsletter (Vol. X)</h4>
+                        <p id="dl-newsletter-meta">Official PDF Document • 135 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Newsletter_V10.pdf" download="ECE_Newsletter_V10.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Newsletter_V10.pdf')">↓</a>
+            </div>
+
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">📊</div>
+                    <div class="file-details">
+                        <h4 id="dl-planner-title">Academic Planning Template (Excel)</h4>
+                        <p id="dl-planner-meta">Spreadsheet Template • 5 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Academic_Planner.xlsx" download="ECE_Academic_Planner.xlsx" class="btn-download" onclick="showDownloadNotify('ECE_Academic_Planner.xlsx')">↓</a>
+            </div>
+
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">🏆</div>
+                    <div class="file-details">
+                        <h4 id="dl-report-title">Previous ECE Events Summary Report</h4>
+                        <p id="dl-report-meta">PDF Summary Report • 150 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Previous_Events_Report.pdf" download="ECE_Previous_Events_Report.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Previous_Events_Report.pdf')">↓</a>
+            </div>
         </div>
 
         <!-- Admin Add File Control (visible only in admin mode) -->
