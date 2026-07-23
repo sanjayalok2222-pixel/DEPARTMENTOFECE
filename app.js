@@ -417,6 +417,7 @@ function renderActivePoster() {
     document.getElementById('event-date-text').innerText = p.date;
     document.getElementById('event-reg-link').href = p.link;
     document.getElementById('admin-link-url').value = p.link;
+    document.getElementById('admin-poster-image-url').value = p.img.startsWith('data:') ? '' : p.img;
 }
 
 function nextPoster() {
@@ -468,6 +469,14 @@ function updateActivePosterLink(newUrl) {
     localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
 }
 
+// Paste Image URL directly from other website
+function updateActivePosterImageByUrl(pastedUrl) {
+    if (!pastedUrl) return;
+    eventPosters[currentPosterIndex].img = pastedUrl;
+    document.getElementById('event-poster-img').src = pastedUrl;
+    localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+}
+
 // Add new slot to carousel
 function addNewPosterSlot() {
     eventPosters.push({
@@ -479,7 +488,7 @@ function addNewPosterSlot() {
     currentPosterIndex = eventPosters.length - 1;
     localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
     renderActivePoster();
-    alert('New poster slot added at the end of the carousel. You can now edit its text, link and upload its 1:1 image flyer!');
+    alert('New poster slot added at the end of the carousel. You can now edit its text, link and upload/paste its image!');
 }
 
 // Delete active poster slot
@@ -497,7 +506,79 @@ function deleteActivePoster() {
 }
 
 
-// === 9. Admin Profile Avatar System ===
+// === 9. HOD & Student Coordinator Real Photo Uploads ===
+function triggerHodUpload() {
+    document.getElementById('admin-hod-upload').click();
+}
+
+function handleHodPhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        localStorage.setItem('vsb_ece_hod_photo', e.target.result);
+        displayHodPhoto(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function displayHodPhoto(base64Data) {
+    const imgEl = document.getElementById('hod-photo-img');
+    const emojiEl = document.getElementById('hod-avatar-emoji');
+    if (base64Data) {
+        imgEl.src = base64Data;
+        imgEl.style.display = 'block';
+        emojiEl.style.display = 'none';
+    } else {
+        imgEl.style.display = 'none';
+        emojiEl.style.display = 'block';
+    }
+}
+
+function triggerCoordUpload(id) {
+    document.getElementById(`admin-coord-upload-${id}`).click();
+}
+
+function handleCoordPhotoUpload(event, id) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        localStorage.setItem(`vsb_ece_coord_photo_${id}`, e.target.result);
+        displayCoordPhoto(id, e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function displayCoordPhoto(id, base64Data) {
+    const imgEl = document.getElementById(`coord-img-${id}`);
+    const emojiEl = document.getElementById(`coord-emoji-${id}`);
+    if (base64Data) {
+        imgEl.src = base64Data;
+        imgEl.style.display = 'block';
+        emojiEl.style.display = 'none';
+    } else {
+        imgEl.style.display = 'none';
+        emojiEl.style.display = 'block';
+    }
+}
+
+function initPhotos() {
+    // Load HOD photo
+    const hodPhoto = localStorage.getItem('vsb_ece_hod_photo');
+    displayHodPhoto(hodPhoto);
+
+    // Load coordinators photos
+    for (let id = 1; id <= 5; id++) {
+        const coordPhoto = localStorage.getItem(`vsb_ece_coord_photo_${id}`);
+        displayCoordPhoto(id, coordPhoto);
+    }
+}
+
+
+// === 10. Admin Profile Avatar System ===
 function triggerAvatarUpload() {
     document.getElementById('admin-avatar-upload').click();
 }
@@ -522,7 +603,7 @@ function initAdminAvatar() {
 }
 
 
-// === 10. Admin Dynamic Downloads System ===
+// === 11. Admin Dynamic Downloads System ===
 function initDownloads() {
     const saved = localStorage.getItem('vsb_ece_custom_downloads');
     if (saved) {
@@ -616,7 +697,7 @@ function deleteCustomFile(id) {
 }
 
 
-// === 11. Initializer Loader ===
+// === 12. Initializer Loader ===
 function loadAllWebData() {
     // 1. Load basic text edits
     const saved = localStorage.getItem('vsb_ece_web_edits');
@@ -634,6 +715,7 @@ function loadAllWebData() {
     initPosters();
     initDownloads();
     initAdminAvatar();
+    initPhotos();
 
     // 3. Auto log in if admin state persists
     if (localStorage.getItem('vsb_ece_is_admin') === 'true') {

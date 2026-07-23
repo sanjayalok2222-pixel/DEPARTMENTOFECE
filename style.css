@@ -1366,6 +1366,35 @@ body.admin-mode .btn-admin-overlay {
     background: var(--accent-cyan);
 }
 
+.btn-admin-only-inline {
+    display: none;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: var(--accent-blue);
+    border: 1.5px solid #fff;
+    color: #fff;
+    font-size: 0.65rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+body.admin-mode .btn-admin-only-inline {
+    display: flex;
+}
+
+.btn-admin-only-inline:hover {
+    background: var(--accent-cyan);
+    transform: scale(1.1);
+}
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
