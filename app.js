@@ -366,6 +366,21 @@ function logoutAdmin() {
 function saveWebChanges() {
     const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
 
+    // BUG FIX 1: Explicitly write current input value properties into the HTML element value attributes!
+    const supaUrlInput = document.getElementById('admin-supabase-url');
+    const supaKeyInput = document.getElementById('admin-supabase-key');
+    if (supaUrlInput) supaUrlInput.setAttribute('value', supaUrlInput.value);
+    if (supaKeyInput) supaKeyInput.setAttribute('value', supaKeyInput.value);
+
+    // Save Supabase credentials to localStorage as persistent fallback
+    if (supaUrlInput) localStorage.setItem('vsb_ece_supabase_url', supaUrlInput.value);
+    if (supaKeyInput) localStorage.setItem('vsb_ece_supabase_key', supaKeyInput.value);
+
+    const allTextInputFields = document.querySelectorAll('input[type="text"], input[type="password"]');
+    allTextInputFields.forEach(input => {
+        input.setAttribute('value', input.value);
+    });
+
     // 1. Temporarily disable editing state for clean HTML serialization
     editableElements.forEach(id => {
         const el = document.getElementById(id);
@@ -488,6 +503,7 @@ function nextPoster() {
     }
 }
 
+// Backup sync parameters trigger
 function prevPoster() {
     const cards = getPosterCards();
     if (cards.length <= 1) return;
@@ -723,21 +739,31 @@ function deleteCustomDownloadCard(btn) {
 
 // === 12. Supabase Integration Logic ===
 function loadFromSupabase() {
-    const url = document.getElementById('admin-supabase-url') ? document.getElementById('admin-supabase-url').value.trim() : '';
-    const key = document.getElementById('admin-supabase-key') ? document.getElementById('admin-supabase-key').value.trim() : '';
+    // Restore Supabase credentials from local storage persistent cache
+    const url = localStorage.getItem('vsb_ece_supabase_url') || document.getElementById('admin-supabase-url').getAttribute('value') || '';
+    const key = localStorage.getItem('vsb_ece_supabase_key') || document.getElementById('admin-supabase-key').getAttribute('value') || '';
+
+    if (url && document.getElementById('admin-supabase-url')) {
+        document.getElementById('admin-supabase-url').value = url;
+        document.getElementById('admin-supabase-url').setAttribute('value', url);
+    }
+    if (key && document.getElementById('admin-supabase-key')) {
+        document.getElementById('admin-supabase-key').value = key;
+        document.getElementById('admin-supabase-key').setAttribute('value', key);
+    }
 
     if (!url || !key) {
         console.info('Supabase cloud parameters are not configured yet. Running in offline/file sync mode.');
         return;
     }
 
-    const selectUrl = `${url}/rest/v1/vsb_ece_state?key=eq.site_data`;
+    const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
 
     fetch(selectUrl, {
         method: 'GET',
         headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'apikey': key.trim(),
+            'Authorization': `Bearer ${key.trim()}`
         }
     })
     .then(res => {
@@ -807,9 +833,11 @@ function applyFetchedState(state) {
     if (state.hodPhotoSrc) {
         const img = document.getElementById('hod-photo-img');
         const emoji = document.getElementById('hod-avatar-emoji');
-        img.src = state.hodPhotoSrc;
-        img.style.display = state.hodPhotoDisplay || 'none';
-        emoji.style.display = state.hodEmojiDisplay || 'block';
+        if (img && emoji) {
+            img.src = state.hodPhotoSrc;
+            img.style.display = state.hodPhotoDisplay || 'none';
+            emoji.style.display = state.hodEmojiDisplay || 'block';
+        }
     }
 
     // 5. Restore Coordinators Photos
@@ -827,7 +855,10 @@ function applyFetchedState(state) {
 
     // 6. Restore Admin Avatar
     if (state.adminAvatarSrc) {
-        document.getElementById('admin-profile-pic').src = state.adminAvatarSrc;
+        const adminPic = document.getElementById('admin-profile-pic');
+        if (adminPic) {
+            adminPic.src = state.adminAvatarSrc;
+        }
     }
 
     // Reapply hover 3D tilt effects
@@ -842,13 +873,26 @@ function applyFetchedState(state) {
 
 // === 13. Initializer Loader ===
 function loadAllWebData() {
-    // 1. Auto log in if admin session persists
-    if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
-        enableAdminMode();
+    // 1. Restore persistent cache parameters
+    const url = localStorage.getItem('vsb_ece_supabase_url') || '';
+    const key = localStorage.getItem('vsb_ece_supabase_key') || '';
+    
+    if (url && document.getElementById('admin-supabase-url')) {
+        document.getElementById('admin-supabase-url').value = url;
+        document.getElementById('admin-supabase-url').setAttribute('value', url);
+    }
+    if (key && document.getElementById('admin-supabase-key')) {
+        document.getElementById('admin-supabase-key').value = key;
+        document.getElementById('admin-supabase-key').setAttribute('value', key);
     }
 
     // 2. Query and sync live database state from Supabase Cloud
     loadFromSupabase();
+
+    // 3. Auto log in if admin session persists
+    if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
+        enableAdminMode();
+    }
 }
 
 // Run loader on load
