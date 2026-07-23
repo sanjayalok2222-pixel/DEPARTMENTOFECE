@@ -17,8 +17,8 @@
     <header>
         <div class="header-container">
             <div class="logo-section">
-                <!-- Using live VSB transparent logo for authentication -->
-                <img src="https://vsbec.edu.in/wp-content/uploads/2023/10/logo.png" alt="VSB Engineering College Logo" class="vsb-logo">
+                <!-- Using uploaded VSB crest logo -->
+                <img src="assets/vsb-logo-crest.png" alt="VSB Engineering College Logo" class="vsb-logo">
                 <div class="college-title">
                     <h1 id="college-name-header">V.S.B. ENGINEERING COLLEGE</h1>
                     <p class="college-subtitle" id="college-auth-header">(An Autonomous Institution) (Anna University Recognized Research Institute)</p>
@@ -41,6 +41,7 @@
     <nav class="sub-nav">
         <ul class="nav-links">
             <li><a href="#dept-info" class="active">Department Information</a></li>
+            <li><a href="#event-registration">Event Registration</a></li>
             <li><a href="#events">Club Activities</a></li>
             <li><a href="#event-file">Downloads</a></li>
             <li><a href="#hod">HOD</a></li>
@@ -272,6 +273,46 @@
         </div>
     </section>
 
+    <!-- Event Registration Section (1:1 Ratio Carousel & Links) -->
+    <section id="event-registration">
+        <h2 class="section-title">Event Registration</h2>
+        <div class="registration-container">
+            <div class="carousel-wrapper">
+                <button class="carousel-control prev" onclick="prevPoster()">❮</button>
+                <div class="poster-card-container">
+                    <div class="poster-card tilt-card" id="active-poster-card">
+                        <div class="poster-image-container">
+                            <!-- 1:1 Poster Image -->
+                            <img id="event-poster-img" src="assets/vsb-ece-poster.jpg" alt="Event Poster" class="poster-1to1">
+                            <!-- Admin Edit Image Trigger -->
+                            <input type="file" id="admin-poster-upload" accept="image/*" style="display:none;" onchange="handlePosterUpload(event)">
+                            <button class="btn-admin-overlay" id="change-poster-btn" onclick="triggerPosterUpload()">📷 Change Image</button>
+                        </div>
+                        <div class="poster-details">
+                            <h3 id="event-title-text">VSB ECE Symposium 2026</h3>
+                            <p id="event-date-text">Date: September 15, 2026</p>
+                            <!-- Custom Link Below Poster -->
+                            <div class="link-action-container">
+                                <a id="event-reg-link" href="https://forms.gle/vsbece2026" target="_blank" class="btn-primary">Register Now</a>
+                                <!-- Editable fields shown only to admin -->
+                                <div class="admin-input-group" id="admin-link-edit-fields" style="display:none; margin-top: 1rem; width: 100%;">
+                                    <input type="text" id="admin-link-url" placeholder="Paste Registration Google Form URL" class="admin-text-field" onchange="updateActivePosterLink(this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control next" onclick="nextPoster()">❯</button>
+            </div>
+            
+            <!-- Infinite Poster dynamic add button (Admin only) -->
+            <div class="admin-only-block" id="admin-poster-add-container" style="display:none; margin-top: 2rem; text-align: center;">
+                <button class="btn-primary btn-add-poster" onclick="addNewPosterSlot()">➕ Add Additional Poster Slot</button>
+                <button class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin-left: 1rem;" onclick="deleteActivePoster()">🗑️ Delete Active Poster</button>
+            </div>
+        </div>
+    </section>
+
     <!-- 2. Events / Club Activities Section (Only Electronics Club) -->
     <section id="events">
         <h2 class="section-title">Club Activities</h2>
@@ -293,56 +334,13 @@
     <section id="event-file">
         <h2 class="section-title">Department Downloads</h2>
         
-        <div class="download-grid">
-            <div class="download-card tilt-card">
-                <div class="file-info">
-                    <div class="file-icon">📄</div>
-                    <div class="file-details">
-                        <h4 id="dl-syllabus-title">ECE Curriculum Syllabus 2025-26</h4>
-                        <p id="dl-syllabus-meta">Official PDF Document • 120 KB</p>
-                    </div>
-                </div>
-                <!-- Real download link -->
-                <a href="ECE_Syllabus_2025_26.pdf" download="ECE_Syllabus_2025_26.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Syllabus_2025_26.pdf')">↓</a>
-            </div>
+        <div class="download-grid" id="download-grid-container">
+            <!-- Dynamic and Default files are loaded here -->
+        </div>
 
-            <div class="download-card tilt-card">
-                <div class="file-info">
-                    <div class="file-icon">📰</div>
-                    <div class="file-details">
-                        <h4 id="dl-newsletter-title">ECE Department Newsletter (Vol. X)</h4>
-                        <p id="dl-newsletter-meta">Official PDF Document • 135 KB</p>
-                    </div>
-                </div>
-                <!-- Real download link -->
-                <a href="ECE_Newsletter_V10.pdf" download="ECE_Newsletter_V10.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Newsletter_V10.pdf')">↓</a>
-            </div>
-
-            <!-- New Download 3: Excel Academic Planner -->
-            <div class="download-card tilt-card">
-                <div class="file-info">
-                    <div class="file-icon">📊</div>
-                    <div class="file-details">
-                        <h4 id="dl-planner-title">Academic Planning Template (Excel)</h4>
-                        <p id="dl-planner-meta">Spreadsheet Template • 5 KB</p>
-                    </div>
-                </div>
-                <!-- Real download link -->
-                <a href="ECE_Academic_Planner.xlsx" download="ECE_Academic_Planner.xlsx" class="btn-download" onclick="showDownloadNotify('ECE_Academic_Planner.xlsx')">↓</a>
-            </div>
-
-            <!-- New Download 4: Previous Event Summary -->
-            <div class="download-card tilt-card">
-                <div class="file-info">
-                    <div class="file-icon">🏆</div>
-                    <div class="file-details">
-                        <h4 id="dl-report-title">Previous ECE Events Summary Report</h4>
-                        <p id="dl-report-meta">PDF Summary Report • 150 KB</p>
-                    </div>
-                </div>
-                <!-- Real download link -->
-                <a href="ECE_Previous_Events_Report.pdf" download="ECE_Previous_Events_Report.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Previous_Events_Report.pdf')">↓</a>
-            </div>
+        <!-- Admin Add File Control (visible only in admin mode) -->
+        <div class="admin-only-block" id="admin-download-controls" style="display:none; margin-top: 3rem; text-align: center;">
+            <button class="btn-primary" onclick="openAddFileModal()">➕ Add New Download File</button>
         </div>
     </section>
 
@@ -435,6 +433,29 @@
         </div>
     </div>
 
+    <!-- Admin Add Download File Modal -->
+    <div id="addFileModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAddFileModal()">×</button>
+            <h3>Add New Download File</h3>
+            <form id="addFileForm" onsubmit="submitAddNewFile(event)">
+                <div class="form-group">
+                    <label for="new-file-name">File Display Name</label>
+                    <input type="text" id="new-file-name" required placeholder="e.g. ECE Curriculum 2026-27">
+                </div>
+                <div class="form-group">
+                    <label for="new-file-meta">File Meta / Details</label>
+                    <input type="text" id="new-file-meta" required placeholder="e.g. PDF Document • 150 KB">
+                </div>
+                <div class="form-group">
+                    <label for="new-file-upload">Upload File (Optional - Mock link created automatically)</label>
+                    <input type="file" id="new-file-upload" class="admin-text-field" onchange="handleNewFileUpload(event)">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">Add File</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Club Detail Overlay Interface (Dynamic Inner Portal) -->
     <div id="clubInterfaceModal" class="modal">
         <div class="modal-content" style="max-width: 600px;">
@@ -452,6 +473,11 @@
 
     <!-- Floating Admin Controls Bar (Only visible after login) -->
     <div id="admin-controls-bar" class="admin-controls-panel">
+        <div class="admin-profile-avatar-container">
+            <img id="admin-profile-pic" src="assets/ece-logo.png" alt="Admin Avatar" class="admin-avatar-circle">
+            <input type="file" id="admin-avatar-upload" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+            <button class="btn-avatar-edit" onclick="triggerAvatarUpload()">✏️</button>
+        </div>
         <div class="admin-badge-indicator">
             <span class="pulse-dot"></span>
             <span>Admin Active Mode</span>

@@ -233,10 +233,14 @@ window.addEventListener('scroll', () => {
 });
 
 
-// === 7. Real Admin Controls & Editing Logic ===
+// === 7. Real Admin Controls & Dynamic Data Systems ===
 const loginModal = document.getElementById('adminLoginModal');
+const addFileModal = document.getElementById('addFileModal');
 const loginBtn = document.getElementById('admin-login-btn');
 const adminControlsBar = document.getElementById('admin-controls-bar');
+const adminLinkEditGroup = document.getElementById('admin-link-edit-fields');
+const adminPosterAddGroup = document.getElementById('admin-poster-add-container');
+const adminDownloadAddGroup = document.getElementById('admin-download-controls');
 
 // Predefined list of editable element IDs in Admin Mode
 const editableElements = [
@@ -244,20 +248,42 @@ const editableElements = [
     'hero-title', 'hero-subtitle', 'about-card-text', 'vision-text', 'mission-list', 
     'intake-ug-title', 'intake-ug-text', 'intake-pg-title', 'intake-pg-text', 
     'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
-    'dl-syllabus-title', 'dl-syllabus-meta', 'dl-newsletter-title', 'dl-newsletter-meta', 
-    'dl-planner-title', 'dl-planner-meta', 'dl-report-title', 'dl-report-meta', 
     'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email', 'coordinators-container'
 ];
 
+// Carousel State
+let eventPosters = [];
+let currentPosterIndex = 0;
+
+// Downloads State
+let customFiles = [];
+const defaultDownloads = [
+    { id: "syllabus", name: "ECE Curriculum Syllabus 2025-26", meta: "Official PDF Document • 120 KB", url: "ECE_Syllabus_2025_26.pdf", icon: "📄" },
+    { id: "newsletter", name: "ECE Department Newsletter (Vol. X)", meta: "Official PDF Document • 135 KB", url: "ECE_Newsletter_V10.pdf", icon: "📰" },
+    { id: "planner", name: "Academic Planning Template (Excel)", meta: "Spreadsheet Template • 5 KB", url: "ECE_Academic_Planner.xlsx", icon: "📊" },
+    { id: "report", name: "Previous ECE Events Summary Report", meta: "PDF Summary Report • 150 KB", url: "ECE_Previous_Events_Report.pdf", icon: "🏆" }
+];
+let tempNewFileUrl = null;
+
+// Modal triggers
 function openLoginModal() {
     loginModal.classList.add('active');
 }
-
 function closeLoginModal() {
     loginModal.classList.remove('active');
     document.getElementById('adminLoginForm').reset();
 }
 
+function openAddFileModal() {
+    addFileModal.classList.add('active');
+}
+function closeAddFileModal() {
+    addFileModal.classList.remove('active');
+    document.getElementById('addFileForm').reset();
+    tempNewFileUrl = null;
+}
+
+// Submit Admin credentials
 function submitAdminLogin(event) {
     event.preventDefault();
     const user = document.getElementById('admin-user').value;
@@ -272,13 +298,20 @@ function submitAdminLogin(event) {
     }
 }
 
+// Enable Admin mode options
 function enableAdminMode() {
     document.body.classList.add('admin-mode');
     adminControlsBar.classList.add('active');
+    
+    // Show hidden edit panels
+    adminLinkEditGroup.style.display = 'block';
+    adminPosterAddGroup.style.display = 'block';
+    adminDownloadAddGroup.style.display = 'block';
+
     loginBtn.textContent = 'Admin Mode Active';
     loginBtn.disabled = true;
 
-    // Enable editing on all predefined fields
+    // Enable editing on all standard fields
     editableElements.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -286,17 +319,29 @@ function enableAdminMode() {
         }
     });
 
-    // Make table td and th elements contenteditable individually for exact cell edit
+    // Make poster details inline editable too
+    document.getElementById('event-title-text').setAttribute('contenteditable', 'true');
+    document.getElementById('event-date-text').setAttribute('contenteditable', 'true');
+
+    // Make table td and th elements contenteditable individually
     const tableCells = document.querySelectorAll('table th, table td');
     tableCells.forEach(cell => {
         cell.setAttribute('contenteditable', 'true');
     });
+
+    renderDownloads();
 }
 
+// Logout admin
 function logoutAdmin() {
     localStorage.removeItem('vsb_ece_is_admin');
     document.body.classList.remove('admin-mode');
     adminControlsBar.classList.remove('active');
+    
+    adminLinkEditGroup.style.display = 'none';
+    adminPosterAddGroup.style.display = 'none';
+    adminDownloadAddGroup.style.display = 'none';
+
     loginBtn.textContent = 'Admin Login';
     loginBtn.disabled = false;
 
@@ -307,6 +352,9 @@ function logoutAdmin() {
             el.setAttribute('contenteditable', 'false');
         }
     });
+    
+    document.getElementById('event-title-text').setAttribute('contenteditable', 'false');
+    document.getElementById('event-date-text').setAttribute('contenteditable', 'false');
 
     const tableCells = document.querySelectorAll('table th, table td');
     tableCells.forEach(cell => {
@@ -327,13 +375,250 @@ function saveWebChanges() {
             edits[id] = el.innerHTML;
         }
     });
-
     localStorage.setItem('vsb_ece_web_edits', JSON.stringify(edits));
-    alert('All website edits saved successfully to local storage!');
+
+    // Save active poster details to active poster slot
+    if (eventPosters.length > 0) {
+        eventPosters[currentPosterIndex].title = document.getElementById('event-title-text').innerText;
+        eventPosters[currentPosterIndex].date = document.getElementById('event-date-text').innerText;
+        localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+    }
+
+    alert('All website edits and posters saved successfully to local storage!');
 }
 
-// Load and apply edits on page load
-function loadWebEdits() {
+
+// === 8. Event Posters System (1:1 Carousel) ===
+function initPosters() {
+    const saved = localStorage.getItem('vsb_ece_event_posters');
+    if (saved) {
+        eventPosters = JSON.parse(saved);
+    } else {
+        // Seed initial poster generated by agent
+        eventPosters = [
+            {
+                img: "assets/vsb-ece-poster.jpg",
+                title: "VSB ECE Symposium 2026",
+                date: "Date: September 15, 2026",
+                link: "https://forms.gle/vsbece2026"
+            }
+        ];
+        localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+    }
+    renderActivePoster();
+}
+
+function renderActivePoster() {
+    if (eventPosters.length === 0) return;
+    const p = eventPosters[currentPosterIndex];
+
+    document.getElementById('event-poster-img').src = p.img;
+    document.getElementById('event-title-text').innerText = p.title;
+    document.getElementById('event-date-text').innerText = p.date;
+    document.getElementById('event-reg-link').href = p.link;
+    document.getElementById('admin-link-url').value = p.link;
+}
+
+function nextPoster() {
+    if (eventPosters.length <= 1) return;
+    // Sync current edits before switching
+    if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
+        eventPosters[currentPosterIndex].title = document.getElementById('event-title-text').innerText;
+        eventPosters[currentPosterIndex].date = document.getElementById('event-date-text').innerText;
+    }
+    
+    currentPosterIndex = (currentPosterIndex + 1) % eventPosters.length;
+    renderActivePoster();
+}
+
+function prevPoster() {
+    if (eventPosters.length <= 1) return;
+    // Sync current edits before switching
+    if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
+        eventPosters[currentPosterIndex].title = document.getElementById('event-title-text').innerText;
+        eventPosters[currentPosterIndex].date = document.getElementById('event-date-text').innerText;
+    }
+
+    currentPosterIndex = (currentPosterIndex - 1 + eventPosters.length) % eventPosters.length;
+    renderActivePoster();
+}
+
+// Poster Upload
+function triggerPosterUpload() {
+    document.getElementById('admin-poster-upload').click();
+}
+
+function handlePosterUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        eventPosters[currentPosterIndex].img = e.target.result;
+        localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+        renderActivePoster();
+    };
+    reader.readAsDataURL(file);
+}
+
+// Update link for active poster
+function updateActivePosterLink(newUrl) {
+    eventPosters[currentPosterIndex].link = newUrl;
+    document.getElementById('event-reg-link').href = newUrl;
+    localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+}
+
+// Add new slot to carousel
+function addNewPosterSlot() {
+    eventPosters.push({
+        img: "assets/ece-logo.png",
+        title: "New ECE Event Title",
+        date: "Date: To Be Announced",
+        link: "#"
+    });
+    currentPosterIndex = eventPosters.length - 1;
+    localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+    renderActivePoster();
+    alert('New poster slot added at the end of the carousel. You can now edit its text, link and upload its 1:1 image flyer!');
+}
+
+// Delete active poster slot
+function deleteActivePoster() {
+    if (eventPosters.length <= 1) {
+        alert('You must keep at least one active poster slot!');
+        return;
+    }
+    if (confirm('Are you sure you want to delete this poster slot from the carousel?')) {
+        eventPosters.splice(currentPosterIndex, 1);
+        currentPosterIndex = 0;
+        localStorage.setItem('vsb_ece_event_posters', JSON.stringify(eventPosters));
+        renderActivePoster();
+    }
+}
+
+
+// === 9. Admin Profile Avatar System ===
+function triggerAvatarUpload() {
+    document.getElementById('admin-avatar-upload').click();
+}
+
+function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('admin-profile-pic').src = e.target.result;
+        localStorage.setItem('vsb_ece_admin_avatar', e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function initAdminAvatar() {
+    const savedAvatar = localStorage.getItem('vsb_ece_admin_avatar');
+    if (savedAvatar) {
+        document.getElementById('admin-profile-pic').src = savedAvatar;
+    }
+}
+
+
+// === 10. Admin Dynamic Downloads System ===
+function initDownloads() {
+    const saved = localStorage.getItem('vsb_ece_custom_downloads');
+    if (saved) {
+        customFiles = JSON.parse(saved);
+    }
+    renderDownloads();
+}
+
+function renderDownloads() {
+    const container = document.getElementById('download-grid-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
+
+    // 1. Render default files
+    defaultDownloads.forEach(file => {
+        container.innerHTML += `
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">${file.icon}</div>
+                    <div class="file-details">
+                        <h4>${file.name}</h4>
+                        <p>${file.meta}</p>
+                    </div>
+                </div>
+                <a href="${file.url}" download="${file.url}" class="btn-download" onclick="showDownloadNotify('${file.url}')">↓</a>
+            </div>
+        `;
+    });
+
+    // 2. Render custom files uploaded by admin
+    customFiles.forEach(file => {
+        container.innerHTML += `
+            <div class="download-card tilt-card" style="position: relative;">
+                <div class="file-info">
+                    <div class="file-icon">${file.icon}</div>
+                    <div class="file-details">
+                        <h4>${file.name}</h4>
+                        <p>${file.meta}</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a href="${file.url}" download="${file.name}.pdf" class="btn-download" onclick="showDownloadNotify('${file.name}')">↓</a>
+                    ${isAdmin ? `<button class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center;" onclick="deleteCustomFile('${file.id}')">🗑️</button>` : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    apply3DTilt();
+}
+
+function handleNewFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        tempNewFileUrl = e.target.result; // Stores Base64 file contents
+    };
+    reader.readAsDataURL(file);
+}
+
+function submitAddNewFile(event) {
+    event.preventDefault();
+    const name = document.getElementById('new-file-name').value;
+    const meta = document.getElementById('new-file-meta').value;
+
+    const newFile = {
+        id: "file-" + Date.now(),
+        name: name,
+        meta: meta,
+        url: tempNewFileUrl || "#", // Fallback if no file uploaded
+        icon: "📁"
+    };
+
+    customFiles.push(newFile);
+    localStorage.setItem('vsb_ece_custom_downloads', JSON.stringify(customFiles));
+    closeAddFileModal();
+    renderDownloads();
+    alert('New download file added successfully!');
+}
+
+function deleteCustomFile(id) {
+    if (confirm('Are you sure you want to delete this custom download file?')) {
+        customFiles = customFiles.filter(file => file.id !== id);
+        localStorage.setItem('vsb_ece_custom_downloads', JSON.stringify(customFiles));
+        renderDownloads();
+    }
+}
+
+
+// === 11. Initializer Loader ===
+function loadAllWebData() {
+    // 1. Load basic text edits
     const saved = localStorage.getItem('vsb_ece_web_edits');
     if (saved) {
         const edits = JSON.parse(saved);
@@ -345,19 +630,26 @@ function loadWebEdits() {
         }
     }
 
-    // Auto log in if admin state persists
+    // 2. Load custom sections data
+    initPosters();
+    initDownloads();
+    initAdminAvatar();
+
+    // 3. Auto log in if admin state persists
     if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
         enableAdminMode();
     }
 }
 
 // Run loader on load
-window.addEventListener('DOMContentLoaded', loadWebEdits);
+window.addEventListener('DOMContentLoaded', loadAllWebData);
 
 // Close overlay modal backdrop clicks
 window.onclick = function(event) {
     if (event.target === loginModal) {
         closeLoginModal();
+    } else if (event.target === addFileModal) {
+        closeAddFileModal();
     } else if (event.target === clubModal) {
         closeClubModal();
     }
