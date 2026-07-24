@@ -391,16 +391,8 @@ function toggleSupabaseSettings() {
 // Submit Admin credentials
 function submitAdminLogin(event) {
     event.preventDefault();
-    const user = document.getElementById('admin-user').value;
-    const pass = document.getElementById('admin-pass').value;
-
-    if (user === 'ece_1234' && pass === 'ECE1234') {
-        localStorage.setItem('vsb_ece_is_admin', 'true');
-        closeLoginModal();
-        enableAdminMode();
-    } else {
-        alert('Incorrect Admin credentials! Try again.');
-    }
+    closeLoginModal();
+    window.open('admin.html', '_blank');
 }
 
 // Enable Admin mode options
