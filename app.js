@@ -64,11 +64,11 @@ window.addEventListener('mousemove', (e) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    stars.rotation.y += 0.001;
-    stars.rotation.x += 0.0003;
+    stars.rotation.y += 0.0002;
+    stars.rotation.x += 0.00005;
 
-    stars.rotation.y += (mouseX - stars.rotation.y) * 0.03;
-    stars.rotation.x += (-mouseY - stars.rotation.x) * 0.03;
+    stars.rotation.y += (mouseX - stars.rotation.y) * 0.01;
+    stars.rotation.x += (-mouseY - stars.rotation.x) * 0.01;
 
     renderer.render(scene, camera);
 }
@@ -101,10 +101,10 @@ function apply3DTilt() {
             const mouseX = e.clientX - cardRect.left - cardWidth / 2;
             const mouseY = e.clientY - cardRect.top - cardHeight / 2;
             
-            const tiltX = (mouseY / (cardHeight / 2)) * -14;
-            const tiltY = (mouseX / (cardWidth / 2)) * 14;
+            const tiltX = (mouseY / (cardHeight / 2)) * -5;
+            const tiltY = (mouseX / (cardWidth / 2)) * 5;
 
-            card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.04, 1.04, 1.04)`;
+            card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.015, 1.015, 1.015)`;
             card.style.boxShadow = `0 18px 45px rgba(0, 210, 255, 0.3)`;
             card.style.borderColor = `var(--accent-cyan)`;
         });

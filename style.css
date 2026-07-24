@@ -26,12 +26,12 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
-    padding-top: 200px;
+    padding-top: 215px;
 }
 
 @media (max-width: 1024px) {
     body {
-        padding-top: 310px;
+        padding-top: 340px;
     }
 }
 
@@ -102,8 +102,8 @@ header.header-hidden {
 
 /* Bigger VSB Logo / Banner */
 .vsb-logo {
-    height: 115px; 
-    max-height: 115px;
+    height: 130px; 
+    max-height: 130px;
     transition: all 0.3s ease;
 }
 
@@ -188,7 +188,7 @@ header.header-hidden {
     background: rgba(8, 12, 23, 0.95);
     border-bottom: 1px solid rgba(0, 210, 255, 0.1);
     position: fixed;
-    top: 140px;
+    top: 155px;
     left: 0;
     width: 100%;
     z-index: 99;
@@ -196,15 +196,15 @@ header.header-hidden {
 }
 
 .sub-nav.header-hidden {
-    transform: translateY(-210px);
+    transform: translateY(-235px);
 }
 
 @media (max-width: 1024px) {
     .sub-nav {
-        top: 250px;
+        top: 280px;
     }
     .sub-nav.header-hidden {
-        transform: translateY(-330px);
+        transform: translateY(-365px);
     }
 }
 
@@ -318,7 +318,7 @@ section {
 .tilt-card {
     transform-style: preserve-3d;
     will-change: transform;
-    transition: transform 0.25s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease, border-color 0.6s ease;
 }
 
 /* Department Info Grid */
@@ -945,7 +945,7 @@ tr:hover td {
     background: #4ade80;
     border-radius: 50%;
     box-shadow: 0 0 10px #4ade80;
-    animation: adminPulse 1.5s infinite;
+    animation: adminPulse 3s infinite;
 }
 
 .admin-actions-btns {
