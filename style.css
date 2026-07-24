@@ -26,12 +26,12 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
-    padding-top: 190px;
+    padding-top: 200px;
 }
 
 @media (max-width: 1024px) {
     body {
-        padding-top: 280px;
+        padding-top: 310px;
     }
 }
 
@@ -86,7 +86,7 @@ header.header-hidden {
 
 .header-container {
     max-width: 100%;
-    padding: 1.25rem 4rem;
+    padding: 0.75rem 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -102,8 +102,8 @@ header.header-hidden {
 
 /* Bigger VSB Logo / Banner */
 .vsb-logo {
-    height: 90px; 
-    max-height: 90px;
+    height: 115px; 
+    max-height: 115px;
     transition: all 0.3s ease;
 }
 
@@ -188,7 +188,7 @@ header.header-hidden {
     background: rgba(8, 12, 23, 0.95);
     border-bottom: 1px solid rgba(0, 210, 255, 0.1);
     position: fixed;
-    top: 130px;
+    top: 140px;
     left: 0;
     width: 100%;
     z-index: 99;
@@ -196,15 +196,15 @@ header.header-hidden {
 }
 
 .sub-nav.header-hidden {
-    transform: translateY(-190px);
+    transform: translateY(-210px);
 }
 
 @media (max-width: 1024px) {
     .sub-nav {
-        top: 220px;
+        top: 250px;
     }
     .sub-nav.header-hidden {
-        transform: translateY(-290px);
+        transform: translateY(-330px);
     }
 }
 
@@ -1422,15 +1422,15 @@ body.admin-mode .btn-admin-only-inline {
 
 /* VSB Trust Logo styling */
 .vsb-trust-logo {
-    height: 90px;
-    max-height: 90px;
+    height: 115px;
+    max-height: 115px;
     margin-left: 1.25rem;
     transition: all 0.3s ease;
 }
 
 @media (max-width: 1024px) {
     .vsb-trust-logo {
-        height: 80px;
+        height: 95px;
         margin-left: 0;
         margin-top: 0.5rem;
     }
