@@ -7,6 +7,7 @@ let globalSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
 let globalSupaKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
 
 // Check persistent admin session on load
+// Check persistent admin session on load
 window.addEventListener('DOMContentLoaded', () => {
     // 1. Fetch Supabase configuration from local config.json securely
     fetch('/get-config')
@@ -15,20 +16,14 @@ window.addEventListener('DOMContentLoaded', () => {
             globalSupaUrl = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
             globalSupaKey = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
             
-            const fieldUrl = document.getElementById('field-supabase-url');
-            const fieldKey = document.getElementById('field-supabase-key');
-            if (fieldUrl) fieldUrl.value = globalSupaUrl;
-            if (fieldKey) fieldKey.value = globalSupaKey;
+            populateSupaFields();
         })
         .catch(err => {
             console.warn('Could not load config.json from local server fallback. Using Vercel production fallbacks.');
             globalSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
             globalSupaKey = localStorage.getItem('vsb_ece_supabase_key') || 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
             
-            const fieldUrl = document.getElementById('field-supabase-url');
-            const fieldKey = document.getElementById('field-supabase-key');
-            if (fieldUrl) fieldUrl.value = globalSupaUrl;
-            if (fieldKey) fieldKey.value = globalSupaKey;
+            populateSupaFields();
         });
 
     const isAuth = localStorage.getItem('vsb_ece_is_admin') === 'true';
@@ -42,15 +37,73 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Admin Authentication Login (Supabase Auth first, local ece_1234 setup fallback)
+function populateSupaFields() {
+    const fieldUrl = document.getElementById('field-supabase-url');
+    const fieldKey = document.getElementById('field-supabase-key');
+    const loginUrl = document.getElementById('login-supa-url');
+    const loginKey = document.getElementById('login-supa-key');
+    
+    if (fieldUrl) fieldUrl.value = globalSupaUrl;
+    if (fieldKey) fieldKey.value = globalSupaKey;
+    if (loginUrl) loginUrl.value = globalSupaUrl;
+    if (loginKey) loginKey.value = globalSupaKey;
+}
+
+// Save database settings directly on the login card
+function saveLoginSupaConfig() {
+    const supaUrlInput = document.getElementById('login-supa-url');
+    const supaKeyInput = document.getElementById('login-supa-key');
+    if (!supaUrlInput || !supaKeyInput) return;
+
+    let supaUrl = supaUrlInput.value.trim();
+    const supaKey = supaKeyInput.value.trim();
+
+    if (!supaUrl || !supaKey) {
+        alert('Please enter both Supabase URL and Anon Key!');
+        return;
+    }
+
+    // Clean trailing slash
+    if (supaUrl.endsWith('/')) {
+        supaUrl = supaUrl.slice(0, -1);
+    }
+
+    globalSupaUrl = supaUrl;
+    globalSupaKey = supaKey;
+
+    localStorage.setItem('vsb_ece_supabase_url', supaUrl);
+    localStorage.setItem('vsb_ece_supabase_key', supaKey);
+
+    // Save to local config.json privately on disk if running local server
+    fetch('/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supabase_url: supaUrl, supabase_key: supaKey })
+    })
+    .then(() => {
+        showNotification('Database credentials saved successfully!');
+        populateSupaFields();
+    })
+    .catch(err => {
+        showNotification('Database credentials cached in browser localStorage.');
+        populateSupaFields();
+    });
+}
+
+// Admin Authentication Login via Supabase Auth REST
 async function handleCmsLogin(event) {
     event.preventDefault();
     const username = document.getElementById('cms-username').value.trim();
     const password = document.getElementById('cms-password').value.trim();
 
     // Use current form values or global variables
-    const supaUrl = globalSupaUrl || (document.getElementById('field-supabase-url') ? document.getElementById('field-supabase-url').value.trim() : '');
+    let supaUrl = globalSupaUrl || (document.getElementById('field-supabase-url') ? document.getElementById('field-supabase-url').value.trim() : '');
     const supaKey = globalSupaKey || (document.getElementById('field-supabase-key') ? document.getElementById('field-supabase-key').value.trim() : '');
+
+    // Clean trailing slash from URL path
+    if (supaUrl.endsWith('/')) {
+        supaUrl = supaUrl.slice(0, -1);
+    }
 
     if (supaUrl && supaKey) {
         try {
@@ -76,25 +129,20 @@ async function handleCmsLogin(event) {
                 showNotification('Authenticated securely via Supabase Auth!');
                 loadIndexHtmlDocument();
             } else {
-                const errData = await response.json();
-                alert('Authentication failed: ' + (errData.error_description || 'Invalid email or password.'));
+                let errorMsg = 'Invalid email or password.';
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.error_description || errData.error || errorMsg;
+                } catch (e) {
+                    errorMsg = `Server returned status ${response.status} (${response.statusText})`;
+                }
+                alert('Authentication failed: ' + errorMsg);
             }
         } catch (err) {
             alert('Supabase Auth error: ' + err.message);
         }
     } else {
-        // Fallback for initial local setup if Supabase isn't configured yet
-        if (username === 'ece_1234' && password === 'ECE1234') {
-            localStorage.setItem('vsb_ece_is_admin', 'true');
-            
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('dashboard-container').style.display = 'flex';
-            
-            showNotification('LoggedIn locally. Please configure Supabase settings immediately!');
-            loadIndexHtmlDocument();
-        } else {
-            alert('Authentication failed! Enter correct local setup credentials.');
-        }
+        alert('Supabase connection is not configured! Please expand "Database Connection Settings" below to connect your project.');
     }
 }
 
