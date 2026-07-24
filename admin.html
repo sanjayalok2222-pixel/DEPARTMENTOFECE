@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production-Grade CMS Admin Dashboard | VSB ECE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #05070e;
+            --bg-card: rgba(10, 16, 30, 0.7);
+            --border-card: rgba(0, 210, 255, 0.15);
+            --accent-blue: #0055ff;
+            --accent-cyan: #00d2ff;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-glow: 0 0 15px rgba(0, 210, 255, 0.4);
+            --card-glow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Background grid effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 210, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 210, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 1. Login View Overlay */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 7, 14, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 0 40px rgba(0, 210, 255, 0.2);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            background: rgba(0, 210, 255, 0.05);
+            box-shadow: var(--text-glow);
+        }
+
+        .btn-submit {
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: var(--text-glow);
+        }
+
+        .btn-submit:hover {
+            background: #fff;
+            box-shadow: 0 0 25px #fff;
+        }
+
+        /* 2. Main Dashboard Interface */
+        #dashboard-container {
+            display: none; /* Shown after successful login */
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 16, 30, 0.9);
+            border-right: 1px solid var(--border-card);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-header img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .sidebar-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex-grow: 1;
+        }
+
+        .sidebar-item button {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item button:hover {
+            color: var(--accent-cyan);
+            background: rgba(0, 210, 255, 0.03);
+        }
+
+        .sidebar-item.active button {
+            color: var(--bg-dark);
+            background: var(--accent-cyan);
+            box-shadow: var(--text-glow);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-profile img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+        }
+
+        .admin-profile-info h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .admin-profile-info p {
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .btn-logout {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 0.6rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        /* Content Panel Wrapper */
+        .main-content {
+            margin-left: 280px;
+            flex-grow: 1;
+            padding: 3rem;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1.5rem;
+        }
+
+        .content-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .publish-bar {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-publish {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.75rem 1.75rem;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-publish:hover {
+            background: #fff;
+            color: var(--bg-dark);
+            box-shadow: 0 0 25px #fff;
+        }
+
+        .btn-preview {
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 0.75rem 1.75rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-preview:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+            box-shadow: var(--text-glow);
+        }
+
+        /* Workspace Panels */
+        .workspace-panel {
+            display: none; /* Shown dynamically depending on active tab */
+            animation: fadeIn 0.4s ease;
+        }
+
+        .workspace-panel.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-glow);
+        }
+
+        .card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--accent-cyan);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Photo Upload Workspace Widgets */
+        .photo-uploader-widget {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            background: rgba(0, 210, 255, 0.02);
+            border: 1px dashed rgba(0, 210, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .photo-preview-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: var(--text-glow);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            flex-shrink: 0;
+        }
+
+        .photo-preview-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview-initials {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .photo-upload-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-upload-file {
+            background: var(--accent-cyan);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-upload-file:hover {
+            background: white;
+            box-shadow: var(--text-glow);
+        }
+
+        .btn-clear-photo {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear-photo:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        /* Dynamically Added Cards Lists (Posters, Downloads) */
+        .cms-list-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .cms-list-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .cms-list-item:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 210, 255, 0.02);
+        }
+
+        .cms-list-img-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #060913;
+        }
+
+        .cms-list-fields {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-delete-list-item {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-delete-list-item:hover {
+            background: var(--accent-red);
+            color: white;
+            transform: scale(1.08);
+        }
+
+        .btn-add-list-item {
+            background: transparent;
+            border: 1.5px dashed var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 1rem;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-add-list-item:hover {
+            background: rgba(0, 210, 255, 0.05);
+            box-shadow: var(--text-glow);
+        }
+
+        /* Overview Stats Widgets */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            text-shadow: var(--text-glow);
+        }
+
+        /* Textarea helper */
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Alert Messages Notification banner */
+        #notification-banner {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            padding: 1.25rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 800;
+            z-index: 3000;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Secure Login Overlay screen -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <img src="assets/ece-logo.png" alt="ECE Logo" style="width: 80px; margin-bottom: 1.5rem; filter: drop-shadow(var(--text-glow));">
+            <h2>VSB ECE Department</h2>
+            <p>Production-Grade CMS Admin Portal</p>
+            <form id="cmsLoginForm" onsubmit="handleCmsLogin(event)">
+                <div class="form-group">
+                    <label for="cms-username">Admin Username</label>
+                    <input type="text" id="cms-username" required class="form-control" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="cms-password">Security Password</label>
+                    <input type="password" id="cms-password" required class="form-control" placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn-submit">Authenticate Portal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Main Dashboard Interface Wrapper -->
+    <div id="dashboard-container">
+        <!-- Dashboard Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/ece-logo.png" alt="ECE Logo">
+                <div>
+                    <h1>VSB ECE CMS</h1>
+                    <span style="font-size: 0.65rem; text-transform: uppercase; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">Production Admin</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" data-tab="overview"><button onclick="switchCmsTab('overview')">📊 Dashboard Overview</button></li>
+                <li class="sidebar-item" data-tab="header-hero"><button onclick="switchCmsTab('header-hero')">🏛️ Header & Hero</button></li>
+                <li class="sidebar-item" data-tab="about-info"><button onclick="switchCmsTab('about-info')">📖 About & Info Tabs</button></li>
+                <li class="sidebar-item" data-tab="flyers"><button onclick="switchCmsTab('flyers')">🎟️ Event Flyers</button></li>
+                <li class="sidebar-item" data-tab="downloads"><button onclick="switchCmsTab('downloads')">📂 Downloads Grid</button></li>
+                <li class="sidebar-item" data-tab="faculty"><button onclick="switchCmsTab('faculty')">🎓 HODs & Faculty</button></li>
+                <li class="sidebar-item" data-tab="system"><button onclick="switchCmsTab('system')">⚙️ Database Setup</button></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="admin-profile">
+                    <img id="admin-avatar-display" src="assets/ece-logo.png" alt="Admin Avatar">
+                    <div class="admin-profile-info">
+                        <h4>ECE Admin Office</h4>
+                        <p>Status: Active Mode</p>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="handleCmsLogout()">Secure Logout</button>
+            </div>
+        </div>
+
+        <!-- Main CMS Editing Panel -->
+        <div class="main-content">
+            <div class="content-header">
+                <div>
+                    <h2 id="cms-tab-title">Dashboard Overview</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Manage and update all site elements programmatically.</p>
+                </div>
+                <div class="publish-bar">
+                    <button class="btn-preview" onclick="previewLiveWebsite()">👁️ Preview Site</button>
+                    <button class="btn-publish" onclick="publishCmsChanges()">💾 Save & Sync Changes</button>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 1: Overview Dashboard -->
+            <div id="panel-overview" class="workspace-panel active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Event Flyers</h4>
+                        <p id="stat-flyers-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Download Files</h4>
+                        <p id="stat-files-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>HOD Slots</h4>
+                        <p>2</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Coordinators</h4>
+                        <p>5</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📢 Quick Operations Control Panel</h3>
+                    <p style="line-height: 1.6; color: var(--text-secondary); margin-bottom: 1.5rem;">Welcome to the production grade content management system dashboard. Here you can edit titles, upload event brochures, add new downloads, change coordinator profiles, and configure your live Supabase sync variables. Changes saved here will instantly serialize back to `index.html` on your local host, sync to Supabase, and push updates to your GitHub repository.</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn-submit" style="width: auto; padding: 0.75rem 2rem;" onclick="switchCmsTab('flyers')">Manage Active Event Flyer</button>
+                        <button class="btn-preview" onclick="switchCmsTab('downloads')">Manage Downloads Directory</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 2: Header & Hero -->
+            <div id="panel-header-hero" class="workspace-panel">
+                <div class="card">
+                    <h3>🏛️ College Header Identifiers</h3>
+                    <div class="form-group">
+                        <label for="field-header-name">College Name Header</label>
+                        <input type="text" id="field-header-name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="field-header-auth">Autonomous Affiliation Subtitle</label>
+                        <input type="text" id="field-header-auth" class="form-control">
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="field-header-appr">Approved Details Text</label>
+                            <input type="text" id="field-header-appr" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="field-header-nba">Accreditation NBA / NAAC Line</label>
+                            <input type="text" id="field-header-nba" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🚀 Hero Landing Area</h3>
+                    <div class="form-group">
+                        <label for="field-hero-title">Main Hero Landing Title</label>
+                        <input type="text" id="field-hero-title" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="field-hero-subtitle">Hero Description Paragraph Text</label>
+                        <textarea id="field-hero-subtitle" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 3: About & Info Tabs -->
+            <div id="panel-about-info" class="workspace-panel">
+                <div class="card">
+                    <h3>📖 About Department Info Card</h3>
+                    <div class="form-group">
+                        <label for="field-about-text">About Section Text (Markdown / HTML elements allowed)</label>
+                        <textarea id="field-about-text" class="form-control" style="min-height: 200px;"></textarea>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Vision & Mission Statements</h3>
+                    <div class="form-group">
+                        <label for="field-vision-text">👁️ Department Vision Text</label>
+                        <textarea id="field-vision-text" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="field-mission-list">🚀 Department Mission List (Paste each bullet point as HTML `<li>` tag)</label>
+                        <textarea id="field-mission-list" class="form-control" style="min-height: 150px;"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 4: Event Flyers (Carousel slot editor) -->
+            <div id="panel-flyers" class="workspace-panel">
+                <div class="card">
+                    <h3>🎟️ Manage Carousel Event Flyers</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">List of active slots in the 1:1 ratio carousel. You can add infinite slides, edit text values, upload local flyer image, or paste external URL links.</p>
+                    
+                    <div class="cms-list-grid" id="cms-posters-list">
+                        <!-- Dynamic elements populated by JS -->
+                    </div>
+                    
+                    <button class="btn-add-list-item" onclick="cmsAddPosterCardSlot()">➕ Add Additional Event Poster Slide</button>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 5: Downloads Grid -->
+            <div id="panel-downloads" class="workspace-panel">
+                <div class="card">
+                    <h3>📂 Manage Download Center Resources</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage dynamic academic brochures and syllabus PDF downloads. Admin can edit text titles, modify details, delete files, or attach new PDF/spreadsheet documents.</p>
+                    
+                    <div class="cms-list-grid" id="cms-downloads-list">
+                        <!-- Dynamic elements populated by JS -->
+                    </div>
+                    
+                    <button class="btn-add-list-item" onclick="cmsAddDownloadCardSlot()">➕ Add Additional Download Card Slot</button>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 6: HODs & Faculty -->
+            <div id="panel-faculty" class="workspace-panel">
+                <!-- HOD Slots -->
+                <div class="card">
+                    <h3>👨‍🏫 Primary Head of Department (HOD 1)</h3>
+                    <div class="photo-uploader-widget">
+                        <div class="photo-preview-circle">
+                            <img id="preview-hod-photo" src="" alt="HOD Photo" style="display:none;">
+                            <span id="preview-hod-initials" class="photo-preview-initials">PA</span>
+                        </div>
+                        <div class="photo-upload-controls">
+                            <label class="btn-upload-file">
+                                📤 Choose Profile Photo File
+                                <input type="file" id="upload-hod-photo" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')">
+                            </label>
+                            <button class="btn-clear-photo" onclick="clearCmsProfilePhoto('hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')">🗑️ Reset to Initials Placeholder</button>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="field-hod-name">HOD 1 Name</label>
+                            <input type="text" id="field-hod-name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="field-hod-designation">Designation Subtitle</label>
+                            <input type="text" id="field-hod-designation" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field-hod-msg">HOD message speech</label>
+                        <textarea id="field-hod-msg" class="form-control"></textarea>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="field-hod-research">Research Areas</label>
+                            <input type="text" id="field-hod-research" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="field-hod-email">Contact Office Email</label>
+                            <input type="text" id="field-hod-email" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>👩‍🏫 Head of Department Slot 2 (HOD 2)</h3>
+                    <div class="photo-uploader-widget">
+                        <div class="photo-preview-circle">
+                            <img id="preview-hod-photo-2" src="" alt="HOD Photo" style="display:none;">
+                            <span id="preview-hod-initials-2" class="photo-preview-initials">VJ</span>
+                        </div>
+                        <div class="photo-upload-controls">
+                            <label class="btn-upload-file">
+                                📤 Choose Profile Photo File
+                                <input type="file" id="upload-hod-photo-2" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')">
+                            </label>
+                            <button class="btn-clear-photo" onclick="clearCmsProfilePhoto('hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')">🗑️ Reset to Initials Placeholder</button>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="field-hod-name-2">HOD 2 Name</label>
+                            <input type="text" id="field-hod-name-2" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="field-hod-designation-2">Designation Subtitle</label>
+                            <input type="text" id="field-hod-designation-2" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="field-hod-msg-2">HOD message speech</label>
+                        <textarea id="field-hod-msg-2" class="form-control"></textarea>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label for="field-hod-research-2">Research Areas</label>
+                            <input type="text" id="field-hod-research-2" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="field-hod-email-2">Contact Office Email</label>
+                            <input type="text" id="field-hod-email-2" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Coordinators Section -->
+                <div class="card">
+                    <h3>👥 Student Coordinators (5 Slots)</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 2rem;">Manage student coordinator names, details, and profile pictures. Resets to initials badge SB, RS, SS, KT, RP if image is cleared.</p>
+                    
+                    <div id="cms-coordinators-container">
+                        <!-- 5 slot items generated programmatically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 7: Database & System Configurations -->
+            <div id="panel-system" class="workspace-panel">
+                <div class="card">
+                    <h3>⚡ Supabase Live Database Configuration</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure live REST endpoints for Supabase. Once configured, edits published will update both index.html locally AND sync database rows globally for online user reloads.</p>
+                    <div class="form-group">
+                        <label for="field-supabase-url">Supabase Rest URL API Endpoint</label>
+                        <input type="text" id="field-supabase-url" class="form-control" placeholder="e.g. https://xyz.supabase.co">
+                    </div>
+                    <div class="form-group">
+                        <label for="field-supabase-key">Supabase Anon Public API Key</label>
+                        <input type="password" id="field-supabase-key" class="form-control" placeholder="Enter Supabase Service Anon/Service Key">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>⚙️ System Operations</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn-clear-photo" style="width: auto;" onclick="resetLocalStorageConfig()">🗑️ Reset Database Config cache</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Banner -->
+    <div id="notification-banner">Publishing updates...</div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+// === 1. Secure Authentication & Tab Navigation ===
+let indexDoc = null; // Background parsed DOM document of index.html
+let activeTab = 'overview';
+
+// Check persistent admin session on load
+window.addEventListener('DOMContentLoaded', () => {
+    const isAuth = localStorage.getItem('vsb_ece_is_admin') === 'true';
+    if (isAuth) {
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('dashboard-container').style.display = 'flex';
+        loadIndexHtmlDocument();
+    } else {
+        document.getElementById('login-overlay').style.display = 'flex';
+        document.getElementById('dashboard-container').style.display = 'none';
+    }
+});
+
+// Admin Authentication Login
+function handleCmsLogin(event) {
+    event.preventDefault();
+    const user = document.getElementById('cms-username').value;
+    const pass = document.getElementById('cms-password').value;
+
+    if (user === 'ece_1234' && pass === 'ECE1234') {
+        localStorage.setItem('vsb_ece_is_admin', 'true');
+        // Copy auth flag to parent/student landing session too
+        localStorage.setItem('vsb_ece_is_admin', 'true');
+        
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('dashboard-container').style.display = 'flex';
+        
+        showNotification('Authenticated successfully! Loading CMS workspace...');
+        loadIndexHtmlDocument();
+    } else {
+        alert('Authentication failed! Incorrect admin credentials.');
+    }
+}
+
+// Secure Logout
+function handleCmsLogout() {
+    localStorage.removeItem('vsb_ece_is_admin');
+    window.location.reload();
+}
+
+// Switch Sidebar tabs
+function switchCmsTab(tabId) {
+    activeTab = tabId;
+    
+    // Highlight sidebar items
+    const menuItems = document.querySelectorAll('.sidebar-item');
+    menuItems.forEach(item => {
+        if (item.getAttribute('data-tab') === tabId) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+
+    // Show workspace panels
+    const panels = document.querySelectorAll('.workspace-panel');
+    panels.forEach(panel => {
+        if (panel.getAttribute('id') === `panel-${tabId}`) {
+            panel.classList.add('active');
+        } else {
+            panel.classList.remove('active');
+        }
+    });
+
+    // Update main header title
+    const titles = {
+        'overview': 'Dashboard Overview',
+        'header-hero': 'Header & Hero Area CMS',
+        'about-info': 'About & Vision Statements',
+        'flyers': 'Carousel Event Flyers',
+        'downloads': 'Downloads Directory Grid',
+        'faculty': 'Faculty & Coordinator Profiles',
+        'system': 'Database Configurations'
+    };
+    document.getElementById('cms-tab-title').textContent = titles[tabId] || 'CMS Admin Dashboard';
+}
+
+
+// === 2. Fetch and Parse index.html into Memory DOM ===
+function loadIndexHtmlDocument() {
+    fetch('index.html')
+        .then(res => {
+            if (!res.ok) throw new Error('Could not read index.html from disk');
+            return res.text();
+        })
+        .then(html => {
+            const parser = new DOMParser();
+            indexDoc = parser.parseFromString(html, 'text/html');
+            
+            // Populate all editor panel forms with existing data
+            populateCmsForms();
+            showNotification('Loaded current index.html elements successfully!');
+        })
+        .catch(err => {
+            console.error(err);
+            alert('CMS Loader Error: Make sure your Python server is running on http://localhost:8000 and you open admin.html from that server origin.');
+        });
+}
+
+
+// === 3. Populate Form fields with background DOM elements ===
+function populateCmsForms() {
+    if (!indexDoc) return;
+
+    // A. General Header Identifiers
+    setVal('field-header-name', 'college-name-header');
+    setVal('field-header-auth', 'college-auth-header');
+    setVal('field-header-appr', 'college-appr-header');
+    setVal('field-header-nba', 'college-nba-header');
+
+    // B. Hero Landing
+    setVal('field-hero-title', 'hero-title');
+    setVal('field-hero-subtitle', 'hero-subtitle');
+
+    // C. About Info & Vision
+    setVal('field-about-text', 'about-card-text');
+    setVal('field-vision-text', 'vision-text');
+    setVal('field-mission-list', 'mission-list');
+
+    // D. Database configs (Supabase)
+    const storedSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || indexDoc.body.getAttribute('data-supabase-url') || '';
+    const storedSupaKey = localStorage.getItem('vsb_ece_supabase_key') || indexDoc.body.getAttribute('data-supabase-key') || '';
+    document.getElementById('field-supabase-url').value = storedSupaUrl;
+    document.getElementById('field-supabase-key').value = storedSupaKey;
+
+    // E. HOD 1 Profile Details
+    setVal('field-hod-name', 'hod-name');
+    setVal('field-hod-designation', 'hod-designation');
+    setVal('field-hod-msg', 'hod-msg-text');
+    setVal('field-hod-research', 'hod-research');
+    setVal('field-hod-email', 'hod-email');
+    
+    // HOD 1 Picture previews
+    const hod1PhotoImg = indexDoc.getElementById('hod-photo-img');
+    const hod1PhotoPreview = document.getElementById('preview-hod-photo');
+    const hod1Initials = document.getElementById('preview-hod-initials');
+    if (hod1PhotoImg && hod1PhotoImg.style.display === 'block') {
+        hod1PhotoPreview.src = hod1PhotoImg.src;
+        hod1PhotoPreview.style.display = 'block';
+        hod1Initials.style.display = 'none';
+    } else {
+        hod1PhotoPreview.style.display = 'none';
+        hod1Initials.style.display = 'block';
+    }
+
+    // F. HOD 2 Profile Details
+    setVal('field-hod-name-2', 'hod-name-2');
+    setVal('field-hod-designation-2', 'hod-designation-2');
+    setVal('field-hod-msg-2', 'hod-msg-text-2');
+    setVal('field-hod-research-2', 'hod-research-2');
+    setVal('field-hod-email-2', 'hod-email-2');
+    
+    // HOD 2 Picture previews
+    const hod2PhotoImg = indexDoc.getElementById('hod-photo-img-2');
+    const hod2PhotoPreview = document.getElementById('preview-hod-photo-2');
+    const hod2Initials = document.getElementById('preview-hod-initials-2');
+    if (hod2PhotoImg && hod2PhotoImg.style.display === 'block') {
+        hod2PhotoPreview.src = hod2PhotoImg.src;
+        hod2PhotoPreview.style.display = 'block';
+        hod2Initials.style.display = 'none';
+    } else {
+        hod2PhotoPreview.style.display = 'none';
+        hod2Initials.style.display = 'block';
+    }
+
+    // G. Event Flyers Carousel Cards Manager
+    populatePostersCarouselList();
+
+    // H. Downloads Directory Grid Cards Manager
+    populateDownloadsCmsList();
+
+    // I. Student Coordinators Slots Manager
+    populateCoordinatorsCmsList();
+
+    // Updates Quick Stats overview counters
+    document.getElementById('stat-flyers-count').textContent = document.querySelectorAll('.cms-poster-item-card').length;
+    document.getElementById('stat-files-count').textContent = document.querySelectorAll('.cms-download-item-card').length;
+}
+
+// Helper to copy innerHTML of elements into form fields
+function setVal(fieldId, elementId) {
+    const el = indexDoc.getElementById(elementId);
+    const f = document.getElementById(fieldId);
+    if (el && f) {
+        f.value = el.innerHTML.trim();
+    }
+}
+
+
+// === 4. List Managers Form Rendering (Dynamic Array Fields) ===
+
+// A. Event Carousel Flyers List
+function populatePostersCarouselList() {
+    const listContainer = document.getElementById('cms-posters-list');
+    listContainer.innerHTML = '';
+
+    const cards = indexDoc.querySelectorAll('#posters-carousel-container .poster-card');
+    cards.forEach((card, index) => {
+        const title = card.querySelector('.event-title-text').innerText.trim();
+        const date = card.querySelector('.event-date-text').innerText.trim();
+        const regLink = card.querySelector('.event-reg-link').getAttribute('href') || '';
+        const imgEl = card.querySelector('.poster-1to1');
+        const imgUrl = imgEl ? imgEl.getAttribute('src') : '';
+
+        const itemHtml = `
+            <div class="cms-list-item cms-poster-item-card" data-index="${index}">
+                <img class="cms-list-img-preview" id="poster-preview-img-${index}" src="${imgUrl || 'assets/ece-logo.png'}" alt="Flyer Preview">
+                <div class="cms-list-fields">
+                    <div class="form-group" style="grid-column: span 2; margin-bottom:0.5rem;">
+                        <label>Flyer Title</label>
+                        <input type="text" class="form-control cms-poster-title" value="${title}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0.5rem;">
+                        <label>Event Date Details</label>
+                        <input type="text" class="form-control cms-poster-date" value="${date}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0.5rem;">
+                        <label>Register URL link</label>
+                        <input type="text" class="form-control cms-poster-link" value="${regLink}">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
+                        <label>Flyer Image source</label>
+                        <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="${imgUrl}" placeholder="Paste direct image URL" onchange="previewCmsPosterLinkUrl(${index}, this)">
+                            <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
+                                📤 Upload
+                                <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPosterUploader(${index}, event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-delete-list-item" title="Delete Slide" onclick="cmsDeletePosterCardSlot(${index})">🗑️</button>
+            </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+    });
+}
+
+function handleCmsPosterUploader(index, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById(`poster-preview-img-${index}`).src = e.target.result;
+        // Clear manual URL text input
+        const input = document.querySelectorAll('.cms-poster-item-card')[index].querySelector('.cms-poster-image-url');
+        if (input) input.value = '';
+    };
+    reader.readAsDataURL(file);
+}
+
+function previewCmsPosterLinkUrl(index, input) {
+    const preview = document.getElementById(`poster-preview-img-${index}`);
+    if (preview && input.value) {
+        preview.src = input.value;
+    }
+}
+
+function cmsDeletePosterCardSlot(index) {
+    if (confirm('Are you sure you want to delete this event flyer slide?')) {
+        const cards = indexDoc.querySelectorAll('#posters-carousel-container .poster-card');
+        if (cards[index]) {
+            cards[index].remove();
+            // Re-render
+            populatePostersCarouselList();
+            showNotification('Event slide removed from DOM memory.');
+        }
+    }
+}
+
+function cmsAddPosterCardSlot() {
+    const listContainer = document.getElementById('cms-posters-list');
+    const index = document.querySelectorAll('.cms-poster-item-card').length;
+
+    const itemHtml = `
+        <div class="cms-list-item cms-poster-item-card new-item" data-index="${index}">
+            <img class="cms-list-img-preview" id="poster-preview-img-${index}" src="assets/ece-logo.png" alt="Flyer Preview">
+            <div class="cms-list-fields">
+                <div class="form-group" style="grid-column: span 2; margin-bottom:0.5rem;">
+                    <label>Flyer Title</label>
+                    <input type="text" class="form-control cms-poster-title" value="New ECE Challenge Title">
+                </div>
+                <div class="form-group" style="margin-bottom:0.5rem;">
+                    <label>Event Date Details</label>
+                    <input type="text" class="form-control cms-poster-date" value="Date: To Be Announced">
+                </div>
+                <div class="form-group" style="margin-bottom:0.5rem;">
+                    <label>Register URL link</label>
+                    <input type="text" class="form-control cms-poster-link" value="#">
+                </div>
+                <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
+                    <label>Flyer Image source</label>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="assets/ece-logo.png" onchange="previewCmsPosterLinkUrl(${index}, this)">
+                        <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
+                            📤 Upload
+                            <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPosterUploader(${index}, event)">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-delete-list-item" title="Delete Slide" onclick="this.closest('.cms-list-item').remove()">🗑️</button>
+        </div>
+    `;
+    listContainer.insertAdjacentHTML('beforeend', itemHtml);
+}
+
+
+// B. Downloads directory list manager
+function populateDownloadsCmsList() {
+    const listContainer = document.getElementById('cms-downloads-list');
+    listContainer.innerHTML = '';
+
+    const cards = indexDoc.querySelectorAll('#download-grid-container .download-card');
+    cards.forEach((card, index) => {
+        const title = card.querySelector('.file-details h4').innerText.trim();
+        const meta = card.querySelector('.file-details p').innerText.trim();
+        const dlBtn = card.querySelector('.btn-download');
+        const dlUrl = dlBtn ? dlBtn.getAttribute('href') : '';
+        const isCustom = card.classList.contains('custom-dl-card');
+
+        const itemHtml = `
+            <div class="cms-list-item cms-download-item-card" data-index="${index}" data-custom="${isCustom ? 'true' : 'false'}">
+                <div style="font-size: 2.2rem; margin-right: 0.5rem;">📁</div>
+                <div class="cms-list-fields">
+                    <div class="form-group" style="margin-bottom:0.5rem;">
+                        <label>File Display Name</label>
+                        <input type="text" class="form-control cms-download-title" value="${title}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0.5rem;">
+                        <label>Meta Details (PDF/Excel Size)</label>
+                        <input type="text" class="form-control cms-download-meta" value="${meta}">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
+                        <label>Attached Document Destination</label>
+                        <div style="display:flex; gap:0.5rem; align-items:center;">
+                            <input type="text" class="form-control cms-download-url" id="cms-dl-url-${index}" style="flex-grow:1;" value="${dlUrl}" placeholder="Paste raw hyperlink or choose file">
+                            <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
+                                📤 Attach
+                                <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader(${index}, event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(${index})">🗑️</button>
+            </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+    });
+}
+
+function handleCmsDownloadFileUploader(index, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById(`cms-dl-url-${index}`).value = e.target.result; // Stores file Base64 target
+        showNotification(`File attachment '${file.name}' converted successfully.`);
+    };
+    reader.readAsDataURL(file);
+}
+
+function cmsDeleteDownloadCardSlot(index) {
+    if (confirm('Are you sure you want to delete this download document slot?')) {
+        const cards = indexDoc.querySelectorAll('#download-grid-container .download-card');
+        if (cards[index]) {
+            cards[index].remove();
+            populateDownloadsCmsList();
+            showNotification('Download card removed from DOM memory.');
+        }
+    }
+}
+
+function cmsAddDownloadCardSlot() {
+    const listContainer = document.getElementById('cms-downloads-list');
+    const index = document.querySelectorAll('.cms-download-item-card').length;
+
+    const itemHtml = `
+        <div class="cms-list-item cms-download-item-card new-item" data-index="${index}" data-custom="true">
+            <div style="font-size: 2.2rem; margin-right: 0.5rem;">📁</div>
+            <div class="cms-list-fields">
+                <div class="form-group" style="margin-bottom:0.5rem;">
+                    <label>File Display Name</label>
+                    <input type="text" class="form-control cms-download-title" value="New ECE Download Resource">
+                </div>
+                <div class="form-group" style="margin-bottom:0.5rem;">
+                    <label>Meta Details (PDF/Excel Size)</label>
+                    <input type="text" class="form-control cms-download-meta" value="Official PDF Document • 150 KB">
+                </div>
+                <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
+                    <label>Attached Document Destination</label>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <input type="text" class="form-control cms-download-url" id="cms-dl-url-${index}" style="flex-grow:1;" value="#" placeholder="Paste raw hyperlink or choose file">
+                        <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
+                            📤 Attach
+                            <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader(${index}, event)">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-delete-list-item" title="Delete Card" onclick="this.closest('.cms-list-item').remove()">🗑️</button>
+        </div>
+    `;
+    listContainer.insertAdjacentHTML('beforeend', itemHtml);
+}
+
+
+// C. Student Coordinators (5 Slots)
+function populateCoordinatorsCmsList() {
+    const listContainer = document.getElementById('cms-coordinators-container');
+    listContainer.innerHTML = '';
+
+    for (let id = 1; id <= 5; id++) {
+        const nameEl = indexDoc.getElementById(`coord-name-${id}`);
+        const name = nameEl ? nameEl.innerText.trim() : '';
+        const imgEl = indexDoc.getElementById(`coord-img-${id}`);
+        const emojiEl = indexDoc.getElementById(`coord-emoji-${id}`);
+        const initialsText = emojiEl ? emojiEl.innerText.trim() : 'SC';
+        const imgUrl = imgEl ? imgEl.getAttribute('src') : '';
+        const hasPhoto = imgEl && imgEl.style.display === 'block';
+
+        const itemHtml = `
+            <div class="photo-uploader-widget coordinator-cms-widget" style="margin-bottom: 1.5rem;" data-id="${id}">
+                <div class="photo-preview-circle">
+                    <img id="preview-coord-photo-${id}" src="${hasPhoto ? imgUrl : ''}" style="display:${hasPhoto ? 'block' : 'none'};">
+                    <span id="preview-coord-initials-${id}" class="photo-preview-initials" style="display:${hasPhoto ? 'none' : 'block'};">${initialsText}</span>
+                </div>
+                <div style="flex-grow:1; display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Coordinator Name</label>
+                        <input type="text" class="form-control cms-coord-name" value="${name}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
+                        <label>Profile photo controls</label>
+                        <div style="display:flex; gap:0.5rem;">
+                            <label class="btn-upload-file" style="margin:0;">
+                                📤 Photo
+                                <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">
+                            </label>
+                            <button class="btn-clear-photo" style="padding:0.4rem 1rem;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">🗑️ Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+    }
+}
+
+
+// === 5. Image & File Upload Helpers ===
+function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        // Update dashboard preview
+        const pImg = document.getElementById(previewImgId);
+        const pInit = document.getElementById(previewInitialsId);
+        if (pImg && pInit) {
+            pImg.src = e.target.result;
+            pImg.style.display = 'block';
+            pInit.style.display = 'none';
+        }
+
+        // Write directly to background parsed DOM document elements
+        const docImg = indexDoc.getElementById(targetImgId);
+        const docEmoji = indexDoc.getElementById(targetEmojiId);
+        if (docImg && docEmoji) {
+            docImg.src = e.target.result;
+            docImg.style.display = 'block';
+            docEmoji.style.display = 'none';
+        }
+        showNotification('Profile photo processed and saved in DOM memory!');
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearCmsProfilePhoto(targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
+    // Revert dashboard preview
+    const pImg = document.getElementById(previewImgId);
+    const pInit = document.getElementById(previewInitialsId);
+    if (pImg && pInit) {
+        pImg.src = '';
+        pImg.style.display = 'none';
+        pInit.style.display = 'block';
+    }
+
+    // Revert background parsed DOM document elements
+    const docImg = indexDoc.getElementById(targetImgId);
+    const docEmoji = indexDoc.getElementById(targetEmojiId);
+    if (docImg && docEmoji) {
+        docImg.src = '';
+        docImg.style.display = 'none';
+        docEmoji.style.display = 'block';
+    }
+    showNotification('Profile photo reset to initials placeholder.');
+}
+
+
+// === 6. Reconstruct the DOM parser elements and Publish changes ===
+function publishCmsChanges() {
+    if (!indexDoc) {
+        alert('CMS document is not initialized!');
+        return;
+    }
+
+    // 1. Set general Text edits back to parsed DOM
+    updateDocInner('college-name-header', 'field-header-name');
+    updateDocInner('college-auth-header', 'field-header-auth');
+    updateDocInner('college-appr-header', 'field-header-appr');
+    updateDocInner('college-nba-header', 'field-header-nba');
+    
+    updateDocInner('hero-title', 'field-hero-title');
+    updateDocInner('hero-subtitle', 'field-hero-subtitle');
+    
+    updateDocInner('about-card-text', 'field-about-text');
+    updateDocInner('vision-text', 'field-vision-text');
+    updateDocInner('mission-list', 'field-mission-list');
+
+    // HOD 1 Info
+    updateDocInner('hod-name', 'field-hod-name');
+    updateDocInner('hod-designation', 'field-hod-designation');
+    updateDocInner('hod-msg-text', 'field-hod-msg');
+    updateDocInner('hod-research', 'field-hod-research');
+    updateDocInner('hod-email', 'field-hod-email');
+
+    // HOD 2 Info
+    updateDocInner('hod-name-2', 'field-hod-name-2');
+    updateDocInner('hod-designation-2', 'field-hod-designation-2');
+    updateDocInner('hod-msg-text-2', 'field-hod-msg-2');
+    updateDocInner('hod-research-2', 'field-hod-research-2');
+    updateDocInner('hod-email-2', 'field-hod-email-2');
+
+    // 2. Reconstruct Event Flyers Carousel HTML
+    reconstructPostersCmsDom();
+
+    // 3. Reconstruct Downloads grid HTML
+    reconstructDownloadsCmsDom();
+
+    // 4. Reconstruct Student Coordinator details
+    reconstructCoordinatorsCmsDom();
+
+    // 5. Update Supabase variables attributes inside indexDoc body tag
+    const supaUrl = document.getElementById('field-supabase-url').value.trim();
+    const supaKey = document.getElementById('field-supabase-key').value.trim();
+    indexDoc.body.setAttribute('data-supabase-url', supaUrl);
+    indexDoc.body.setAttribute('data-supabase-key', supaKey);
+
+    // Save Supabase credentials to localStorage fallback cache
+    localStorage.setItem('vsb_ece_supabase_url', supaUrl);
+    localStorage.setItem('vsb_ece_supabase_key', supaKey);
+
+    // 6. Serialize updated DOM parser to HTML string
+    const serializedHtml = "<!DOCTYPE html>\n" + indexDoc.documentElement.outerHTML;
+
+    // 7. Extract state JSON object to upsert to Supabase database
+    const stateObj = extractCmsJsonState();
+
+    showNotification('Serializing DOM and publishing edits...');
+
+    // 8. Make HTTP POST request to Python Local CMS Server (Saves to index.html disk)
+    const localPublishPromise = fetch('/save-html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: serializedHtml })
+    }).catch(err => {
+        console.warn('Local CMS Python server is offline. Publishing updates directly to Supabase cloud database.');
+    });
+
+    // 9. Upsert state JSON to Supabase Cloud REST endpoint
+    const cloudPublishPromise = saveCmsToSupabase(supaUrl, supaKey, stateObj);
+
+    Promise.all([localPublishPromise, cloudPublishPromise])
+    .then(([localRes, cloudRes]) => {
+        let msg = 'Website CMS updates saved successfully!';
+        if (cloudRes && cloudRes.ok) {
+            msg += ' Supabase live cloud database updated and synchronized!';
+        } else if (cloudRes) {
+            msg += ' (Supabase sync failed - verify RLS settings or API keys)';
+        }
+        alert(msg);
+        window.location.reload(); // Refresh the CMS forms with the newly updated DOM values
+    })
+    .catch(err => {
+        console.error('Publishing changes exception:', err);
+        alert('Error publishing edits. Verify system configuration endpoints.');
+    });
+}
+
+function updateDocInner(elId, fieldId) {
+    const el = indexDoc.getElementById(elId);
+    const f = document.getElementById(fieldId);
+    if (el && f) {
+        el.innerHTML = f.value;
+    }
+}
+
+// Rebuild posters elements inside indexDoc
+function reconstructPostersCmsDom() {
+    const container = indexDoc.getElementById('posters-carousel-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const items = document.querySelectorAll('.cms-poster-item-card');
+
+    items.forEach((item, idx) => {
+        const title = item.querySelector('.cms-poster-title').value.trim();
+        const date = item.querySelector('.cms-poster-date').value.trim();
+        const regLink = item.querySelector('.cms-poster-link').value.trim();
+        const imgPreview = item.querySelector('.cms-list-img-preview');
+        const imgUrl = item.querySelector('.cms-poster-image-url').value.trim() || imgPreview.src;
+        const isActive = idx === 0;
+
+        const cardHtml = `
+            <div class="poster-card tilt-card ${isActive ? 'active' : ''}">
+                <div class="poster-image-container">
+                    <img class="poster-1to1" src="${imgUrl}" alt="${title}">
+                    <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
+                    <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
+                </div>
+                <div class="poster-details">
+                    <h3 class="event-title-text">${title}</h3>
+                    <p class="event-date-text">${date}</p>
+                    <div class="link-action-container">
+                        <a class="event-reg-link" href="${regLink}" target="_blank">Register Now</a>
+                        <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
+                            <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
+                            <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="${regLink}" onchange="updateActivePosterLink(this)">
+                            <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="${imgUrl}" onchange="updateActivePosterImageByUrl(this)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHtml);
+    });
+}
+
+// Rebuild downloads elements inside indexDoc
+function reconstructDownloadsCmsDom() {
+    const container = indexDoc.getElementById('download-grid-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const items = document.querySelectorAll('.cms-download-item-card');
+
+    items.forEach(item => {
+        const title = item.querySelector('.cms-download-title').value.trim();
+        const meta = item.querySelector('.cms-download-meta').value.trim();
+        const fileUrl = item.querySelector('.cms-download-url').value.trim();
+        const isCustom = item.getAttribute('data-custom') === 'true';
+
+        const fileIcon = fileUrl.includes('.xlsx') || fileUrl.includes('Excel') ? '📊' : '📄';
+
+        const cardHtml = `
+            <div class="download-card tilt-card ${isCustom ? 'custom-dl-card' : ''}">
+                <div class="file-info">
+                    <div class="file-icon">${fileIcon}</div>
+                    <div class="file-details">
+                        <h4>${title}</h4>
+                        <p>${meta}</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a href="${fileUrl}" download="${title}.pdf" class="btn-download" onclick="showDownloadNotify('${title}')">↓</a>
+                    ${isCustom ? `<button class="btn-admin-logout btn-admin-only-inline" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:none; align-items:center; justify-content:center;" onclick="deleteCustomDownloadCard(this)">🗑️</button>` : ''}
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', cardHtml);
+    });
+}
+
+// Rebuild student coordinator elements inside indexDoc
+function reconstructCoordinatorsCmsDom() {
+    const widgets = document.querySelectorAll('.coordinator-cms-widget');
+    widgets.forEach(widget => {
+        const id = widget.getAttribute('data-id');
+        const name = widget.querySelector('.cms-coord-name').value.trim();
+        
+        // Update coordinator name inside indexDoc
+        const docName = indexDoc.getElementById(`coord-name-${id}`);
+        if (docName) {
+            docName.innerText = name;
+        }
+    });
+}
+
+// Collect current CMS JSON state values
+function extractCmsJsonState() {
+    const editsObj = {};
+    const editableElements = [
+        'college-name-header', 'college-auth-header', 'college-appr-header', 'college-nba-header',
+        'hero-title', 'hero-subtitle', 'about-card-text', 'vision-text', 'mission-list', 
+        'intake-ug-title', 'intake-ug-text', 'intake-pg-title', 'intake-pg-text', 
+        'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
+        'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
+        'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
+        'coordinators-container'
+    ];
+
+    editableElements.forEach(id => {
+        const el = indexDoc.getElementById(id);
+        if (el) {
+            editsObj[id] = el.innerHTML;
+        }
+    });
+
+    const coordPhotosArray = [];
+    for (let id = 1; id <= 5; id++) {
+        const img = indexDoc.getElementById(`coord-img-${id}`);
+        const emoji = indexDoc.getElementById(`coord-emoji-${id}`);
+        if (img && emoji) {
+            coordPhotosArray.push({
+                id: id,
+                src: img.src,
+                displayImg: img.style.display,
+                displayEmoji: emoji.style.display
+            });
+        }
+    }
+
+    return {
+        edits: editsObj,
+        postersHtml: indexDoc.getElementById('posters-carousel-container').innerHTML,
+        downloadsHtml: indexDoc.getElementById('download-grid-container').innerHTML,
+        hodPhotoSrc: indexDoc.getElementById('hod-photo-img').src,
+        hodPhotoDisplay: indexDoc.getElementById('hod-photo-img').style.display,
+        hodEmojiDisplay: indexDoc.getElementById('hod-avatar-emoji').style.display,
+        hodPhotoSrc2: indexDoc.getElementById('hod-photo-img-2').src,
+        hodPhotoDisplay2: indexDoc.getElementById('hod-photo-img-2').style.display,
+        hodEmojiDisplay2: indexDoc.getElementById('hod-avatar-emoji-2').style.display,
+        coordPhotos: coordPhotosArray,
+        adminAvatarSrc: indexDoc.getElementById('admin-profile-pic') ? indexDoc.getElementById('admin-profile-pic').src : ''
+    };
+}
+
+// Save CMS State JSON to Supabase
+function saveCmsToSupabase(url, key, state) {
+    if (!url || !key) return Promise.resolve(null);
+    
+    const upsertUrl = `${url.trim()}/rest/v1/vsb_ece_state`;
+    return fetch(upsertUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key.trim(),
+            'Authorization': `Bearer ${key.trim()}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'site_data',
+            value: state
+        })
+    });
+}
+
+
+// === 7. Auxiliary Operations & system cache resets ===
+function showNotification(message) {
+    const banner = document.getElementById('notification-banner');
+    banner.textContent = message;
+    banner.style.display = 'block';
+    
+    setTimeout(() => {
+        banner.style.display = 'none';
+    }, 3000);
+}
+
+function resetLocalStorageConfig() {
+    if (confirm('Clear local caching configs (Supabase URL, Session status)?')) {
+        localStorage.removeItem('vsb_ece_supabase_url');
+        localStorage.removeItem('vsb_ece_supabase_key');
+        localStorage.removeItem('vsb_ece_is_admin');
+        alert('Config cache cleared.');
+        window.location.reload();
+    }
+}
+
+function previewLiveWebsite() {
+    window.open('index.html', '_blank');
+}

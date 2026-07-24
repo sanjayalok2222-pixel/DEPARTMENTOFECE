@@ -34,7 +34,7 @@
                     <span>ECE Department</span>
                 </div>
                 <!-- Admin Login Button -->
-                <button class="btn-admin" id="admin-login-btn" onclick="openLoginModal()">Admin Login</button>
+                <button class="btn-admin" id="admin-login-btn" onclick="window.open('admin.html', '_blank')">Admin Login</button>
             </div>
         </div>
     </header>
@@ -625,6 +625,7 @@
         <div class="admin-actions-btns">
             <!-- Gear toggler button -->
             <button class="btn-admin-gear" onclick="toggleSupabaseSettings()" title="Supabase Cloud Settings">⚙️</button>
+            <button class="btn-preview" onclick="window.open('admin.html', '_blank')" style="background:rgba(0, 210, 255, 0.1); border:1px solid var(--accent-cyan); color:var(--accent-cyan); padding:0.5rem 1.25rem; border-radius:30px; font-family:'Outfit'; font-weight:700; font-size:0.85rem; cursor:pointer; margin-right: 0.25rem;">Dashboard 📊</button>
             <button class="btn-save-changes" onclick="saveWebChanges()">Save & Sync Changes</button>
             <button class="btn-admin-logout" onclick="logoutAdmin()">Logout</button>
         </div>
