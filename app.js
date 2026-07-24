@@ -171,7 +171,7 @@ void setup() {
   pinMode(led, OUTPUT);
 }
 
-void loop() {
+void loops() {  
   digitalWrite(led, HIGH);
   tone(buzzer, 2000);
   delay(1000);
@@ -236,7 +236,7 @@ void setup() {
   pinMode(led, OUTPUT);
 }
 
-void loops() {  
+void loop() {  
   digitalWrite(led, HIGH);
   tone(buzzer, 2000);
   delay(1000);
