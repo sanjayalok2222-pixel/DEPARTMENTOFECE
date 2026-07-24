@@ -280,26 +280,26 @@
             <div class="carousel-wrapper">
                 <button class="carousel-control prev" onclick="prevPoster()">❮</button>
                 <div class="poster-card-container" id="posters-carousel-container">
-                    <!-- Default initial poster card -->
+                    <!-- Default initial ArduFusion poster card -->
                     <div class="poster-card tilt-card active">
                         <div class="poster-image-container">
-                            <!-- 1:1 Poster Image -->
-                            <img class="poster-1to1" src="assets/vsb-ece-poster.jpg" alt="Event Poster">
+                            <!-- 1:1 Poster Image (ArduFusion) -->
+                            <img class="poster-1to1" src="assets/ardufusion-poster.jpg" alt="ArduFusion Poster">
                             <!-- Admin Edit Image Trigger -->
                             <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
                             <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
                         </div>
                         <div class="poster-details">
-                            <h3 class="event-title-text">VSB ECE Symposium 2026</h3>
-                            <p class="event-date-text">Date: September 15, 2026</p>
-                            <!-- Custom Link Below Poster -->
+                            <h3 class="event-title-text">ArduFusion</h3>
+                            <p class="event-date-text">Date: July 25.07.2026 (Saturday)</p>
+                            <!-- Custom Link Below Poster - styled as a beautiful button -->
                             <div class="link-action-container">
-                                <a class="event-reg-link" href="https://forms.gle/vsbece2026" target="_blank">Register Now</a>
+                                <a class="event-reg-link" href="https://forms.gle/MBd6YtJUSsTDWSfs6" target="_blank">Register Now</a>
                                 <!-- Editable fields shown only to admin -->
                                 <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
                                     <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
-                                    <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://forms.gle/vsbece2026" onchange="updateActivePosterLink(this)">
-                                    <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/vsb-ece-poster.jpg" onchange="updateActivePosterImageByUrl(this)">
+                                    <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://forms.gle/MBd6YtJUSsTDWSfs6" onchange="updateActivePosterLink(this)">
+                                    <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/ardufusion-poster.jpg" onchange="updateActivePosterImageByUrl(this)">
                                 </div>
                             </div>
                         </div>
@@ -396,10 +396,10 @@
         
         <div class="hod-container tilt-card">
             <div class="hod-profile-wrapper">
-                <div class="coord-avatar" id="hod-avatar-container" style="width: 180px; height: 180px; font-size: 5rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+                <div class="coord-avatar" id="hod-avatar-container" style="width: 180px; height: 180px; font-size: 1.8rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
                     <!-- Real Photo element, initially hidden -->
                     <img id="hod-photo-img" src="" alt="HOD Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="hod-avatar-emoji">👨‍🏫</span>
+                    <span id="hod-avatar-emoji" class="coord-initials">PA</span>
                     <!-- Photo change file input trigger -->
                     <input type="file" id="admin-hod-upload" accept="image/*" style="display:none;" onchange="handleHodPhotoUpload(event)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerHodUpload()">✏️</button>
@@ -433,7 +433,7 @@
             <div class="coord-card tilt-card" id="coord-1">
                 <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                     <img id="coord-img-1" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="coord-emoji-1">⚡</span>
+                    <span id="coord-emoji-1" class="coord-initials">SB</span>
                     <input type="file" id="admin-coord-upload-1" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 1)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(1)">✏️</button>
                 </div>
@@ -445,7 +445,7 @@
             <div class="coord-card tilt-card" id="coord-2">
                 <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                     <img id="coord-img-2" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="coord-emoji-2">⚙️</span>
+                    <span id="coord-emoji-2" class="coord-initials">RS</span>
                     <input type="file" id="admin-coord-upload-2" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 2)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(2)">✏️</button>
                 </div>
@@ -457,7 +457,7 @@
             <div class="coord-card tilt-card" id="coord-3">
                 <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                     <img id="coord-img-3" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="coord-emoji-3">💡</span>
+                    <span id="coord-emoji-3" class="coord-initials">SS</span>
                     <input type="file" id="admin-coord-upload-3" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 3)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(3)">✏️</button>
                 </div>
@@ -469,7 +469,7 @@
             <div class="coord-card tilt-card" id="coord-4">
                 <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                     <img id="coord-img-4" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="coord-emoji-4">🔮</span>
+                    <span id="coord-emoji-4" class="coord-initials">KT</span>
                     <input type="file" id="admin-coord-upload-4" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 4)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(4)">✏️</button>
                 </div>
@@ -481,7 +481,7 @@
             <div class="coord-card tilt-card" id="coord-5">
                 <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                     <img id="coord-img-5" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="coord-emoji-5">🚀</span>
+                    <span id="coord-emoji-5" class="coord-initials">RP</span>
                     <input type="file" id="admin-coord-upload-5" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 5)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(5)">✏️</button>
                 </div>
@@ -561,13 +561,15 @@
             <span>Admin Active Mode</span>
         </div>
         
-        <!-- Supabase Live Cloud Integration Config (Values are written directly in HTML by save & sync) -->
-        <div class="admin-supabase-config" style="display: flex; gap: 0.5rem; align-items: center; margin-left: 1rem;">
+        <!-- Supabase config container (hidden by default inside the panel) -->
+        <div class="admin-supabase-config" style="display: none; gap: 0.5rem; align-items: center; margin-left: 1rem;">
             <input type="text" id="admin-supabase-url" placeholder="Supabase URL" class="admin-text-field" style="width: 150px; border-color: rgba(255,255,255,0.15);" value="">
             <input type="password" id="admin-supabase-key" placeholder="Supabase Anon Key" class="admin-text-field" style="width: 150px; border-color: rgba(255,255,255,0.15);" value="">
         </div>
 
         <div class="admin-actions-btns">
+            <!-- Gear toggler button -->
+            <button class="btn-admin-gear" onclick="toggleSupabaseSettings()" title="Supabase Cloud Settings">⚙️</button>
             <button class="btn-save-changes" onclick="saveWebChanges()">Save & Sync Changes</button>
             <button class="btn-admin-logout" onclick="logoutAdmin()">Logout</button>
         </div>

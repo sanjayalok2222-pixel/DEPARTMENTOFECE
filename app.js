@@ -209,17 +209,36 @@ function showDownloadNotify(fileName) {
 }
 
 
-// === 6. Dynamic Navigation Link Highlighting ===
+// === 6. Dynamic Navigation & Scroll Hide Header system ===
+let lastScrollY = window.scrollY;
+
 window.addEventListener('scroll', () => {
+    // 1. Scroll-to-Hide Header & Sub-navigation Menu
+    const header = document.querySelector('header');
+    const subNav = document.querySelector('.sub-nav');
+    
+    if (header && subNav) {
+        if (window.scrollY > lastScrollY && window.scrollY > 180) {
+            // Scrolling down: translate headers off-screen
+            header.classList.add('header-hidden');
+            subNav.classList.add('header-hidden');
+        } else {
+            // Scrolling up: slide headers back in
+            header.classList.remove('header-hidden');
+            subNav.classList.remove('header-hidden');
+        }
+    }
+    lastScrollY = window.scrollY;
+
+    // 2. Active Tab Link highlight
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-links li a');
-    
     let currentSection = '';
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-        if (window.scrollY >= (sectionTop - 180)) {
+        if (window.scrollY >= (sectionTop - 250)) {
             currentSection = section.getAttribute('id');
         }
     });
@@ -269,6 +288,14 @@ function closeAddFileModal() {
     addFileModal.classList.remove('active');
     document.getElementById('addFileForm').reset();
     tempNewFileUrl = null;
+}
+
+// Toggle Supabase Config view via settings gear icon click
+function toggleSupabaseSettings() {
+    const configPanel = document.querySelector('.admin-supabase-config');
+    if (configPanel) {
+        configPanel.classList.toggle('active');
+    }
 }
 
 // Submit Admin credentials
@@ -366,7 +393,7 @@ function logoutAdmin() {
 function saveWebChanges() {
     const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
 
-    // BUG FIX 1: Explicitly write current input value properties into the HTML element value attributes!
+    // BUG FIX: Explicitly write current input value properties into the HTML element value attributes!
     const supaUrlInput = document.getElementById('admin-supabase-url');
     const supaKeyInput = document.getElementById('admin-supabase-key');
     if (supaUrlInput) supaUrlInput.setAttribute('value', supaUrlInput.value);
@@ -503,7 +530,6 @@ function nextPoster() {
     }
 }
 
-// Backup sync parameters trigger
 function prevPoster() {
     const cards = getPosterCards();
     if (cards.length <= 1) return;
@@ -781,6 +807,7 @@ function loadFromSupabase() {
     });
 }
 
+// Push state to Supabase
 function saveToSupabase(state) {
     const url = document.getElementById('admin-supabase-url') ? document.getElementById('admin-supabase-url').value.trim() : '';
     const key = document.getElementById('admin-supabase-key') ? document.getElementById('admin-supabase-key').value.trim() : '';

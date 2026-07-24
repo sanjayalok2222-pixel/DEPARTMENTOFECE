@@ -26,6 +26,13 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
+    padding-top: 190px;
+}
+
+@media (max-width: 1024px) {
+    body {
+        padding-top: 280px;
+    }
 }
 
 /* Background watermark using ECE Logo */
@@ -61,18 +68,25 @@ body::before {
 
 /* Header & Navigation Styles */
 header {
-    background: rgba(5, 7, 14, 0.85);
+    background: rgba(5, 7, 14, 0.95);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
     z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+header.header-hidden {
+    transform: translateY(-100%);
 }
 
 .header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1.25rem 2rem;
+    max-width: 100%;
+    padding: 1.25rem 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -171,10 +185,27 @@ header {
 
 /* Sticky Secondary Sub-nav */
 .sub-nav {
-    background: rgba(8, 12, 23, 0.9);
+    background: rgba(8, 12, 23, 0.95);
     border-bottom: 1px solid rgba(0, 210, 255, 0.1);
-    position: relative;
+    position: fixed;
+    top: 130px;
+    left: 0;
+    width: 100%;
     z-index: 99;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sub-nav.header-hidden {
+    transform: translateY(-190px);
+}
+
+@media (max-width: 1024px) {
+    .sub-nav {
+        top: 220px;
+    }
+    .sub-nav.header-hidden {
+        transform: translateY(-290px);
+    }
 }
 
 .nav-links {
@@ -750,14 +781,17 @@ tr:hover td {
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+    background: rgba(255, 255, 255, 0.03);
     margin: 0 auto 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    font-size: 1.6rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    border: 2px solid var(--accent-cyan);
+    box-shadow: var(--text-glow);
 }
 
 .coord-card h4 {
@@ -1385,6 +1419,67 @@ body.admin-mode .btn-admin-only-inline {
     background: var(--accent-cyan);
     transform: scale(1.1);
 }
+
+.admin-supabase-config {
+    display: none !important;
+}
+
+.admin-supabase-config.active {
+    display: flex !important;
+}
+
+.btn-admin-gear {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.btn-admin-gear:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: var(--text-glow);
+    transform: rotate(45deg);
+}
+
+.event-reg-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-cyan);
+    color: var(--bg-dark) !important;
+    padding: 0.8rem 2.2rem;
+    border-radius: 50px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    box-shadow: var(--text-glow);
+    transition: all 0.3s ease;
+    margin-top: 1.25rem;
+    border: 1px solid var(--accent-cyan);
+    cursor: pointer;
+}
+
+.event-reg-link:hover {
+    background: transparent;
+    color: var(--accent-cyan) !important;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    transform: translateY(-2px);
+}
+
 
 /* Animations */
 @keyframes fadeIn {
