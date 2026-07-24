@@ -3,7 +3,25 @@ let indexDoc = null; // Background parsed DOM document of index.html
 let activeTab = 'overview';
 
 // Check persistent admin session on load
+let globalSupaUrl = '';
+let globalSupaKey = '';
+
+// Check persistent admin session on load
 window.addEventListener('DOMContentLoaded', () => {
+    // 1. Fetch Supabase configuration from local config.json securely
+    fetch('/get-config')
+        .then(res => res.json())
+        .then(config => {
+            globalSupaUrl = config.supabase_url || '';
+            globalSupaKey = config.supabase_key || '';
+            
+            const fieldUrl = document.getElementById('field-supabase-url');
+            const fieldKey = document.getElementById('field-supabase-key');
+            if (fieldUrl) fieldUrl.value = globalSupaUrl;
+            if (fieldKey) fieldKey.value = globalSupaKey;
+        })
+        .catch(err => console.warn('Could not load config.json from local server fallback.'));
+
     const isAuth = localStorage.getItem('vsb_ece_is_admin') === 'true';
     if (isAuth) {
         document.getElementById('login-overlay').style.display = 'none';
@@ -15,30 +33,66 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Admin Authentication Login
-function handleCmsLogin(event) {
+// Admin Authentication Login (Supabase Auth first, local ece_1234 setup fallback)
+async function handleCmsLogin(event) {
     event.preventDefault();
-    const user = document.getElementById('cms-username').value;
-    const pass = document.getElementById('cms-password').value;
+    const username = document.getElementById('cms-username').value.trim();
+    const password = document.getElementById('cms-password').value.trim();
 
-    if (user === 'ece_1234' && pass === 'ECE1234') {
-        localStorage.setItem('vsb_ece_is_admin', 'true');
-        // Copy auth flag to parent/student landing session too
-        localStorage.setItem('vsb_ece_is_admin', 'true');
-        
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('dashboard-container').style.display = 'flex';
-        
-        showNotification('Authenticated successfully! Loading CMS workspace...');
-        loadIndexHtmlDocument();
+    // Use current form values or global variables
+    const supaUrl = globalSupaUrl || (document.getElementById('field-supabase-url') ? document.getElementById('field-supabase-url').value.trim() : '');
+    const supaKey = globalSupaKey || (document.getElementById('field-supabase-key') ? document.getElementById('field-supabase-key').value.trim() : '');
+
+    if (supaUrl && supaKey) {
+        try {
+            showNotification('Authenticating securely with Supabase Auth...');
+            // Authenticate directly using Supabase Auth REST endpoint (No hardcoded credentials!)
+            const response = await fetch(`${supaUrl}/auth/v1/token?grant_type=password`, {
+                method: 'POST',
+                headers: {
+                    'apikey': supaKey,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: username, password: password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('vsb_ece_auth_token', data.access_token);
+                localStorage.setItem('vsb_ece_is_admin', 'true');
+                
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('dashboard-container').style.display = 'flex';
+                
+                showNotification('Authenticated securely via Supabase Auth!');
+                loadIndexHtmlDocument();
+            } else {
+                const errData = await response.json();
+                alert('Authentication failed: ' + (errData.error_description || 'Invalid email or password.'));
+            }
+        } catch (err) {
+            alert('Supabase Auth error: ' + err.message);
+        }
     } else {
-        alert('Authentication failed! Incorrect admin credentials.');
+        // Fallback for initial local setup if Supabase isn't configured yet
+        if (username === 'ece_1234' && password === 'ECE1234') {
+            localStorage.setItem('vsb_ece_is_admin', 'true');
+            
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('dashboard-container').style.display = 'flex';
+            
+            showNotification('LoggedIn locally. Please configure Supabase settings immediately!');
+            loadIndexHtmlDocument();
+        } else {
+            alert('Authentication failed! Enter correct local setup credentials.');
+        }
     }
 }
 
 // Secure Logout
 function handleCmsLogout() {
     localStorage.removeItem('vsb_ece_is_admin');
+    localStorage.removeItem('vsb_ece_auth_token');
     window.location.reload();
 }
 
@@ -548,15 +602,19 @@ function publishCmsChanges() {
     // 4. Reconstruct Student Coordinator details
     reconstructCoordinatorsCmsDom();
 
-    // 5. Update Supabase variables attributes inside indexDoc body tag
+    // 5. Update Supabase variables in memory and localStorage
     const supaUrl = document.getElementById('field-supabase-url').value.trim();
     const supaKey = document.getElementById('field-supabase-key').value.trim();
-    indexDoc.body.setAttribute('data-supabase-url', supaUrl);
-    indexDoc.body.setAttribute('data-supabase-key', supaKey);
+    
+    globalSupaUrl = supaUrl;
+    globalSupaKey = supaKey;
 
-    // Save Supabase credentials to localStorage fallback cache
     localStorage.setItem('vsb_ece_supabase_url', supaUrl);
     localStorage.setItem('vsb_ece_supabase_key', supaKey);
+
+    // Secure: Strip keys from index.html body attributes to prevent exposing secrets in public repo
+    indexDoc.body.setAttribute('data-supabase-url', '');
+    indexDoc.body.setAttribute('data-supabase-key', '');
 
     // 6. Serialize updated DOM parser to HTML string
     const serializedHtml = "<!DOCTYPE html>\n" + indexDoc.documentElement.outerHTML;
@@ -566,7 +624,14 @@ function publishCmsChanges() {
 
     showNotification('Serializing DOM and publishing edits...');
 
-    // 8. Make HTTP POST request to Python Local CMS Server (Saves to index.html disk)
+    // 8. Save config to server config.json privately (so it's ignored by Git)
+    const saveConfigPromise = fetch('/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supabase_url: supaUrl, supabase_key: supaKey })
+    }).catch(err => console.warn('Could not save credentials to local config.json file.'));
+
+    // 9. Make HTTP POST request to Python Local CMS Server (Saves to index.html disk)
     const localPublishPromise = fetch('/save-html', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -575,10 +640,10 @@ function publishCmsChanges() {
         console.warn('Local CMS Python server is offline. Publishing updates directly to Supabase cloud database.');
     });
 
-    // 9. Upsert state JSON to Supabase Cloud REST endpoint
+    // 10. Upsert state JSON to Supabase Cloud REST endpoint
     const cloudPublishPromise = saveCmsToSupabase(supaUrl, supaKey, stateObj);
 
-    Promise.all([localPublishPromise, cloudPublishPromise])
+    Promise.all([saveConfigPromise, localPublishPromise, cloudPublishPromise])
     .then(([localRes, cloudRes]) => {
         let msg = 'Website CMS updates saved successfully!';
         if (cloudRes && cloudRes.ok) {

@@ -1033,21 +1033,47 @@ function applyFetchedState(state) {
 
 // === 13. Initializer Loader ===
 function loadAllWebData() {
-    // 1. Restore persistent cache parameters
-    const url = localStorage.getItem('vsb_ece_supabase_url') || '';
-    const key = localStorage.getItem('vsb_ece_supabase_key') || '';
-    
-    if (url && document.getElementById('admin-supabase-url')) {
-        document.getElementById('admin-supabase-url').value = url;
-        document.getElementById('admin-supabase-url').setAttribute('value', url);
-    }
-    if (key && document.getElementById('admin-supabase-key')) {
-        document.getElementById('admin-supabase-key').value = key;
-        document.getElementById('admin-supabase-key').setAttribute('value', key);
-    }
-
-    // 2. Query and sync live database state from Supabase Cloud
-    loadFromSupabase();
+    // 1. Fetch Supabase configuration from local config.json securely if running locally
+    fetch('/get-config')
+        .then(res => res.json())
+        .then(config => {
+            const url = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || '';
+            const key = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || '';
+            
+            if (url) {
+                localStorage.setItem('vsb_ece_supabase_url', url);
+                if (document.getElementById('admin-supabase-url')) {
+                    document.getElementById('admin-supabase-url').value = url;
+                    document.getElementById('admin-supabase-url').setAttribute('value', url);
+                }
+            }
+            if (key) {
+                localStorage.setItem('vsb_ece_supabase_key', key);
+                if (document.getElementById('admin-supabase-key')) {
+                    document.getElementById('admin-supabase-key').value = key;
+                    document.getElementById('admin-supabase-key').setAttribute('value', key);
+                }
+            }
+            
+            // 2. Query and sync live database state from Supabase Cloud
+            loadFromSupabase();
+        })
+        .catch(err => {
+            // Standalone production hosting fallback (e.g. Vercel)
+            const url = localStorage.getItem('vsb_ece_supabase_url') || '';
+            const key = localStorage.getItem('vsb_ece_supabase_key') || '';
+            
+            if (url && document.getElementById('admin-supabase-url')) {
+                document.getElementById('admin-supabase-url').value = url;
+                document.getElementById('admin-supabase-url').setAttribute('value', url);
+            }
+            if (key && document.getElementById('admin-supabase-key')) {
+                document.getElementById('admin-supabase-key').value = key;
+                document.getElementById('admin-supabase-key').setAttribute('value', key);
+            }
+            
+            loadFromSupabase();
+        });
 
     // 3. Auto log in if admin session persists
     if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
