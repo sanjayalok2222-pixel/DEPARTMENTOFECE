@@ -140,12 +140,15 @@ const portalContent = document.getElementById('club-portal-content');
 
 function openClubInterface(clubType) {
     if (clubType === 'electronics') {
+        const r1 = document.getElementById('round-1-url')?.innerText.trim() || 'https://portiz-epeyysyfu-rubahans-projects.vercel.app/';
+        const r2 = document.getElementById('round-2-url')?.innerText.trim() || 'https://game.educaplay.com/';
+
         portalContent.innerHTML = `
             <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.5rem; text-align: center;">🔌 Electronics Club Challenges</h3>
             <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; text-align: center;">Click on the rounds below to launch the technical challenges directly:</p>
             <div style="display: flex; flex-direction: column; gap: 1.25rem; align-items: center; width: 100%; max-width: 400px; margin: 0 auto;">
-                <a href="https://portiz-epeyysyfu-rubahans-projects.vercel.app/" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 1 - Play</a>
-                <a href="https://game.educaplay.com/" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 2 - Challenge</a>
+                <a href="${r1}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 1 - Play</a>
+                <a href="${r2}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 2 - Challenge</a>
                 <button onclick="showRound3Challenge()" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">Round 3 - Simulation</button>
             </div>
         `;
@@ -251,7 +254,7 @@ void loop() {
 
             <div style="text-align: center; margin-top: 0.5rem;">
                 <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #ff4a4a; letter-spacing: 1px; margin-bottom: 0.75rem; font-weight: 800;">📢 COPY THE CORRECT CODE</h4>
-                <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To Round 3</a>
+                <a href="${document.getElementById('round-3-url')?.innerText.trim() || 'https://wokwi.com/projects/new/arduino-uno'}" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To Round 3</a>
             </div>
         </div>
     `;

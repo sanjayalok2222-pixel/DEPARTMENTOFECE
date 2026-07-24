@@ -186,6 +186,9 @@ function populateCmsForms() {
     setVal('field-about-text', 'about-card-text');
     setVal('field-vision-text', 'vision-text');
     setVal('field-mission-list', 'mission-list');
+    setVal('field-round-1', 'round-1-url');
+    setVal('field-round-2', 'round-2-url');
+    setVal('field-round-3', 'round-3-url');
 
     // D. Database configs (Supabase)
     const storedSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || indexDoc.body.getAttribute('data-supabase-url') || '';
@@ -590,6 +593,9 @@ function publishCmsChanges() {
     updateDocInner('about-card-text', 'field-about-text');
     updateDocInner('vision-text', 'field-vision-text');
     updateDocInner('mission-list', 'field-mission-list');
+    updateDocInner('round-1-url', 'field-round-1');
+    updateDocInner('round-2-url', 'field-round-2');
+    updateDocInner('round-3-url', 'field-round-3');
 
     // HOD 1 Info
     updateDocInner('hod-name', 'field-hod-name');
@@ -781,7 +787,7 @@ function extractCmsJsonState() {
         'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
         'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
         'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
-        'coordinators-container'
+        'coordinators-container', 'round-1-url', 'round-2-url', 'round-3-url'
     ];
 
     editableElements.forEach(id => {
