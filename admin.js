@@ -4,9 +4,8 @@ let activeTab = 'overview';
 
 // Check persistent admin session on load
 let globalSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-let globalSupaKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+let globalSupaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
 
-// Check persistent admin session on load
 // Check persistent admin session on load
 window.addEventListener('DOMContentLoaded', () => {
     // 1. Fetch Supabase configuration from local config.json securely
@@ -14,14 +13,14 @@ window.addEventListener('DOMContentLoaded', () => {
         .then(res => res.json())
         .then(config => {
             globalSupaUrl = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
-            globalSupaKey = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+            globalSupaKey = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
             
             populateSupaFields();
         })
         .catch(err => {
             console.warn('Could not load config.json from local server fallback. Using Vercel production fallbacks.');
             globalSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
-            globalSupaKey = localStorage.getItem('vsb_ece_supabase_key') || 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+            globalSupaKey = localStorage.getItem('vsb_ece_supabase_key') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
             
             populateSupaFields();
         });
@@ -40,55 +39,11 @@ window.addEventListener('DOMContentLoaded', () => {
 function populateSupaFields() {
     const fieldUrl = document.getElementById('field-supabase-url');
     const fieldKey = document.getElementById('field-supabase-key');
-    const loginUrl = document.getElementById('login-supa-url');
-    const loginKey = document.getElementById('login-supa-key');
     
     if (fieldUrl) fieldUrl.value = globalSupaUrl;
     if (fieldKey) fieldKey.value = globalSupaKey;
-    if (loginUrl) loginUrl.value = globalSupaUrl;
-    if (loginKey) loginKey.value = globalSupaKey;
 }
 
-// Save database settings directly on the login card
-function saveLoginSupaConfig() {
-    const supaUrlInput = document.getElementById('login-supa-url');
-    const supaKeyInput = document.getElementById('login-supa-key');
-    if (!supaUrlInput || !supaKeyInput) return;
-
-    let supaUrl = supaUrlInput.value.trim();
-    const supaKey = supaKeyInput.value.trim();
-
-    if (!supaUrl || !supaKey) {
-        alert('Please enter both Supabase URL and Anon Key!');
-        return;
-    }
-
-    // Clean trailing slash
-    if (supaUrl.endsWith('/')) {
-        supaUrl = supaUrl.slice(0, -1);
-    }
-
-    globalSupaUrl = supaUrl;
-    globalSupaKey = supaKey;
-
-    localStorage.setItem('vsb_ece_supabase_url', supaUrl);
-    localStorage.setItem('vsb_ece_supabase_key', supaKey);
-
-    // Save to local config.json privately on disk if running local server
-    fetch('/save-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ supabase_url: supaUrl, supabase_key: supaKey })
-    })
-    .then(() => {
-        showNotification('Database credentials saved successfully!');
-        populateSupaFields();
-    })
-    .catch(err => {
-        showNotification('Database credentials cached in browser localStorage.');
-        populateSupaFields();
-    });
-}
 
 // Admin Authentication Login via Supabase Auth REST
 async function handleCmsLogin(event) {
