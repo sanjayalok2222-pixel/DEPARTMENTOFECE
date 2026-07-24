@@ -146,11 +146,134 @@ function openClubInterface(clubType) {
             <div style="display: flex; flex-direction: column; gap: 1.25rem; align-items: center; width: 100%; max-width: 400px; margin: 0 auto;">
                 <a href="https://portiz-epeyysyfu-rubahans-projects.vercel.app/" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 1 - Play</a>
                 <a href="https://game.educaplay.com/" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 2 - Challenge</a>
-                <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 3 - Simulation</a>
+                <button onclick="showRound3Challenge()" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">Round 3 - Simulation</button>
             </div>
         `;
         clubModal.classList.add('active');
     }
+}
+
+function showRound3Challenge() {
+    portalContent.innerHTML = `
+        <div class="round3-challenge-container" style="display: flex; flex-direction: column; gap: 1.25rem; width: 100%;">
+            <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1rem; margin-bottom: 0.5rem;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
+            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; color: var(--accent-cyan); text-align: center; margin-bottom: 0.25rem;">💻 Arduino Uno Code Challenge</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; text-align: center; margin-bottom: 1rem;">Find the correct version among the four codes below, copy it, and launch the Wokwi simulation tool.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-height: 380px; overflow-y: auto; padding-right: 0.5rem;">
+                <!-- Code 1 -->
+                <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 1 (Option A)</span>
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
+const int buzzer = 8;
+
+void setup() {
+  pinMode(led, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(led, HIGH);
+  tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
+  delay(1000);
+}</pre>
+                    <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
+                </div>
+
+                <!-- Code 2 -->
+                <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 2 (Option B)</span>
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13
+const int buzzer = 8;
+
+void setup() {
+  pinMode(led, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(led, HIGH);
+  tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
+  delay(1000);
+}</pre>
+                    <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
+                </div>
+
+                <!-- Code 3 -->
+                <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 3 (Option C)</span>
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
+const int buzzer = 8;
+
+void setup() {
+  pinMode(led, OUTPUT);
+
+void loop() {
+  digitalWrite(led, HIGH);
+  tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
+  delay(1000);
+}</pre>
+                    <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
+                </div>
+
+                <!-- Code 4 -->
+                <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 4 (Option D)</span>
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
+const int buzzer = 8;
+
+void setup() {
+  pinMode(led, OUTPUT);
+}
+
+void loops() {  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
+  delay(1000);
+}</pre>
+                    <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 0.5rem;">
+                <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #ff4a4a; letter-spacing: 1px; margin-bottom: 0.75rem; font-weight: 800;">📢 COPY THE CORRECT CODE</h4>
+                <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To Round 3</a>
+            </div>
+        </div>
+    `;
+}
+
+function copyToClipboard(button) {
+    const code = button.previousElementSibling.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        const originalText = button.textContent;
+        button.textContent = "Copied!";
+        button.style.background = "#4ade80";
+        button.style.borderColor = "#4ade80";
+        button.style.color = "#05070e";
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = "rgba(0,210,255,0.1)";
+            button.style.borderColor = "var(--accent-cyan)";
+            button.style.color = "var(--accent-cyan)";
+        }, 1500);
+    }).catch(err => {
+        console.error("Clipboard copy failure:", err);
+    });
 }
 
 function closeClubModal() {
