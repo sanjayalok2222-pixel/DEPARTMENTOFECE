@@ -3,8 +3,8 @@ let indexDoc = null; // Background parsed DOM document of index.html
 let activeTab = 'overview';
 
 // Check persistent admin session on load
-let globalSupaUrl = '';
-let globalSupaKey = '';
+let globalSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+let globalSupaKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
 
 // Check persistent admin session on load
 window.addEventListener('DOMContentLoaded', () => {
@@ -12,15 +12,24 @@ window.addEventListener('DOMContentLoaded', () => {
     fetch('/get-config')
         .then(res => res.json())
         .then(config => {
-            globalSupaUrl = config.supabase_url || '';
-            globalSupaKey = config.supabase_key || '';
+            globalSupaUrl = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
+            globalSupaKey = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
             
             const fieldUrl = document.getElementById('field-supabase-url');
             const fieldKey = document.getElementById('field-supabase-key');
             if (fieldUrl) fieldUrl.value = globalSupaUrl;
             if (fieldKey) fieldKey.value = globalSupaKey;
         })
-        .catch(err => console.warn('Could not load config.json from local server fallback.'));
+        .catch(err => {
+            console.warn('Could not load config.json from local server fallback. Using Vercel production fallbacks.');
+            globalSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
+            globalSupaKey = localStorage.getItem('vsb_ece_supabase_key') || 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+            
+            const fieldUrl = document.getElementById('field-supabase-url');
+            const fieldKey = document.getElementById('field-supabase-key');
+            if (fieldUrl) fieldUrl.value = globalSupaUrl;
+            if (fieldKey) fieldKey.value = globalSupaKey;
+        });
 
     const isAuth = localStorage.getItem('vsb_ece_is_admin') === 'true';
     if (isAuth) {
