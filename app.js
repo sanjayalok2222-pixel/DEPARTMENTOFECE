@@ -880,8 +880,11 @@ function deleteCustomDownloadCard(btn) {
 // === 12. Supabase Integration Logic ===
 function loadFromSupabase() {
     // Restore Supabase credentials from local storage persistent cache
-    const url = localStorage.getItem('vsb_ece_supabase_url') || document.getElementById('admin-supabase-url').getAttribute('value') || '';
-    const key = localStorage.getItem('vsb_ece_supabase_key') || document.getElementById('admin-supabase-key').getAttribute('value') || '';
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
 
     if (url && document.getElementById('admin-supabase-url')) {
         document.getElementById('admin-supabase-url').value = url;
@@ -1025,12 +1028,15 @@ function applyFetchedState(state) {
 
 // === 13. Initializer Loader ===
 function loadAllWebData() {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+
     // 1. Fetch Supabase configuration from local config.json securely if running locally
     fetch('/get-config')
         .then(res => res.json())
         .then(config => {
-            const url = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || '';
-            const key = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || '';
+            const url = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+            const key = config.supabase_key || localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
             
             if (url) {
                 localStorage.setItem('vsb_ece_supabase_url', url);
@@ -1052,8 +1058,8 @@ function loadAllWebData() {
         })
         .catch(err => {
             // Standalone production hosting fallback (e.g. Vercel)
-            const url = localStorage.getItem('vsb_ece_supabase_url') || '';
-            const key = localStorage.getItem('vsb_ece_supabase_key') || '';
+            const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+            const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
             
             if (url && document.getElementById('admin-supabase-url')) {
                 document.getElementById('admin-supabase-url').value = url;
