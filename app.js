@@ -134,58 +134,23 @@ function switchTab(event, tabId) {
 }
 
 
-// === 4. Club Interactive Portal Interface ===
+// === 4. Club Interactive Portal Interface (Round 1, 2, 3 Buttons) ===
 const clubModal = document.getElementById('clubInterfaceModal');
 const portalContent = document.getElementById('club-portal-content');
 
-const clubData = {
-    electronics: {
-        title: "🔌 Electronics Club Portal",
-        faculty: "Mr. P. Anandhakumar (HoD ECE)",
-        overview: "Dedicated to designing microelectronic layouts, debugging circuit faults, and mastering PCB printing technology.",
-        activities: [
-            "Circuitrix Debugging Contest (National Level)",
-            "PCB Design bootcamps using KiCad",
-            "Soldering & components assembly training labs"
-        ],
-        projects: "Smart Agriculture IoT kit, Wearable health monitoring sensors."
-    }
-};
-
 function openClubInterface(clubType) {
-    const data = clubData[clubType];
-    if (!data) return;
-
-    portalContent.innerHTML = `
-        <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.25rem;">${data.title}</h3>
-        
-        <div style="margin-bottom: 1.5rem;">
-            <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Faculty Advisor</span>
-            <strong style="color: var(--text-primary); font-size: 1rem;">${data.faculty}</strong>
-        </div>
-
-        <div style="margin-bottom: 1.5rem;">
-            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">${data.overview}</p>
-        </div>
-
-        <div style="margin-bottom: 1.5rem;">
-            <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.6rem;">Key Core Activities</span>
-            <ul style="list-style: none; padding: 0;">
-                ${data.activities.map(act => `
-                    <li style="position: relative; padding-left: 1.5rem; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-primary);">
-                        <span style="position: absolute; left: 0; color: var(--accent-cyan);">✦</span> ${act}
-                    </li>
-                `).join('')}
-            </ul>
-        </div>
-
-        <div>
-            <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Recent Student Projects</span>
-            <p style="color: var(--accent-cyan); font-weight: 500; font-size: 0.9rem;">${data.projects}</p>
-        </div>
-    `;
-    
-    clubModal.classList.add('active');
+    if (clubType === 'electronics') {
+        portalContent.innerHTML = `
+            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.5rem; text-align: center;">🔌 Electronics Club Challenges</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; text-align: center;">Click on the rounds below to launch the technical challenges directly:</p>
+            <div style="display: flex; flex-direction: column; gap: 1.25rem; align-items: center; width: 100%; max-width: 400px; margin: 0 auto;">
+                <a href="https://portiz-epeyysyfu-rubahans-projects.vercel.app/" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 1 - Play</a>
+                <a href="https://game.educaplay.com/" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 2 - Challenge</a>
+                <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">Round 3 - Simulation</a>
+            </div>
+        `;
+        clubModal.classList.add('active');
+    }
 }
 
 function closeClubModal() {
@@ -261,13 +226,15 @@ const adminLinkEditGroup = document.getElementById('admin-link-edit-fields');
 const adminPosterAddGroup = document.getElementById('admin-poster-add-container');
 const adminDownloadAddGroup = document.getElementById('admin-download-controls');
 
-// Predefined list of editable element IDs in Admin Mode
+// Predefined list of editable element IDs in Admin Mode (now including HOD Slot 2)
 const editableElements = [
     'college-name-header', 'college-auth-header', 'college-appr-header', 'college-nba-header',
     'hero-title', 'hero-subtitle', 'about-card-text', 'vision-text', 'mission-list', 
     'intake-ug-title', 'intake-ug-text', 'intake-pg-title', 'intake-pg-text', 
     'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
-    'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email', 'coordinators-container'
+    'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
+    'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
+    'coordinators-container'
 ];
 
 let tempNewFileUrl = null;
@@ -393,7 +360,7 @@ function logoutAdmin() {
 function saveWebChanges() {
     const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
 
-    // BUG FIX: Explicitly write current input value properties into the HTML element value attributes!
+    // Explicitly write current input value properties into the HTML element value attributes!
     const supaUrlInput = document.getElementById('admin-supabase-url');
     const supaKeyInput = document.getElementById('admin-supabase-key');
     if (supaUrlInput) supaUrlInput.setAttribute('value', supaUrlInput.value);
@@ -469,6 +436,9 @@ function saveWebChanges() {
         hodPhotoSrc: document.getElementById('hod-photo-img').src,
         hodPhotoDisplay: document.getElementById('hod-photo-img').style.display,
         hodEmojiDisplay: document.getElementById('hod-avatar-emoji').style.display,
+        hodPhotoSrc2: document.getElementById('hod-photo-img-2').src,
+        hodPhotoDisplay2: document.getElementById('hod-photo-img-2').style.display,
+        hodEmojiDisplay2: document.getElementById('hod-avatar-emoji-2').style.display,
         coordPhotos: coordPhotosArray,
         adminAvatarSrc: document.getElementById('admin-profile-pic').src
     };
@@ -652,6 +622,35 @@ function handleHodPhotoUpload(event) {
 function displayHodPhoto(base64Data) {
     const imgEl = document.getElementById('hod-photo-img');
     const emojiEl = document.getElementById('hod-avatar-emoji');
+    if (base64Data) {
+        imgEl.src = base64Data;
+        imgEl.style.display = 'block';
+        emojiEl.style.display = 'none';
+    } else {
+        imgEl.style.display = 'none';
+        emojiEl.style.display = 'block';
+    }
+}
+
+// HOD 2 uploads
+function triggerHodUpload2() {
+    document.getElementById('admin-hod-upload-2').click();
+}
+
+function handleHodPhotoUpload2(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        displayHodPhoto2(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function displayHodPhoto2(base64Data) {
+    const imgEl = document.getElementById('hod-photo-img-2');
+    const emojiEl = document.getElementById('hod-avatar-emoji-2');
     if (base64Data) {
         imgEl.src = base64Data;
         imgEl.style.display = 'block';
@@ -867,7 +866,18 @@ function applyFetchedState(state) {
         }
     }
 
-    // 5. Restore Coordinators Photos
+    // 5. Restore HOD 2 Photo
+    if (state.hodPhotoSrc2) {
+        const img = document.getElementById('hod-photo-img-2');
+        const emoji = document.getElementById('hod-avatar-emoji-2');
+        if (img && emoji) {
+            img.src = state.hodPhotoSrc2;
+            img.style.display = state.hodPhotoDisplay2 || 'none';
+            emoji.style.display = state.hodEmojiDisplay2 || 'block';
+        }
+    }
+
+    // 6. Restore Coordinators Photos
     if (state.coordPhotos && state.coordPhotos.length > 0) {
         state.coordPhotos.forEach(p => {
             const img = document.getElementById(`coord-img-${p.id}`);
@@ -880,7 +890,7 @@ function applyFetchedState(state) {
         });
     }
 
-    // 6. Restore Admin Avatar
+    // 7. Restore Admin Avatar
     if (state.adminAvatarSrc) {
         const adminPic = document.getElementById('admin-profile-pic');
         if (adminPic) {

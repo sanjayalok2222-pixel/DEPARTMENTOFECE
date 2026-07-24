@@ -1420,6 +1420,134 @@ body.admin-mode .btn-admin-only-inline {
     transform: scale(1.1);
 }
 
+/* VSB Trust Logo styling */
+.vsb-trust-logo {
+    height: 90px;
+    max-height: 90px;
+    margin-left: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .vsb-trust-logo {
+        height: 80px;
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+}
+
+/* Certificate Generation Section and Card Styles */
+.certificate-container {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.certificate-card {
+    background: var(--bg-card);
+    border: 2px dashed rgba(0, 210, 255, 0.25);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    box-shadow: var(--card-glow);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+
+.certificate-card:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 15px 45px rgba(0, 210, 255, 0.25);
+    transform: translateY(-5px);
+}
+
+.certificate-toy-model {
+    border: 3px double rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    background: rgba(5, 7, 14, 0.7);
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.certificate-toy-model::after {
+    content: "TEMPLATE";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-25deg);
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+    letter-spacing: 5px;
+}
+
+.cert-college {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-bottom: 0.5rem;
+}
+
+.cert-dept {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+}
+
+.cert-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.cert-present {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+}
+
+.cert-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+    width: 250px;
+    margin: 0 auto 1.5rem;
+    padding-bottom: 0.25rem;
+}
+
+.cert-achievement {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    max-width: 450px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.cert-badge-gold {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.5rem;
+    font-size: 2.2rem;
+}
+
+/* Double HOD Slot grid adjustments */
+.hod-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
 .admin-supabase-config {
     display: none !important;
 }

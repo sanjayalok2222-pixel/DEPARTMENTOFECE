@@ -17,14 +17,16 @@
     <header>
         <div class="header-container">
             <div class="logo-section">
-                <!-- Using uploaded VSB crest logo (now fully transparent) -->
-                <img src="assets/vsb-logo-crest.png" alt="VSB Engineering College Logo" class="vsb-logo">
+                <!-- VSB yellow logo left-aligned first -->
+                <img src="assets/vsb-yellow-logo.png" alt="VSB Engineering College Logo" class="vsb-logo">
                 <div class="college-title">
                     <h1 id="college-name-header">V.S.B. ENGINEERING COLLEGE</h1>
                     <p class="college-subtitle" id="college-auth-header">(An Autonomous Institution) (Anna University Recognized Research Institute)</p>
                     <p class="college-details-line" id="college-appr-header">Approved by AICTE, New Delhi, Affiliated to Anna University, Chennai</p>
                     <p class="college-details-line" id="college-nba-header">NBA Accredited Courses, Accredited by NAAC</p>
                 </div>
+                <!-- VSB 25-Years diamond logo right-aligned last of college title -->
+                <img src="assets/vsb-trust-logo.png" alt="VSB Educational Trust Logo" class="vsb-trust-logo">
             </div>
             <div class="header-actions">
                 <div class="dept-badge">
@@ -44,6 +46,7 @@
             <li><a href="#event-registration">Event Registration</a></li>
             <li><a href="#events">Club Activities</a></li>
             <li><a href="#event-file">Downloads</a></li>
+            <li><a href="#certificate">Certificate Generate</a></li>
             <li><a href="#hod">HOD</a></li>
             <li><a href="#coordinators">Coordinators</a></li>
         </ul>
@@ -390,35 +393,88 @@
         </div>
     </section>
 
-    <!-- 4. HOD Section -->
+    <!-- Certificate Generate Section (New Section) -->
+    <section id="certificate">
+        <h2 class="section-title">Certificate Generate</h2>
+        <div class="certificate-container">
+            <div class="certificate-card tilt-card" onclick="window.open('https://vsbeccertificate.vercel.app/', '_blank')">
+                <div class="certificate-toy-model">
+                    <div class="cert-college">V.S.B. ENGINEERING COLLEGE</div>
+                    <div class="cert-dept">Department of Electronics & Communication Engineering</div>
+                    <div class="cert-title">Certificate of Merit</div>
+                    <div class="cert-present">This is to certify that the student has successfully completed the technical rounds.</div>
+                    <div class="cert-name">YOUR NAME HERE</div>
+                    <div class="cert-achievement">For active participation and excellence in ECE Club challenges.</div>
+                    <div class="cert-badge-gold">🎖️</div>
+                </div>
+                <a href="https://vsbeccertificate.vercel.app/" target="_blank" class="event-reg-link" style="margin-top: 0;">Generate Certificate</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. HOD Section (Supporting 2 HOD Slots) -->
     <section id="hod">
         <h2 class="section-title">Head of the Department</h2>
         
-        <div class="hod-container tilt-card">
-            <div class="hod-profile-wrapper">
-                <div class="coord-avatar" id="hod-avatar-container" style="width: 180px; height: 180px; font-size: 1.8rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
-                    <!-- Real Photo element, initially hidden -->
-                    <img id="hod-photo-img" src="" alt="HOD Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="hod-avatar-emoji" class="coord-initials">PA</span>
-                    <!-- Photo change file input trigger -->
-                    <input type="file" id="admin-hod-upload" accept="image/*" style="display:none;" onchange="handleHodPhotoUpload(event)">
-                    <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerHodUpload()">✏️</button>
+        <div class="hod-list-container">
+            <!-- HOD 1: Mr. P. Anandhakumar -->
+            <div class="hod-container tilt-card">
+                <div class="hod-profile-wrapper">
+                    <div class="coord-avatar" id="hod-avatar-container" style="width: 180px; height: 180px; font-size: 1.8rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <!-- Real Photo element -->
+                        <img id="hod-photo-img" src="" alt="HOD Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <span id="hod-avatar-emoji" class="coord-initials">PA</span>
+                        <!-- Photo change file input trigger -->
+                        <input type="file" id="admin-hod-upload" accept="image/*" style="display:none;" onchange="handleHodPhotoUpload(event)">
+                        <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerHodUpload()">✏️</button>
+                    </div>
+                </div>
+                
+                <div class="hod-details">
+                    <h3 id="hod-name">Mr. P. Anandhakumar</h3>
+                    <p class="hod-title" id="hod-designation">Assistant Professor & Head of Department (ECE)</p>
+                    <p class="hod-message" id="hod-msg-text">"Our mission is to foster technical excellence and encourage active participation in engineering research. We work tirelessly to align our students with the industry standards so they can solve real-world problems in the electronics and communication domains."</p>
+                    
+                    <div class="hod-meta">
+                        <div class="meta-item">
+                            <h5>Research Areas</h5>
+                            <p id="hod-research">Wavelet-based Voice Conversion, Smart Attendance systems via AI & IoT.</p>
+                        </div>
+                        <div class="meta-item">
+                            <h5>Contact / Office</h5>
+                            <p id="hod-email">hod.ece@vsbec.edu.in</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="hod-details">
-                <h3 id="hod-name">Mr. P. Anandhakumar</h3>
-                <p class="hod-title" id="hod-designation">Assistant Professor & Head of Department (ECE)</p>
-                <p class="hod-message" id="hod-msg-text">"Our mission is to foster technical excellence and encourage active participation in engineering research. We work tirelessly to align our students with the industry standards so they can solve real-world problems in the electronics and communication domains."</p>
-                
-                <div class="hod-meta">
-                    <div class="meta-item">
-                        <h5>Research Areas</h5>
-                        <p id="hod-research">Wavelet-based Voice Conversion, Smart Attendance systems via AI & IoT.</p>
+
+            <!-- HOD 2: Dr. V. Jamuna (New Slot) -->
+            <div class="hod-container tilt-card">
+                <div class="hod-profile-wrapper">
+                    <div class="coord-avatar" id="hod-avatar-container-2" style="width: 180px; height: 180px; font-size: 1.8rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <!-- Real Photo element -->
+                        <img id="hod-photo-img-2" src="" alt="HOD Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <span id="hod-avatar-emoji-2" class="coord-initials">VJ</span>
+                        <!-- Photo change file input trigger -->
+                        <input type="file" id="admin-hod-upload-2" accept="image/*" style="display:none;" onchange="handleHodPhotoUpload2(event)">
+                        <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerHodUpload2()">✏️</button>
                     </div>
-                    <div class="meta-item">
-                        <h5>Contact / Office</h5>
-                        <p id="hod-email">hod.ece@vsbec.edu.in</p>
+                </div>
+                
+                <div class="hod-details">
+                    <h3 id="hod-name-2">Dr. V. Jamuna</h3>
+                    <p class="hod-title" id="hod-designation-2">Assistant Professor & Head of Department (ECE)</p>
+                    <p class="hod-message" id="hod-msg-text-2">"Our mission is to foster technical excellence and encourage active participation in engineering research. We work tirelessly to align our students with the industry standards so they can solve real-world problems in the electronics and communication domains."</p>
+                    
+                    <div class="hod-meta">
+                        <div class="meta-item">
+                            <h5>Research Areas</h5>
+                            <p id="hod-research-2">Wavelet-based Voice Conversion, Smart Attendance systems via AI & IoT.</p>
+                        </div>
+                        <div class="meta-item">
+                            <h5>Contact / Office</h5>
+                            <p id="hod-email-2">hod.ece@vsbec.edu.in</p>
+                        </div>
                     </div>
                 </div>
             </div>
