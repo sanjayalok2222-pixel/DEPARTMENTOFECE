@@ -188,7 +188,7 @@ function showRoundChallenge(idx) {
             <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; text-align: center; margin-bottom: 1rem;">${round.challengeDesc || 'Copy the program, click Go To Tool, and run it.'}</p>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-height: 380px; overflow-y: auto; padding-right: 0.5rem;">
-                <!-- Code Option A (Default incorrect) -->
+                <!-- Code Option A (Default incorrect - missing closing bracket) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
                     <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 1 (Option A)</span>
                     <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
@@ -196,51 +196,74 @@ const int buzzer = 8;
 
 void setup() {
   pinMode(led, OUTPUT);
-}
 
-void loop() {  
+void loop() {
   digitalWrite(led, HIGH);
   tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
   delay(1000);
 }</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
 
-                <!-- Code Option B (Default incorrect) -->
+                <!-- Code Option B (Default incorrect - missing semicolon) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
                     <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 2 (Option B)</span>
-                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">void setup() {
-  pinMode(13, OUTPUT);
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13
+const int buzzer = 8;
+
+void setup() {
+  pinMode(led, OUTPUT);
 }
+
 void loop() {
-  digitalWrite(13, HIGH);
+  digitalWrite(led, HIGH);
+  tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
+  delay(1000);
 }</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
 
-                <!-- Code Option C (Default incorrect) -->
+                <!-- Code Option C (Dynamic correct code from Supabase) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
-                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 3 (Option C)</span>
-                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">void setup() {
-  pinMode(8, OUTPUT);
-}
-void loop() {
-  tone(8, 1000);
-}</pre>
-                    <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
-                </div>
-
-                <!-- Code Option D (Dynamic correct code from Supabase) -->
-                <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
-                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 4 (Option D - Correct Program)</span>
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 3 (Option C - Correct Program)</span>
                     <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">${round.challengeCode}</pre>
+                    <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
+                </div>
+
+                <!-- Code Option D (Default incorrect - loops method) -->
+                <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 4 (Option D)</span>
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
+const int buzzer = 8;
+
+void setup() {
+  pinMode(led, OUTPUT);
+}
+
+void loops() {  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 2000);
+  delay(1000);
+
+  digitalWrite(led, LOW);
+  noTone(buzzer);
+  delay(1000);
+}</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
             </div>
 
             <div style="text-align: center; margin-top: 0.5rem;">
                 <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #ff4a4a; letter-spacing: 1px; margin-bottom: 0.75rem; font-weight: 800;">📢 COPY THE CORRECT CODE</h4>
-                <a href="${round.url}" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To simulation</a>
+                <a href="${round.url}" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To Round 3</a>
             </div>
         </div>
     `;
