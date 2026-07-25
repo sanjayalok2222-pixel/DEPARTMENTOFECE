@@ -1064,40 +1064,98 @@ body.admin-mode [contenteditable="true"]:focus {
 
 /* Mobile Phones (max-width: 600px) */
 @media (max-width: 600px) {
+    body {
+        padding-top: 130px !important;
+    }
+
+    header {
+        height: auto !important;
+        padding: 0.25rem 0 !important;
+    }
+
+    .header-container {
+        padding: 0.25rem 0.75rem !important;
+        flex-direction: column !important;
+        gap: 0.25rem !important;
+    }
+
+    .logo-section {
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: left !important;
+    }
+
     .vsb-logo {
-        height: 70px;
+        height: 34px !important;
+    }
+
+    .vsb-trust-logo {
+        display: none !important; /* Hide trust logo on mobile to save vertical space */
+    }
+
+    .college-title {
+        text-align: left !important;
     }
 
     .college-title h1 {
-        font-size: 1.15rem;
+        font-size: 0.82rem !important;
+        line-height: 1.2 !important;
+        margin: 0 !important;
     }
 
-    .college-title p {
-        font-size: 0.75rem;
+    .college-subtitle,
+    .college-details-line {
+        display: none !important; /* Hide academic lines on mobile for compact bar view */
     }
 
     .header-actions {
-        flex-direction: column;
-        width: 100%;
-        gap: 0.75rem;
+        flex-direction: row !important;
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+        margin-top: 0.15rem !important;
     }
 
     .dept-badge {
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-        width: 100%;
-        justify-content: center;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.7rem !important;
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    .dept-badge img {
+        height: 12px !important;
+        width: 12px !important;
     }
 
     .btn-admin {
-        width: 100%;
-        text-align: center;
+        width: auto !important;
+        padding: 0.25rem 0.6rem !important;
+        font-size: 0.7rem !important;
+        margin: 0 !important;
+    }
+
+    .sub-nav {
+        top: 86px !important; /* Position right below compact header bar */
+        background: rgba(8, 12, 23, 0.98) !important;
+        border-radius: 0 !important;
+    }
+
+    .sub-nav.header-hidden {
+        transform: translateY(-120px) !important;
+    }
+
+    .nav-links {
+        padding: 0 0.5rem !important;
     }
 
     .nav-links li a {
-        padding: 1rem;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
+        padding: 0.55rem 0.8rem !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.3px !important;
     }
 
     .hero {
