@@ -285,19 +285,8 @@ function populateCmsForms() {
     setVal('field-about-text', 'about-card-text');
     setVal('field-vision-text', 'vision-text');
     setVal('field-mission-list', 'mission-list');
-    setVal('field-round-1', 'round-1-url');
-    setVal('field-round-2', 'round-2-url');
-    setVal('field-round-3', 'round-3-url');
-
-    // Club Activities Modal contents
-    setVal('field-activity-club-title', 'activity-club-title');
-    setVal('field-activity-club-desc', 'activity-club-desc');
-    setVal('field-activity-r1-text', 'activity-r1-text');
-    setVal('field-activity-r2-text', 'activity-r2-text');
-    setVal('field-activity-r3-btn-text', 'activity-r3-btn-text');
-    setVal('field-activity-r3-title', 'activity-r3-title');
-    setVal('field-activity-r3-desc', 'activity-r3-desc');
-    setVal('field-activity-r3-code', 'activity-r3-code');
+    // Club Activity dynamic rounds list uploader manager
+    populateActivityRoundsCmsList();
 
     // D. Database configs (Supabase)
     const storedSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || indexDoc.body.getAttribute('data-supabase-url') || '';
@@ -735,19 +724,8 @@ function publishCmsChanges() {
     updateDocInner('about-card-text', 'field-about-text');
     updateDocInner('vision-text', 'field-vision-text');
     updateDocInner('mission-list', 'field-mission-list');
-    updateDocInner('round-1-url', 'field-round-1');
-    updateDocInner('round-2-url', 'field-round-2');
-    updateDocInner('round-3-url', 'field-round-3');
-
-    // Save Activities challenges
-    updateDocInner('activity-club-title', 'field-activity-club-title');
-    updateDocInner('activity-club-desc', 'field-activity-club-desc');
-    updateDocInner('activity-r1-text', 'field-activity-r1-text');
-    updateDocInner('activity-r2-text', 'field-activity-r2-text');
-    updateDocInner('activity-r3-btn-text', 'field-activity-r3-btn-text');
-    updateDocInner('activity-r3-title', 'field-activity-r3-title');
-    updateDocInner('activity-r3-desc', 'field-activity-r3-desc');
-    updateDocInner('activity-r3-code', 'field-activity-r3-code');
+    // Save dynamic Activity challenges rounds list
+    reconstructActivityRoundsCmsDom();
 
     // Save Certificate portal URL
     const certEl = indexDoc.getElementById('cert-portal-link');
@@ -973,9 +951,7 @@ function extractCmsJsonState() {
         'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
         'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
         'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
-        'coordinators-container', 'round-1-url', 'round-2-url', 'round-3-url', 'cert-portal-link',
-        'activity-club-title', 'activity-club-desc', 'activity-r1-text', 'activity-r2-text',
-        'activity-r3-btn-text', 'activity-r3-title', 'activity-r3-desc', 'activity-r3-code'
+        'coordinators-container', 'club-rounds-container', 'cert-portal-link'
     ];
 
     editableElements.forEach(id => {
@@ -1251,6 +1227,127 @@ function reconstructIsteTableCmsDom() {
             </tr>
         `;
         tbody.insertAdjacentHTML('beforeend', tr);
+    });
+}
+
+// D. Manage Club Activity Challenges & Rounds
+function populateActivityRoundsCmsList() {
+    const list = document.getElementById('cms-activity-rounds-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const container = indexDoc.getElementById('club-rounds-container');
+    if (!container) return;
+    const items = container.querySelectorAll('.activity-round-item');
+    items.forEach((item, index) => {
+        const title = item.getAttribute('data-title') || 'Round';
+        const type = item.getAttribute('data-type') || 'link';
+        const url = item.getAttribute('data-url') || '';
+        const cTitle = item.querySelector('.challenge-title')?.innerText.trim() || '';
+        const cDesc = item.querySelector('.challenge-desc')?.innerText.trim() || '';
+        const cCode = item.querySelector('.challenge-code')?.innerText.trim() || '';
+        
+        addActivityRoundSlotMarkup(index, title, type, url, cTitle, cDesc, cCode);
+    });
+}
+
+function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='') {
+    const list = document.getElementById('cms-activity-rounds-list');
+    const div = document.createElement('div');
+    div.className = 'cms-list-item cms-activity-round-card';
+    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; position: relative;';
+    div.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Round Label / Title</label>
+                <input type="text" class="form-control cms-round-title" value="${title}" placeholder="e.g. Round 1 - Play">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Round Type / Action</label>
+                <select class="form-control cms-round-type" onchange="toggleCmsRoundFields(this)">
+                    <option value="link" ${type === 'link' ? 'selected' : ''}>Redirect External Link</option>
+                    <option value="challenge" ${type === 'challenge' ? 'selected' : ''}>Interactive Code Challenge</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Redirect Link Fields -->
+        <div class="cms-round-fields-link" style="display: ${type === 'link' ? 'block' : 'none'};">
+            <div class="form-group">
+                <label>Redirection URL</label>
+                <input type="text" class="form-control cms-round-url" value="${url}" placeholder="e.g. https://...">
+            </div>
+        </div>
+        
+        <!-- Code Challenge Fields -->
+        <div class="cms-round-fields-challenge" style="display: ${type === 'challenge' ? 'block' : 'none'};">
+            <div class="form-group">
+                <label>Challenge Card Header Title</label>
+                <input type="text" class="form-control cms-round-ctitle" value="${cTitle}" placeholder="e.g. 💻 Arduino Uno Code Challenge">
+            </div>
+            <div class="form-group">
+                <label>Challenge Card Instructions Text</label>
+                <textarea class="form-control cms-round-cdesc" placeholder="Enter instructions...">${cDesc}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Option D Correct Arduino Code Snippet</label>
+                <textarea class="form-control cms-round-ccode" style="font-family: monospace; min-height: 120px;" placeholder="Paste Arduino code...">${cCode}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Simulation Platform URL</label>
+                <input type="text" class="form-control cms-round-url-challenge" value="${url}" placeholder="e.g. Wokwi URL https://...">
+            </div>
+        </div>
+        
+        <button type="button" class="btn-delete-list-item" title="Delete Round" onclick="this.closest('.cms-list-item').remove()" style="position: absolute; top: 1.25rem; right: 1.25rem;">🗑️</button>
+    `;
+    list.appendChild(div);
+}
+
+function toggleCmsRoundFields(select) {
+    const card = select.closest('.cms-activity-round-card');
+    const linkDiv = card.querySelector('.cms-round-fields-link');
+    const challengeDiv = card.querySelector('.cms-round-fields-challenge');
+    
+    if (select.value === 'link') {
+        linkDiv.style.display = 'block';
+        challengeDiv.style.display = 'none';
+    } else {
+        linkDiv.style.display = 'none';
+        challengeDiv.style.display = 'block';
+    }
+}
+
+function cmsAddActivityRoundSlot() {
+    addActivityRoundSlotMarkup(Date.now());
+}
+
+function reconstructActivityRoundsCmsDom() {
+    const container = indexDoc.getElementById('club-rounds-container');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    const cards = document.querySelectorAll('#cms-activity-rounds-list .cms-activity-round-card');
+    cards.forEach(card => {
+        const title = card.querySelector('.cms-round-title').value.trim();
+        const type = card.querySelector('.cms-round-type').value.trim();
+        let url = '';
+        if (type === 'link') {
+            url = card.querySelector('.cms-round-url').value.trim();
+        } else {
+            url = card.querySelector('.cms-round-url-challenge').value.trim();
+        }
+        const cTitle = card.querySelector('.cms-round-ctitle').value.trim();
+        const cDesc = card.querySelector('.cms-round-cdesc').value.trim();
+        const cCode = card.querySelector('.cms-round-ccode').value.trim();
+        
+        const itemHtml = `
+            <div class="activity-round-item" data-title="${title}" data-type="${type}" data-url="${url}">
+                <div class="challenge-title">${cTitle}</div>
+                <div class="challenge-desc">${cDesc}</div>
+                <pre class="challenge-code">${cCode}</pre>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', itemHtml);
     });
 }
 

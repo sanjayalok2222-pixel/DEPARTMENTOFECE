@@ -138,59 +138,57 @@ function switchTab(event, tabId) {
 const clubModal = document.getElementById('clubInterfaceModal');
 const portalContent = document.getElementById('club-portal-content');
 
+let activeClubRounds = [];
+
 function openClubInterface(clubType) {
     if (clubType === 'electronics') {
-        const r1 = document.getElementById('round-1-url')?.innerText.trim() || 'https://portiz-epeyysyfu-rubahans-projects.vercel.app/';
-        const r2 = document.getElementById('round-2-url')?.innerText.trim() || 'https://game.educaplay.com/';
-        
-        const clubTitle = document.getElementById('activity-club-title')?.innerText.trim() || '🔌 Electronics Club Challenges';
-        const clubDesc = document.getElementById('activity-club-desc')?.innerText.trim() || 'Click on the rounds below to launch the technical challenges directly:';
-        const r1Text = document.getElementById('activity-r1-text')?.innerText.trim() || 'Round 1 - Play';
-        const r2Text = document.getElementById('activity-r2-text')?.innerText.trim() || 'Round 2 - Challenge';
-        const r3BtnText = document.getElementById('activity-r3-btn-text')?.innerText.trim() || 'Round 3 - Simulation';
+        activeClubRounds = [];
+        const items = document.querySelectorAll('#club-rounds-container .activity-round-item');
+        items.forEach(item => {
+            activeClubRounds.push({
+                title: item.getAttribute('data-title') || 'Round',
+                type: item.getAttribute('data-type') || 'link',
+                url: item.getAttribute('data-url') || '#',
+                challengeTitle: item.querySelector('.challenge-title')?.innerText.trim() || '',
+                challengeDesc: item.querySelector('.challenge-desc')?.innerText.trim() || '',
+                challengeCode: item.querySelector('.challenge-code')?.innerText.trim() || ''
+            });
+        });
+
+        const clubTitle = document.getElementById('club-title-card')?.innerText.trim() || '🔌 Electronics Club';
+
+        let roundsHtml = '';
+        activeClubRounds.forEach((round, idx) => {
+            if (round.type === 'link') {
+                roundsHtml += `<a href="${round.url}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">${round.title}</a>`;
+            } else {
+                roundsHtml += `<button onclick="showRoundChallenge(${idx})" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">${round.title}</button>`;
+            }
+        });
 
         portalContent.innerHTML = `
-            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.5rem; text-align: center;">${clubTitle}</h3>
-            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; text-align: center;">${clubDesc}</p>
+            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.5rem; text-align: center;">${clubTitle} Challenges</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; text-align: center;">Choose an active round from the choices below:</p>
             <div style="display: flex; flex-direction: column; gap: 1.25rem; align-items: center; width: 100%; max-width: 400px; margin: 0 auto;">
-                <a href="${r1}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">${r1Text}</a>
-                <a href="${r2}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">${r2Text}</a>
-                <button onclick="showRound3Challenge()" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">${r3BtnText}</button>
+                ${roundsHtml || '<p style="color:var(--text-secondary);">No rounds active currently.</p>'}
             </div>
         `;
         clubModal.classList.add('active');
     }
 }
 
-function showRound3Challenge() {
-    const r3Title = document.getElementById('activity-r3-title')?.innerText.trim() || '💻 Arduino Uno Code Challenge';
-    const r3Desc = document.getElementById('activity-r3-desc')?.innerText.trim() || 'Study the connection layout of LED and Buzzer on Arduino Uno. Copy the program, click "Go To Round 3", delete the existing template code, paste it, and run the simulation!';
-    const r3Code = document.getElementById('activity-r3-code')?.innerText.trim() || `int led = 13;
-int buzzer = 8;
-
-void setup() {
-  pinMode(led, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-}
-
-void loop() {  
-  digitalWrite(led, HIGH);
-  tone(buzzer, 2000);
-  delay(1000);
-
-  digitalWrite(led, LOW);
-  noTone(buzzer);
-  delay(1000);
-}`;
+function showRoundChallenge(idx) {
+    const round = activeClubRounds[idx];
+    if (!round) return;
 
     portalContent.innerHTML = `
         <div class="round3-challenge-container" style="display: flex; flex-direction: column; gap: 1.25rem; width: 100%;">
             <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1rem; margin-bottom: 0.5rem;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
-            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; color: var(--accent-cyan); text-align: center; margin-bottom: 0.25rem;">${r3Title}</h3>
-            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; text-align: center; margin-bottom: 1rem;">${r3Desc}</p>
+            <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.6rem; color: var(--accent-cyan); text-align: center; margin-bottom: 0.25rem;">${round.challengeTitle || 'Code Challenge'}</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; text-align: center; margin-bottom: 1rem;">${round.challengeDesc || 'Copy the program, click Go To Tool, and run it.'}</p>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; max-height: 380px; overflow-y: auto; padding-right: 0.5rem;">
-                <!-- Code 1 -->
+                <!-- Code Option A (Default incorrect) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
                     <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 1 (Option A)</span>
                     <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
@@ -200,72 +198,49 @@ void setup() {
   pinMode(led, OUTPUT);
 }
 
-void loops() {  
+void loop() {  
   digitalWrite(led, HIGH);
   tone(buzzer, 2000);
-  delay(1000);
-
-  digitalWrite(led, LOW);
-  noTone(buzzer);
   delay(1000);
 }</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
 
-                <!-- Code 2 -->
+                <!-- Code Option B (Default incorrect) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
                     <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 2 (Option B)</span>
-                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13
-const int buzzer = 8;
-
-void setup() {
-  pinMode(led, OUTPUT);
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">void setup() {
+  pinMode(13, OUTPUT);
 }
-
 void loop() {
-  digitalWrite(led, HIGH);
-  tone(buzzer, 2000);
-  delay(1000);
-
-  digitalWrite(led, LOW);
-  noTone(buzzer);
-  delay(1000);
+  digitalWrite(13, HIGH);
 }</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
 
-                <!-- Code 3 -->
+                <!-- Code Option C (Default incorrect) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
                     <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 3 (Option C)</span>
-                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">const int led = 13;
-const int buzzer = 8;
-
-void setup() {
-  pinMode(led, OUTPUT);
-
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">void setup() {
+  pinMode(8, OUTPUT);
+}
 void loop() {
-  digitalWrite(led, HIGH);
-  tone(buzzer, 2000);
-  delay(1000);
-
-  digitalWrite(led, LOW);
-  noTone(buzzer);
-  delay(1000);
+  tone(8, 1000);
 }</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
 
-                <!-- Code 4 -->
+                <!-- Code Option D (Dynamic correct code from Supabase) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
                     <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 4 (Option D - Correct Program)</span>
-                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">${r3Code}</pre>
+                    <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">${round.challengeCode}</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
             </div>
 
             <div style="text-align: center; margin-top: 0.5rem;">
                 <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: #ff4a4a; letter-spacing: 1px; margin-bottom: 0.75rem; font-weight: 800;">📢 COPY THE CORRECT CODE</h4>
-                <a href="${document.getElementById('round-3-url')?.innerText.trim() || 'https://wokwi.com/projects/new/arduino-uno'}" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To Round 3</a>
+                <a href="${round.url}" target="_blank" class="event-reg-link" style="margin: 0; width: 100%;">Go To simulation</a>
             </div>
         </div>
     `;

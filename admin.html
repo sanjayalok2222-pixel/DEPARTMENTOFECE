@@ -775,22 +775,6 @@
                 </div>
 
                 <div class="card">
-                    <h3>🔌 Club Activities - Technical Round Links</h3>
-                    <div class="form-group">
-                        <label for="field-round-1">Round 1 URL Link</label>
-                        <input type="text" id="field-round-1" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="field-round-2">Round 2 URL Link</label>
-                        <input type="text" id="field-round-2" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="field-round-3">Round 3 URL Link</label>
-                        <input type="text" id="field-round-3" class="form-control">
-                    </div>
-                </div>
-
-                <div class="card">
                     <h3>🔌 Club Activities Details</h3>
                     <div class="form-group">
                         <label for="field-club-title">Club Name / Title</label>
@@ -803,41 +787,14 @@
                 </div>
 
                 <div class="card">
-                    <h3>🔌 Club Activities - Challenges Modal Contents</h3>
-                    <div class="form-group">
-                        <label for="field-activity-club-title">Modal Panel Header Title</label>
-                        <input type="text" id="field-activity-club-title" class="form-control">
+                    <h3>🔌 Manage Club Activity Challenges & Rounds</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure the active rounds for the club activities modal. You can add infinite rounds, define them as a redirect link or an interactive code simulation challenge, and delete/reorder rounds dynamically.</p>
+                    
+                    <div class="cms-list-grid" id="cms-activity-rounds-list">
+                        <!-- Dynamic rounds list populated by JS -->
                     </div>
-                    <div class="form-group">
-                        <label for="field-activity-club-desc">Modal Panel Instructions Subtitle</label>
-                        <textarea id="field-activity-club-desc" class="form-control" style="min-height: 60px;"></textarea>
-                    </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label for="field-activity-r1-text">Round 1 Button Label Text</label>
-                            <input type="text" id="field-activity-r1-text" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="field-activity-r2-text">Round 2 Button Label Text</label>
-                            <input type="text" id="field-activity-r2-text" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="field-activity-r3-btn-text">Round 3 Button Label Text</label>
-                            <input type="text" id="field-activity-r3-btn-text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="field-activity-r3-title">Round 3 Challenge Card Title</label>
-                        <input type="text" id="field-activity-r3-title" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="field-activity-r3-desc">Round 3 Challenge Instructions</label>
-                        <textarea id="field-activity-r3-desc" class="form-control" style="min-height: 80px;"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="field-activity-r3-code">Round 3 Correct Arduino Code Snippet (Option D)</label>
-                        <textarea id="field-activity-r3-code" class="form-control" style="font-family: monospace; min-height: 180px;"></textarea>
-                    </div>
+                    
+                    <button type="button" class="btn-add-list-item" onclick="cmsAddActivityRoundSlot()">➕ Add Additional Activity Round</button>
                 </div>
 
                 <div class="card">
