@@ -157,14 +157,113 @@ function loadIndexHtmlDocument() {
             const parser = new DOMParser();
             indexDoc = parser.parseFromString(html, 'text/html');
             
-            // Populate all editor panel forms with existing data
-            populateCmsForms();
-            showNotification('Loaded current index.html elements successfully!');
+            // Check if Supabase is connected and pull live cloud updates to merge
+            pullStateFromSupabaseAndPopulate();
         })
         .catch(err => {
             console.error(err);
             alert('CMS Loader Error: Make sure your Python server is running on http://localhost:8000 and you open admin.html from that server origin.');
         });
+}
+
+function pullStateFromSupabaseAndPopulate() {
+    // If Supabase key/url are not set yet, wait for browser to load config
+    setTimeout(() => {
+        if (!globalSupaUrl || !globalSupaKey) {
+            populateCmsForms();
+            return;
+        }
+
+        const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
+        fetch(selectUrl, {
+            method: 'GET',
+            headers: {
+                'apikey': globalSupaKey.trim(),
+                'Authorization': `Bearer ${globalSupaKey.trim()}`
+            }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Could not query Supabase state');
+            return res.json();
+        })
+        .then(data => {
+            if (data && data.length > 0) {
+                const state = data[0].value;
+                applyStateToCmsDoc(state);
+                showNotification('Merged live content from Supabase cloud database!');
+            }
+            populateCmsForms();
+        })
+        .catch(err => {
+            console.warn('Could not sync live updates on load. Using base HTML data:', err);
+            populateCmsForms();
+        });
+    }, 400); // Small delay to allow config DOM fetch to complete
+}
+
+function applyStateToCmsDoc(state) {
+    if (!state) return;
+
+    // 1. General text edits
+    if (state.edits) {
+        for (const [id, html] of Object.entries(state.edits)) {
+            const el = indexDoc.getElementById(id);
+            if (el) {
+                if (id === 'cert-portal-link') {
+                    el.setAttribute('href', html);
+                } else {
+                    el.innerHTML = html;
+                }
+            }
+        }
+    }
+
+    // 2. Posters Carousel HTML
+    if (state.postersHtml) {
+        const carousel = indexDoc.getElementById('posters-carousel-container');
+        if (carousel) carousel.innerHTML = state.postersHtml;
+    }
+
+    // 3. Downloads Grid HTML
+    if (state.downloadsHtml) {
+        const grid = indexDoc.getElementById('download-grid-container');
+        if (grid) grid.innerHTML = state.downloadsHtml;
+    }
+
+    // 4. HOD 1 Photo
+    if (state.hodPhotoSrc) {
+        const img = indexDoc.getElementById('hod-photo-img');
+        const emoji = indexDoc.getElementById('hod-avatar-emoji');
+        if (img && emoji) {
+            img.src = state.hodPhotoSrc;
+            img.style.display = state.hodPhotoDisplay || 'none';
+            emoji.style.display = state.hodEmojiDisplay || 'block';
+        }
+    }
+
+    // 5. HOD 2 Photo
+    if (state.hodPhotoSrc2) {
+        const img = indexDoc.getElementById('hod-photo-img-2');
+        const emoji = indexDoc.getElementById('hod-avatar-emoji-2');
+        if (img && emoji) {
+            img.src = state.hodPhotoSrc2;
+            img.style.display = state.hodPhotoDisplay2 || 'none';
+            emoji.style.display = state.hodEmojiDisplay2 || 'block';
+        }
+    }
+
+    // 6. Student Coordinator photos
+    if (state.coordPhotos && state.coordPhotos.length > 0) {
+        state.coordPhotos.forEach(p => {
+            const img = indexDoc.getElementById(`coord-img-${p.id}`);
+            const emoji = indexDoc.getElementById(`coord-emoji-${p.id}`);
+            if (img && emoji) {
+                img.src = p.src;
+                img.style.display = p.displayImg || 'none';
+                emoji.style.display = p.displayEmoji || 'block';
+            }
+        });
+    }
 }
 
 
@@ -189,6 +288,16 @@ function populateCmsForms() {
     setVal('field-round-1', 'round-1-url');
     setVal('field-round-2', 'round-2-url');
     setVal('field-round-3', 'round-3-url');
+
+    // Club Activities Modal contents
+    setVal('field-activity-club-title', 'activity-club-title');
+    setVal('field-activity-club-desc', 'activity-club-desc');
+    setVal('field-activity-r1-text', 'activity-r1-text');
+    setVal('field-activity-r2-text', 'activity-r2-text');
+    setVal('field-activity-r3-btn-text', 'activity-r3-btn-text');
+    setVal('field-activity-r3-title', 'activity-r3-title');
+    setVal('field-activity-r3-desc', 'activity-r3-desc');
+    setVal('field-activity-r3-code', 'activity-r3-code');
 
     // D. Database configs (Supabase)
     const storedSupaUrl = localStorage.getItem('vsb_ece_supabase_url') || indexDoc.body.getAttribute('data-supabase-url') || '';
@@ -630,6 +739,16 @@ function publishCmsChanges() {
     updateDocInner('round-2-url', 'field-round-2');
     updateDocInner('round-3-url', 'field-round-3');
 
+    // Save Activities challenges
+    updateDocInner('activity-club-title', 'field-activity-club-title');
+    updateDocInner('activity-club-desc', 'field-activity-club-desc');
+    updateDocInner('activity-r1-text', 'field-activity-r1-text');
+    updateDocInner('activity-r2-text', 'field-activity-r2-text');
+    updateDocInner('activity-r3-btn-text', 'field-activity-r3-btn-text');
+    updateDocInner('activity-r3-title', 'field-activity-r3-title');
+    updateDocInner('activity-r3-desc', 'field-activity-r3-desc');
+    updateDocInner('activity-r3-code', 'field-activity-r3-code');
+
     // Save Certificate portal URL
     const certEl = indexDoc.getElementById('cert-portal-link');
     const certInput = document.getElementById('field-cert-link');
@@ -854,7 +973,9 @@ function extractCmsJsonState() {
         'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
         'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
         'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
-        'coordinators-container', 'round-1-url', 'round-2-url', 'round-3-url', 'cert-portal-link'
+        'coordinators-container', 'round-1-url', 'round-2-url', 'round-3-url', 'cert-portal-link',
+        'activity-club-title', 'activity-club-desc', 'activity-r1-text', 'activity-r2-text',
+        'activity-r3-btn-text', 'activity-r3-title', 'activity-r3-desc', 'activity-r3-code'
     ];
 
     editableElements.forEach(id => {
