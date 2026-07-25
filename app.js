@@ -169,6 +169,11 @@ function openClubInterface(clubType) {
             }
         });
 
+        // Add public Leaderboard button below the rounds list
+        roundsHtml += `
+            <button onclick="showPublicQuizResults()" class="event-reg-link" style="width: 100%; text-align: center; margin: 1.5rem 0 0 0; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">🏆 View Round 1 Leaderboard</button>
+        `;
+
         portalContent.innerHTML = `
             <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1.5rem; text-align: center;">${clubTitle} Challenges</h3>
             <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; text-align: center;">Choose an active round from the choices below:</p>
@@ -1495,10 +1500,7 @@ function renderQuizQuestion() {
         <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                 <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="exitQuizAlert()">← Exit Quiz</button>
-                <div style="display: flex; gap: 1.5rem; align-items: center;">
-                    <div id="quiz-timer-display" style="font-family: monospace; font-size: 0.95rem; font-weight: bold; color: var(--accent-cyan); background: rgba(0,210,255,0.05); padding: 0.25rem 0.75rem; border-radius: 6px; border: 1px solid rgba(0,210,255,0.15);">Time: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}</div>
-                    <div style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">Score: ${quizScore} / ${quizQuestions.length}</div>
-                </div>
+                <div id="quiz-timer-display" style="font-family: monospace; font-size: 0.95rem; font-weight: bold; color: var(--accent-cyan); background: rgba(0,210,255,0.05); padding: 0.25rem 0.75rem; border-radius: 6px; border: 1px solid rgba(0,210,255,0.15);">Time: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}</div>
             </div>
             
             <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 1.5rem; overflow: hidden; position: relative;">
@@ -1532,37 +1534,15 @@ function selectQuizOption(selectedBtn, selectedIdx) {
         btn.style.cursor = 'default';
     });
     
+    selectedBtn.style.borderColor = 'var(--accent-cyan)';
+    selectedBtn.style.background = 'rgba(0, 210, 255, 0.05)';
+    selectedBtn.style.color = 'var(--accent-cyan)';
+    
     const selectedText = q.options[selectedIdx];
     const isCorrect = selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase();
     
     if (isCorrect) {
-        selectedBtn.style.borderColor = '#4ade80';
-        selectedBtn.style.background = 'rgba(74, 222, 128, 0.08)';
-        selectedBtn.style.color = '#4ade80';
-        selectedBtn.querySelector('.option-feedback').innerText = '✓ Correct';
-        selectedBtn.querySelector('.option-feedback').style.display = 'block';
         quizScore++;
-    } else {
-        selectedBtn.style.borderColor = '#f87171';
-        selectedBtn.style.background = 'rgba(248, 113, 113, 0.08)';
-        selectedBtn.style.color = '#f87171';
-        selectedBtn.querySelector('.option-feedback').innerText = '✗ Incorrect';
-        selectedBtn.querySelector('.option-feedback').style.display = 'block';
-        
-        optionButtons.forEach((btn, idx) => {
-            if (q.options[idx].trim().toLowerCase() === q.ans.trim().toLowerCase()) {
-                btn.style.borderColor = '#4ade80';
-                btn.style.background = 'rgba(74, 222, 128, 0.05)';
-                btn.style.color = '#4ade80';
-                btn.querySelector('.option-feedback').innerText = '✓ Correct Answer';
-                btn.querySelector('.option-feedback').style.display = 'block';
-            }
-        });
-    }
-    
-    const scoreIndicator = document.querySelector('.quiz-container div div');
-    if (scoreIndicator) {
-        scoreIndicator.innerText = `Score: ${quizScore} / ${quizQuestions.length}`;
     }
     
     const isLast = currentQuizIndex === quizQuestions.length - 1;
@@ -1624,9 +1604,8 @@ function finishQuiz() {
                 </div>
             </div>
             
-            <div style="display: flex; gap: 1rem;">
-                <button class="btn-admin-logout" style="width: auto; padding: 0.6rem 1.5rem;" onclick="startRound1Quiz()">Restart Quiz</button>
-                <button class="event-reg-link" style="width: auto; padding: 0.6rem 2rem; margin: 0;" onclick="openClubInterface('electronics')">Back to Rounds</button>
+            <div style="display: flex; gap: 1rem; width: 100%; max-width: 320px;">
+                <button class="event-reg-link" style="width: 100%; padding: 0.75rem; margin: 0; border: none; background: var(--accent-cyan); color: var(--bg-dark) !important;" onclick="openClubInterface('electronics')">Back to Rounds</button>
             </div>
         </div>
     `;
@@ -1690,6 +1669,106 @@ function saveQuizResultToSupabase(submission) {
         if (statusEl) {
             statusEl.innerText = '⚠️ Leaderboard sync failed - recorded locally.';
             statusEl.style.color = '#f87171';
+        }
+    });
+}
+
+function showPublicQuizResults() {
+    portalContent.innerHTML = `
+        <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--accent-cyan); margin: 0;">🏆 Round 1 Leaderboard</h3>
+            </div>
+            
+            <div class="table-container" style="overflow-x: auto; background: rgba(8, 12, 23, 0.6); border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 12px; padding: 1rem;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
+                            <th style="padding: 0.75rem;">Rank</th>
+                            <th style="padding: 0.75rem;">Team Name</th>
+                            <th style="padding: 0.75rem;">Students</th>
+                            <th style="padding: 0.75rem;">Dept / Year</th>
+                            <th style="padding: 0.75rem;">Score</th>
+                            <th style="padding: 0.75rem;">Time Taken</th>
+                        </tr>
+                    </thead>
+                    <tbody id="public-quiz-tbody">
+                        <tr>
+                            <td colspan="6" style="padding: 2rem; text-align: center; color: var(--accent-cyan);">Loading submissions leaderboard...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
+    
+    const tbody = document.getElementById('public-quiz-tbody');
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        let resultsList = [];
+        if (data && data.length > 0) {
+            try {
+                resultsList = JSON.parse(data[0].value) || [];
+            } catch (e) {
+                resultsList = data[0].value || [];
+            }
+        }
+        
+        if (!tbody) return;
+        
+        if (resultsList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No quiz results recorded yet.</td></tr>`;
+            return;
+        }
+        
+        // Sort results: Score descending, Time Taken ascending
+        resultsList.sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+            const parseTime = str => {
+                if (!str) return 9999;
+                const parts = str.split(':');
+                return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            };
+            return parseTime(a.timeSpent) - parseTime(b.timeSpent);
+        });
+        
+        let html = '';
+        resultsList.forEach((res, rank) => {
+            html += `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 0.75rem; font-weight: bold; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${res.teamName || 'N/A'}</td>
+                    <td style="padding: 0.75rem; font-size: 0.85rem;">${res.student1 || 'N/A'}<br>${res.student2 || 'N/A'}</td>
+                    <td style="padding: 0.75rem; font-size: 0.85rem;">${res.dept || 'N/A'} / ${res.year || 'N/A'} Yr</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / 25</td>
+                    <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    })
+    .catch(err => {
+        console.error('Error loading public leaderboard:', err);
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #f87171;">Error loading leaderboard.</td></tr>`;
         }
     });
 }
