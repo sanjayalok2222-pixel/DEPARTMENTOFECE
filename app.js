@@ -159,7 +159,10 @@ function openClubInterface(clubType) {
 
         let roundsHtml = '';
         activeClubRounds.forEach((round, idx) => {
-            if (round.type === 'link') {
+            const isRound1 = idx === 0 || round.title.toLowerCase().includes('round 1') || round.title.toLowerCase().includes('round one');
+            if (isRound1) {
+                roundsHtml += `<button onclick="startRound1Quiz(${idx})" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">${round.title}</button>`;
+            } else if (round.type === 'link') {
                 roundsHtml += `<a href="${round.url}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">${round.title}</a>`;
             } else {
                 roundsHtml += `<button onclick="showRoundChallenge(${idx})" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">${round.title}</button>`;
@@ -1107,4 +1110,372 @@ window.onclick = function(event) {
     } else if (event.target === clubModal) {
         closeClubModal();
     }
+}
+
+// === 8. Round 1 Quiz Game Implementation ===
+const quizQuestions = [
+  {
+    id: 1,
+    q: "Of the four biasing circuits shown in figure, for a BJT, indicate the one which can have maximum bias stability",
+    hasImg: true,
+    img: "assets/quiz/q1.png",
+    options: ["Fig A", "Fig B", "Fig C", "Fig D"],
+    ans: "Fig A"
+  },
+  {
+    id: 2,
+    q: "Determine Vo in the circuit below.",
+    hasImg: true,
+    img: "assets/quiz/q2.png",
+    options: ["24V", "1v", "12V", "2V"],
+    ans: "12V"
+  },
+  {
+    id: 3,
+    q: "What is the voltage on capacitor C2 when all three switches are turned on?",
+    hasImg: true,
+    img: "assets/quiz/q3.png",
+    options: ["16V", "20V", "30V", "10V"],
+    ans: "10v"
+  },
+  {
+    id: 4,
+    q: "A 10V reference is drawn from the circuit shown in the figure. Zener diode of 10V, 400mW and with firing current of 5mA is used. The values of Rs is",
+    hasImg: true,
+    img: "assets/quiz/q4.png",
+    options: ["50 ohms", "100 ohm", "200 ohm", "0 ohms"],
+    ans: "100 ohm"
+  },
+  {
+    id: 5,
+    q: "What is the equivalent resistance for the circuit shown below",
+    hasImg: true,
+    img: "assets/quiz/q5.png",
+    options: ["Equal to 6", "Less than 6", "Greater than 6", "None of the above"],
+    ans: "Less than 6"
+  },
+  {
+    id: 6,
+    q: "What is the Output when Input is OV or 3.3V?",
+    hasImg: true,
+    img: "assets/quiz/q6.png",
+    options: ["3.3V, 0V", "3.3V,3.3V", "0V,3.3V", "Non deterministic, OV"],
+    ans: "3.3V, 0V"
+  },
+  {
+    id: 7,
+    q: "What is the output voltage across the 900 ohm in the circuit given below",
+    hasImg: true,
+    img: "assets/quiz/q7.png",
+    options: ["10V", "14.67V", "20 V", "9.47V"],
+    ans: "10V"
+  },
+  {
+    id: 8,
+    q: "Determine the output Y",
+    hasImg: true,
+    img: "assets/quiz/q8.png",
+    options: ["Y = AB", "Y = /(AB)", "Y=A+B", "Y = /(AB)+/(AB)"],
+    ans: "Y = AB"
+  },
+  {
+    id: 9,
+    q: "Two signals A & B are given at the same time to the circuit below whose propagation delays are mentioned in the figure. When will the output be available?",
+    hasImg: true,
+    img: "assets/quiz/q9.png",
+    options: ["20 ns", "25 ns", "30 ns", "35 ns"],
+    ans: "30 ns"
+  },
+  {
+    id: 10,
+    q: "For the RC circuit shown below, how would Vo waveform look like?",
+    hasImg: true,
+    img: "assets/quiz/q10.png",
+    options: ["Fig A", "Fig B", "Fig C", "Fig D"],
+    ans: "Fig D"
+  },
+  {
+    id: 11,
+    q: "If the inputs 1 & 2 are given to a digital logic EX-OR gate, what will be the appropriate output wave shape?",
+    hasImg: true,
+    img: "assets/quiz/q11.png",
+    options: ["W1", "W2", "W3", "W4"],
+    ans: "W4"
+  },
+  {
+    id: 12,
+    q: "What is the output pk-pk voltage in below circuit with Si diodes?",
+    hasImg: true,
+    img: "assets/quiz/q12.png",
+    options: ["7.4V", "6.7V", "11.7V", "6.4V"],
+    ans: "6.7V"
+  },
+  {
+    id: 13,
+    q: "If Y is \"1\", then, it implies that Data input D has",
+    hasImg: true,
+    img: "assets/quiz/q13.png",
+    options: [
+      "Changed from \"0\" to \"1\"",
+      "Changed from \"1\" to \"0\"",
+      "Not changed",
+      "Changed its state either from \"0\" to \"1\" or \"1\" to \"0\""
+    ],
+    ans: "Changed its state either from \"0\" to \"1\" or \"1\" to \"0\""
+  },
+  {
+    id: 14,
+    q: "Calculate the rise time of this wave shape",
+    hasImg: true,
+    img: "assets/quiz/q14.png",
+    options: ["30", "10", "8", "20"],
+    ans: "10"
+  },
+  {
+    id: 15,
+    q: "Find the voltage across 9 ohm resistor",
+    hasImg: true,
+    img: "assets/quiz/q15.png",
+    options: ["9 V", "5 V", "3 V", "Circuit incomplete"],
+    ans: "3 V"
+  },
+  {
+    id: 16,
+    q: "Calculate the output voltage Vo",
+    hasImg: true,
+    img: "assets/quiz/q16.png",
+    options: ["0.2 V", "0.4 V", "0.6 V", "0.8 V"],
+    ans: "0.6 V"
+  },
+  {
+    id: 17,
+    q: "Find the current through the 2 ohm resistor",
+    hasImg: true,
+    img: "assets/quiz/q17.png",
+    options: ["0.5 A", "4A", "6 A", "2A"],
+    ans: "2A"
+  },
+  {
+    id: 18,
+    q: "A voltage regulator having vref = 1.25V needs to generate 5V output. Assume that ladj = 100uA and R1 = 10kohm. What should be the value of R2?",
+    hasImg: true,
+    img: "assets/quiz/q18.png",
+    options: ["30kohm", "33.33kohm", "16.66kohm", "10kohm"],
+    ans: "30kohm"
+  },
+  {
+    id: 19,
+    q: "What will be the output of Not gate if we give Sine wave (3V pp with 1.5V dc base)?",
+    hasImg: false,
+    options: [
+      "Sine wave ranging from −Vcc/2 to +Vcc/2",
+      "Square wave ranging from −Vcc/2 to +Vcc/2",
+      "Sine wave ranging from 0V to +Vcc",
+      "Square wave ranging from 0V to +Vcc"
+    ],
+    ans: "Square wave ranging from 0V to +Vcc"
+  },
+  {
+    id: 20,
+    q: "An ideal current meter & volt meter should have",
+    hasImg: false,
+    options: [
+      "infinite resistance & Zero resistance",
+      "Finite resistance & Infinite resistance",
+      "Infinite resistance & Finite resistance",
+      "Zero resistance & Infinite resistance"
+    ],
+    ans: "Zero resistance & Infinite resistance"
+  },
+  {
+    id: 21,
+    q: "When an AC current of 5A and DC current of 5A flow simultaneously through a circuit then which of the following statement is true?",
+    hasImg: false,
+    options: [
+      "An AC ammeter will read less than 10A but more than 5A",
+      "An AC ammeter will read only 5A",
+      "A DC ammeter will read 10A",
+      "A DC ammeter will read zero"
+    ],
+    ans: "An AC ammeter will read less than 10A but more than 5A"
+  },
+  {
+    id: 22,
+    q: "The frequency modulated (FM) radio frequency range is nearly",
+    hasImg: false,
+    options: ["90 – 105 MHz", "30 – 70 MHz", "250 – 300 MHz", "150 – 200 MHz"],
+    ans: "90 – 105 MHz"
+  },
+  {
+    id: 23,
+    q: "An 8-bit SAR ADC has a full scale voltage of 2.5V. Its conversion time for an input of 0.5 volt is 20 μs. The conversion time for a 1.5 volts input is",
+    hasImg: false,
+    options: ["10 μs", "20 μs", "40 μs", "60 μs"],
+    ans: "20 μs"
+  },
+  {
+    id: 24,
+    q: "A 6 bit representation of decimal value -7 is",
+    hasImg: false,
+    options: ["111", "101001", "11111", "111001"],
+    ans: "111001"
+  },
+  {
+    id: 25,
+    q: "What is the lowest negative number you can express with 8 bits",
+    hasImg: false,
+    options: ["-8", "-64", "-128", "-256"],
+    ans: "-128"
+  }
+];
+
+let currentQuizIndex = 0;
+let quizScore = 0;
+
+function startRound1Quiz(idx) {
+    currentQuizIndex = 0;
+    quizScore = 0;
+    renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+    const q = quizQuestions[currentQuizIndex];
+    const progressPercent = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+    
+    let figureHtml = '';
+    if (q.hasImg) {
+        figureHtml = `
+            <div style="text-align: center; margin: 1rem 0;">
+                <img src="${q.img}" alt="Circuit Diagram" style="max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid rgba(0, 210, 255, 0.2); padding: 0.5rem; background: rgba(8, 12, 23, 0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            </div>
+        `;
+    }
+    
+    let optionsHtml = '';
+    q.options.forEach((opt, oIdx) => {
+        optionsHtml += `
+            <button class="quiz-option-btn" onclick="selectQuizOption(this, ${oIdx})" style="width: 100%; text-align: left; padding: 1rem; background: #060913; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: var(--text-primary); cursor: pointer; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>${opt}</span>
+                <span class="option-feedback" style="display: none; font-weight: bold;"></span>
+            </button>
+        `;
+    });
+    
+    portalContent.innerHTML = `
+        <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Exit Quiz</button>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">Score: ${quizScore} / ${quizQuestions.length}</div>
+            </div>
+            
+            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 1.5rem; overflow: hidden; position: relative;">
+                <div style="width: ${progressPercent}%; height: 100%; background: var(--accent-cyan); transition: width 0.3s ease; box-shadow: var(--text-glow);"></div>
+            </div>
+            
+            <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: var(--text-primary); font-weight: 800; line-height: 1.5; margin: 0 0 1rem 0;">
+                Question ${currentQuizIndex + 1} of ${quizQuestions.length}:<br>
+                <span style="font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; color: var(--text-secondary);">${q.q}</span>
+            </h4>
+            
+            ${figureHtml}
+            
+            <div id="quiz-options-wrapper" style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
+                ${optionsHtml}
+            </div>
+            
+            <div id="quiz-action-area" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; min-height: 40px;">
+            </div>
+        </div>
+    `;
+}
+
+function selectQuizOption(selectedBtn, selectedIdx) {
+    const q = quizQuestions[currentQuizIndex];
+    const optionButtons = document.querySelectorAll('.quiz-option-btn');
+    const actionArea = document.getElementById('quiz-action-area');
+    
+    optionButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+    });
+    
+    const selectedText = q.options[selectedIdx];
+    const isCorrect = selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase();
+    
+    if (isCorrect) {
+        selectedBtn.style.borderColor = '#4ade80';
+        selectedBtn.style.background = 'rgba(74, 222, 128, 0.08)';
+        selectedBtn.style.color = '#4ade80';
+        selectedBtn.querySelector('.option-feedback').innerText = '✓ Correct';
+        selectedBtn.querySelector('.option-feedback').style.display = 'block';
+        quizScore++;
+    } else {
+        selectedBtn.style.borderColor = '#f87171';
+        selectedBtn.style.background = 'rgba(248, 113, 113, 0.08)';
+        selectedBtn.style.color = '#f87171';
+        selectedBtn.querySelector('.option-feedback').innerText = '✗ Incorrect';
+        selectedBtn.querySelector('.option-feedback').style.display = 'block';
+        
+        optionButtons.forEach((btn, idx) => {
+            if (q.options[idx].trim().toLowerCase() === q.ans.trim().toLowerCase()) {
+                btn.style.borderColor = '#4ade80';
+                btn.style.background = 'rgba(74, 222, 128, 0.05)';
+                btn.style.color = '#4ade80';
+                btn.querySelector('.option-feedback').innerText = '✓ Correct Answer';
+                btn.querySelector('.option-feedback').style.display = 'block';
+            }
+        });
+    }
+    
+    const scoreIndicator = document.querySelector('.quiz-container div div');
+    if (scoreIndicator) {
+        scoreIndicator.innerText = `Score: ${quizScore} / ${quizQuestions.length}`;
+    }
+    
+    const isLast = currentQuizIndex === quizQuestions.length - 1;
+    const btnText = isLast ? 'Finish Quiz' : 'Next Question';
+    const nextFn = isLast ? 'finishQuiz()' : 'goToNextQuestion()';
+    
+    actionArea.innerHTML = `
+        <button class="event-reg-link" onclick="${nextFn}" style="margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">
+            ${btnText}
+        </button>
+    `;
+}
+
+function goToNextQuestion() {
+    currentQuizIndex++;
+    renderQuizQuestion();
+}
+
+function finishQuiz() {
+    const scorePercent = Math.round((quizScore / quizQuestions.length) * 100);
+    
+    let badge = 'Novice';
+    if (scorePercent >= 90) badge = '🏆 Elite ECE Genius';
+    else if (scorePercent >= 75) badge = '🌟 Expert Circuits Engineer';
+    else if (scorePercent >= 50) badge = '⚡ Competent Practitioner';
+    
+    portalContent.innerHTML = `
+        <div class="quiz-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; padding: 2rem 1rem;">
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">Round 1 Complete!</h3>
+            <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.5rem;">Thank you for participating in the Electronics Club challenge.</p>
+            
+            <div style="background: rgba(8, 12, 23, 0.6); border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 12px; padding: 2rem; width: 100%; max-width: 320px; margin-bottom: 2rem;">
+                <div style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Your Score</div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 3.2rem; font-weight: 900; color: var(--accent-cyan); line-height: 1; margin-bottom: 0.5rem;">${quizScore} <span style="font-size: 1.5rem; font-weight: 500; color: var(--text-secondary);">/ ${quizQuestions.length}</span></div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #4ade80; margin-bottom: 1rem;">Accuracy: ${scorePercent}%</div>
+                
+                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Achievement Rank</div>
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">${badge}</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn-admin-logout" style="width: auto; padding: 0.6rem 1.5rem;" onclick="startRound1Quiz()">Restart Quiz</button>
+                <button class="event-reg-link" style="width: auto; padding: 0.6rem 2rem; margin: 0;" onclick="openClubInterface('electronics')">Back to Rounds</button>
+            </div>
+        </div>
+    `;
 }

@@ -1685,3 +1685,28 @@ footer {
         transform: translateX(0);
     }
 }
+
+/* Quiz Option Buttons */
+.quiz-option-btn {
+    width: 100%;
+    text-align: left;
+    padding: 1rem;
+    background: #060913;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quiz-option-btn:hover:not(:disabled) {
+    border-color: var(--accent-cyan);
+    background: rgba(0, 210, 255, 0.03);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+    transform: translateY(-1px);
+}
