@@ -233,7 +233,7 @@ void loop() {
 
                 <!-- Code Option C (Dynamic correct code from Supabase) -->
                 <div style="background: #060913; border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 8px; padding: 1rem; position: relative;">
-                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 3 (Option C - Correct Program)</span>
+                    <span style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; display: block; margin-bottom: 0.5rem;">Code 3 (Option C)</span>
                     <pre style="font-family: monospace; font-size: 0.72rem; color: #a1b0cb; overflow-x: auto; margin: 0; white-space: pre-wrap;">${round.challengeCode}</pre>
                     <button onclick="copyToClipboard(this)" style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,210,255,0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-size: 0.65rem; border-radius: 4px; padding: 0.2rem 0.5rem; cursor: pointer;">Copy</button>
                 </div>
