@@ -1150,6 +1150,9 @@ body.admin-mode [contenteditable="true"]:focus {
 
     .nav-links {
         padding: 0 0.5rem !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 
     .nav-links li a {
