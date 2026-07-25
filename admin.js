@@ -343,11 +343,12 @@ function populateCmsForms() {
     // I. Student Coordinators Slots Manager
     populateCoordinatorsCmsList();
 
-    // J. Certificate link
+    // J. Certificate link & Card Display Name Placeholder
     const certEl = indexDoc.getElementById('cert-portal-link');
     if (certEl && document.getElementById('field-cert-link')) {
         document.getElementById('field-cert-link').value = certEl.getAttribute('href') || '';
     }
+    setVal('field-cert-placeholder', 'cert-placeholder-text');
 
     // K. Program Intake details
     setVal('field-intake-ug-title', 'intake-ug-title');
@@ -727,12 +728,13 @@ function publishCmsChanges() {
     // Save dynamic Activity challenges rounds list
     reconstructActivityRoundsCmsDom();
 
-    // Save Certificate portal URL
+    // Save Certificate portal URL & card placeholder
     const certEl = indexDoc.getElementById('cert-portal-link');
     const certInput = document.getElementById('field-cert-link');
     if (certEl && certInput) {
         certEl.setAttribute('href', certInput.value.trim());
     }
+    updateDocInner('cert-placeholder-text', 'field-cert-placeholder');
 
     // Save Program Intake
     updateDocInner('intake-ug-title', 'field-intake-ug-title');
@@ -951,7 +953,7 @@ function extractCmsJsonState() {
         'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
         'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
         'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
-        'coordinators-container', 'club-rounds-container', 'cert-portal-link'
+        'coordinators-container', 'club-rounds-container', 'cert-portal-link', 'cert-placeholder-text'
     ];
 
     editableElements.forEach(id => {
