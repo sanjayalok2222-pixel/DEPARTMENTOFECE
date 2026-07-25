@@ -277,6 +277,7 @@ function populateCmsForms() {
     setVal('field-header-appr', 'college-appr-header');
     setVal('field-header-nba', 'college-nba-header');
     setVal('field-footer-copyright', 'footer-copyright-text');
+    setVal('field-footer-creators', 'footer-creators-text');
 
     // B. Hero Landing
     setVal('field-hero-title', 'hero-title');
@@ -754,6 +755,7 @@ function publishCmsChanges() {
     updateDocInner('college-appr-header', 'field-header-appr');
     updateDocInner('college-nba-header', 'field-header-nba');
     updateDocInner('footer-copyright-text', 'field-footer-copyright');
+    updateDocInner('footer-creators-text', 'field-footer-creators');
     
     updateDocInner('hero-title', 'field-hero-title');
     updateDocInner('hero-subtitle', 'field-hero-subtitle');
@@ -1009,7 +1011,7 @@ function extractCmsJsonState() {
         'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
         'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
         'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
-        'coordinators-container', 'club-rounds-container', 'cert-portal-link', 'cert-placeholder-text', 'footer-copyright-text'
+        'coordinators-container', 'club-rounds-container', 'cert-portal-link', 'cert-placeholder-text', 'footer-copyright-text', 'footer-creators-text'
     ];
 
     editableElements.forEach(id => {

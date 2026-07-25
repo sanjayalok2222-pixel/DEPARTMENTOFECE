@@ -1630,6 +1630,12 @@ footer {
     overflow: hidden;
 }
 
+.footer-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
