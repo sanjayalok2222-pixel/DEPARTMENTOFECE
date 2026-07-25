@@ -1524,41 +1524,65 @@ function renderQuizQuestion() {
     `;
 }
 
+let selectedQuizAnswerIdx = null;
+
 function selectQuizOption(selectedBtn, selectedIdx) {
-    const q = quizQuestions[currentQuizIndex];
-    const optionButtons = document.querySelectorAll('.quiz-option-btn');
-    const actionArea = document.getElementById('quiz-action-area');
+    selectedQuizAnswerIdx = selectedIdx;
     
+    // Clear selection highlights from all buttons
+    const optionButtons = document.querySelectorAll('.quiz-option-btn');
     optionButtons.forEach(btn => {
-        btn.disabled = true;
-        btn.style.cursor = 'default';
+        btn.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+        btn.style.background = '#060913';
+        btn.style.color = 'var(--text-primary)';
     });
     
+    // Highlight the newly selected option
     selectedBtn.style.borderColor = 'var(--accent-cyan)';
     selectedBtn.style.background = 'rgba(0, 210, 255, 0.05)';
     selectedBtn.style.color = 'var(--accent-cyan)';
     
-    const selectedText = q.options[selectedIdx];
+    const actionArea = document.getElementById('quiz-action-area');
+    const isLast = currentQuizIndex === quizQuestions.length - 1;
+    const btnText = isLast ? 'Finish Quiz' : 'Next Question';
+    const nextFn = isLast ? 'commitAnswerAndFinish()' : 'commitAnswerAndNext()';
+    
+    actionArea.innerHTML = `
+        <button class="event-reg-link" style="margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important; cursor: pointer;" onclick="${nextFn}">
+            ${btnText}
+        </button>
+    `;
+}
+
+function commitAnswerAndNext() {
+    if (selectedQuizAnswerIdx === null) return;
+    
+    const q = quizQuestions[currentQuizIndex];
+    const selectedText = q.options[selectedQuizAnswerIdx];
     const isCorrect = selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase();
     
     if (isCorrect) {
         quizScore++;
     }
     
-    const isLast = currentQuizIndex === quizQuestions.length - 1;
-    const btnText = isLast ? 'Finish Quiz' : 'Next Question';
-    const nextFn = isLast ? 'finishQuiz()' : 'goToNextQuestion()';
-    
-    actionArea.innerHTML = `
-        <button class="event-reg-link" onclick="${nextFn}" style="margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">
-            ${btnText}
-        </button>
-    `;
-}
-
-function goToNextQuestion() {
+    selectedQuizAnswerIdx = null;
     currentQuizIndex++;
     renderQuizQuestion();
+}
+
+function commitAnswerAndFinish() {
+    if (selectedQuizAnswerIdx === null) return;
+    
+    const q = quizQuestions[currentQuizIndex];
+    const selectedText = q.options[selectedQuizAnswerIdx];
+    const isCorrect = selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase();
+    
+    if (isCorrect) {
+        quizScore++;
+    }
+    
+    selectedQuizAnswerIdx = null;
+    finishQuiz();
 }
 
 function finishQuiz() {
