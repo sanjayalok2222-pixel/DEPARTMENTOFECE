@@ -961,7 +961,11 @@ function applyFetchedState(state) {
         for (const [id, html] of Object.entries(state.edits)) {
             const el = document.getElementById(id);
             if (el) {
-                el.innerHTML = html;
+                if (id === 'cert-portal-link') {
+                    el.setAttribute('href', html);
+                } else {
+                    el.innerHTML = html;
+                }
             }
         }
     }

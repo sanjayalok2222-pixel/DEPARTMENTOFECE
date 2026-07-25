@@ -397,7 +397,7 @@
     <section id="certificate">
         <h2 class="section-title">Certificate Generator</h2>
         <div class="certificate-container">
-            <div class="certificate-card tilt-card" onclick="window.open('https://vsbeccertificate.vercel.app/', '_blank')">
+            <div class="certificate-card tilt-card" onclick="window.open(document.getElementById('cert-portal-link').href, '_blank')">
                 <div class="certificate-toy-model">
                     <div class="cert-college">V.S.B. ENGINEERING COLLEGE</div>
                     <div class="cert-dept">Department of Electronics & Communication Engineering</div>
@@ -406,7 +406,7 @@
                     <div class="cert-name">USE THIS PORTAL</div>
                     <div class="cert-badge-gold">🎖️</div>
                 </div>
-                <a href="https://vsbeccertificate.vercel.app/" target="_blank" class="event-reg-link" style="margin-top: 0;">Generate Certificate</a>
+                <a id="cert-portal-link" href="https://vsbeccertificate.vercel.app/" target="_blank" class="event-reg-link" style="margin-top: 0;">Generate Certificate</a>
             </div>
         </div>
     </section>
@@ -493,8 +493,8 @@
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(1)">✏️</button>
                 </div>
                 <h4 id="coord-name-1">Sanjay B</h4>
-                <p class="coord-role">Student Coordinator</p>
-                <p class="coord-year">III Year ECE</p>
+                <p class="coord-role" id="coord-role-1">Student Coordinator</p>
+                <p class="coord-year" id="coord-year-1">III Year ECE</p>
             </div>
 
             <div class="coord-card tilt-card" id="coord-2">
@@ -505,8 +505,8 @@
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(2)">✏️</button>
                 </div>
                 <h4 id="coord-name-2">Ragul S</h4>
-                <p class="coord-role">Student Coordinator</p>
-                <p class="coord-year">III Year ECE</p>
+                <p class="coord-role" id="coord-role-2">Student Coordinator</p>
+                <p class="coord-year" id="coord-year-2">III Year ECE</p>
             </div>
 
             <div class="coord-card tilt-card" id="coord-3">
@@ -517,8 +517,8 @@
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(3)">✏️</button>
                 </div>
                 <h4 id="coord-name-3">Sivasradeep S</h4>
-                <p class="coord-role">Student Coordinator</p>
-                <p class="coord-year">III Year ECE</p>
+                <p class="coord-role" id="coord-role-3">Student Coordinator</p>
+                <p class="coord-year" id="coord-year-3">III Year ECE</p>
             </div>
 
             <div class="coord-card tilt-card" id="coord-4">
@@ -529,8 +529,8 @@
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(4)">✏️</button>
                 </div>
                 <h4 id="coord-name-4">Kishorekumar K T</h4>
-                <p class="coord-role">Student Coordinator</p>
-                <p class="coord-year">III Year ECE</p>
+                <p class="coord-role" id="coord-role-4">Student Coordinator</p>
+                <p class="coord-year" id="coord-year-4">III Year ECE</p>
             </div>
 
             <div class="coord-card tilt-card" id="coord-5">
@@ -541,8 +541,8 @@
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(5)">✏️</button>
                 </div>
                 <h4 id="coord-name-5">Rubahan P</h4>
-                <p class="coord-role">Student Coordinator</p>
-                <p class="coord-year">III Year ECE</p>
+                <p class="coord-role" id="coord-role-5">Student Coordinator</p>
+                <p class="coord-year" id="coord-year-5">III Year ECE</p>
             </div>
         </div>
     </section>

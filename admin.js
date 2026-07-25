@@ -245,6 +245,27 @@ function populateCmsForms() {
     // I. Student Coordinators Slots Manager
     populateCoordinatorsCmsList();
 
+    // J. Certificate link
+    const certEl = indexDoc.getElementById('cert-portal-link');
+    if (certEl && document.getElementById('field-cert-link')) {
+        document.getElementById('field-cert-link').value = certEl.getAttribute('href') || '';
+    }
+
+    // K. Program Intake details
+    setVal('field-intake-ug-title', 'intake-ug-title');
+    setVal('field-intake-ug-text', 'intake-ug-text');
+    setVal('field-intake-pg-title', 'intake-pg-title');
+    setVal('field-intake-pg-text', 'intake-pg-text');
+
+    // L. Club Details
+    setVal('field-club-title', 'club-title-card');
+    setVal('field-club-desc', 'club-desc-card');
+
+    // M. Data Tables Lists
+    populateStrengthTableCmsList();
+    populateMouTableCmsList();
+    populateIsteTableCmsList();
+
     // Updates Quick Stats overview counters
     document.getElementById('stat-flyers-count').textContent = document.querySelectorAll('.cms-poster-item-card').length;
     document.getElementById('stat-files-count').textContent = document.querySelectorAll('.cms-download-item-card').length;
@@ -488,6 +509,10 @@ function populateCoordinatorsCmsList() {
     for (let id = 1; id <= 5; id++) {
         const nameEl = indexDoc.getElementById(`coord-name-${id}`);
         const name = nameEl ? nameEl.innerText.trim() : '';
+        const roleEl = indexDoc.getElementById(`coord-role-${id}`);
+        const role = roleEl ? roleEl.innerText.trim() : '';
+        const yearEl = indexDoc.getElementById(`coord-year-${id}`);
+        const year = yearEl ? yearEl.innerText.trim() : '';
         const imgEl = indexDoc.getElementById(`coord-img-${id}`);
         const emojiEl = indexDoc.getElementById(`coord-emoji-${id}`);
         const initialsText = emojiEl ? emojiEl.innerText.trim() : 'SC';
@@ -504,6 +529,14 @@ function populateCoordinatorsCmsList() {
                     <div class="form-group" style="margin-bottom:0;">
                         <label>Coordinator Name</label>
                         <input type="text" class="form-control cms-coord-name" value="${name}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Coordinator Role</label>
+                        <input type="text" class="form-control cms-coord-role" value="${role}">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label>Year Group</label>
+                        <input type="text" class="form-control cms-coord-year" value="${year}">
                     </div>
                     <div class="form-group" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
                         <label>Profile photo controls</label>
@@ -596,6 +629,28 @@ function publishCmsChanges() {
     updateDocInner('round-1-url', 'field-round-1');
     updateDocInner('round-2-url', 'field-round-2');
     updateDocInner('round-3-url', 'field-round-3');
+
+    // Save Certificate portal URL
+    const certEl = indexDoc.getElementById('cert-portal-link');
+    const certInput = document.getElementById('field-cert-link');
+    if (certEl && certInput) {
+        certEl.setAttribute('href', certInput.value.trim());
+    }
+
+    // Save Program Intake
+    updateDocInner('intake-ug-title', 'field-intake-ug-title');
+    updateDocInner('intake-ug-text', 'field-intake-ug-text');
+    updateDocInner('intake-pg-title', 'field-intake-pg-title');
+    updateDocInner('intake-pg-text', 'field-intake-pg-text');
+
+    // Save Club Details
+    updateDocInner('club-title-card', 'field-club-title');
+    updateDocInner('club-desc-card', 'field-club-desc');
+
+    // Save Tables
+    reconstructStrengthTableCmsDom();
+    reconstructMouTableCmsDom();
+    reconstructIsteTableCmsDom();
 
     // HOD 1 Info
     updateDocInner('hod-name', 'field-hod-name');
@@ -768,11 +823,23 @@ function reconstructCoordinatorsCmsDom() {
     widgets.forEach(widget => {
         const id = widget.getAttribute('data-id');
         const name = widget.querySelector('.cms-coord-name').value.trim();
+        const role = widget.querySelector('.cms-coord-role').value.trim();
+        const year = widget.querySelector('.cms-coord-year').value.trim();
         
         // Update coordinator name inside indexDoc
         const docName = indexDoc.getElementById(`coord-name-${id}`);
         if (docName) {
             docName.innerText = name;
+        }
+        // Update coordinator role inside indexDoc
+        const docRole = indexDoc.getElementById(`coord-role-${id}`);
+        if (docRole) {
+            docRole.innerText = role;
+        }
+        // Update coordinator year inside indexDoc
+        const docYear = indexDoc.getElementById(`coord-year-${id}`);
+        if (docYear) {
+            docYear.innerText = year;
         }
     });
 }
@@ -787,13 +854,17 @@ function extractCmsJsonState() {
         'table-strength-data', 'table-mou-data', 'table-iste-data', 'club-title-card', 'club-desc-card',
         'hod-name', 'hod-designation', 'hod-msg-text', 'hod-research', 'hod-email',
         'hod-name-2', 'hod-designation-2', 'hod-msg-text-2', 'hod-research-2', 'hod-email-2',
-        'coordinators-container', 'round-1-url', 'round-2-url', 'round-3-url'
+        'coordinators-container', 'round-1-url', 'round-2-url', 'round-3-url', 'cert-portal-link'
     ];
 
     editableElements.forEach(id => {
         const el = indexDoc.getElementById(id);
         if (el) {
-            editsObj[id] = el.innerHTML;
+            if (id === 'cert-portal-link') {
+                editsObj[id] = el.getAttribute('href') || '';
+            } else {
+                editsObj[id] = el.innerHTML;
+            }
         }
     });
 
@@ -871,3 +942,194 @@ function resetLocalStorageConfig() {
 function previewLiveWebsite() {
     window.open('index.html', '_blank');
 }
+
+// === 8. Dynamic Data Tables Cms Lists Managers ===
+
+// A. Student Strength Table
+function populateStrengthTableCmsList() {
+    const list = document.getElementById('cms-strength-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const tbody = indexDoc.getElementById('table-strength-data')?.querySelector('tbody');
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length >= 4) {
+            addStrengthRowMarkup(cols[0].innerText.trim(), cols[1].innerText.trim(), cols[2].innerText.trim(), cols[3].innerText.trim());
+        }
+    });
+}
+
+function addStrengthRowMarkup(year='', boys='', girls='', total='') {
+    const list = document.getElementById('cms-strength-list');
+    const div = document.createElement('div');
+    div.className = 'cms-table-row-item-card';
+    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;';
+    div.innerHTML = `
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.5rem; flex-grow: 1;">
+            <input type="text" placeholder="Academic Year" class="form-control cms-strength-year" value="${year}">
+            <input type="text" placeholder="Boys" class="form-control cms-strength-boys" value="${boys}">
+            <input type="text" placeholder="Girls" class="form-control cms-strength-girls" value="${girls}">
+            <input type="text" placeholder="Total" class="form-control cms-strength-total" value="${total}">
+        </div>
+        <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; margin-left: 0.5rem;" onclick="this.parentElement.remove()">🗑️</button>
+    `;
+    list.appendChild(div);
+}
+
+function cmsAddStrengthRow() {
+    addStrengthRowMarkup();
+}
+
+function reconstructStrengthTableCmsDom() {
+    const tbody = indexDoc.getElementById('table-strength-data')?.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const rows = document.querySelectorAll('#cms-strength-list .cms-table-row-item-card');
+    rows.forEach(row => {
+        const year = row.querySelector('.cms-strength-year').value.trim();
+        const boys = row.querySelector('.cms-strength-boys').value.trim();
+        const girls = row.querySelector('.cms-strength-girls').value.trim();
+        const total = row.querySelector('.cms-strength-total').value.trim();
+        
+        if (!year) return;
+        const tr = `
+            <tr>
+                <td>${year}</td>
+                <td>${boys}</td>
+                <td>${girls}</td>
+                <td>${total}</td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', tr);
+    });
+}
+
+
+// B. Department MOUs Table
+function populateMouTableCmsList() {
+    const list = document.getElementById('cms-mou-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const tbody = indexDoc.getElementById('table-mou-data')?.querySelector('tbody');
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length >= 4) {
+            addMouRowMarkup(cols[0].innerText.trim(), cols[1].innerText.trim(), cols[2].innerText.trim(), cols[3].innerText.trim());
+        }
+    });
+}
+
+function addMouRowMarkup(sno='', org='', date='', status='') {
+    const list = document.getElementById('cms-mou-list');
+    const div = document.createElement('div');
+    div.className = 'cms-table-row-item-card';
+    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;';
+    div.innerHTML = `
+        <div style="display: grid; grid-template-columns: 0.5fr 2fr 1fr 1fr; gap: 0.5rem; flex-grow: 1;">
+            <input type="text" placeholder="S.No" class="form-control cms-mou-sno" value="${sno}">
+            <input type="text" placeholder="Industry Name" class="form-control cms-mou-org" value="${org}">
+            <input type="text" placeholder="Date" class="form-control cms-mou-date" value="${date}">
+            <input type="text" placeholder="Status" class="form-control cms-mou-status" value="${status}">
+        </div>
+        <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; margin-left: 0.5rem;" onclick="this.parentElement.remove()">🗑️</button>
+    `;
+    list.appendChild(div);
+}
+
+function cmsAddMouRow() {
+    addMouRowMarkup();
+}
+
+function reconstructMouTableCmsDom() {
+    const tbody = indexDoc.getElementById('table-mou-data')?.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const rows = document.querySelectorAll('#cms-mou-list .cms-table-row-item-card');
+    rows.forEach(row => {
+        const sno = row.querySelector('.cms-mou-sno').value.trim();
+        const org = row.querySelector('.cms-mou-org').value.trim();
+        const date = row.querySelector('.cms-mou-date').value.trim();
+        const status = row.querySelector('.cms-mou-status').value.trim();
+        
+        if (!org) return;
+        const tr = `
+            <tr>
+                <td>${sno}</td>
+                <td>${org}</td>
+                <td>${date}</td>
+                <td>${status}</td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', tr);
+    });
+}
+
+
+// C. ISTE Memberships Table
+function populateIsteTableCmsList() {
+    const list = document.getElementById('cms-iste-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const tbody = indexDoc.getElementById('table-iste-data')?.querySelector('tbody');
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length >= 5) {
+            addIsteRowMarkup(cols[0].innerText.trim(), cols[1].innerText.trim(), cols[2].innerText.trim(), cols[3].innerText.trim(), cols[4].innerText.trim());
+        }
+    });
+}
+
+function addIsteRowMarkup(sno='', body='', year='', count='', expiry='') {
+    const list = document.getElementById('cms-iste-list');
+    const div = document.createElement('div');
+    div.className = 'cms-table-row-item-card';
+    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;';
+    div.innerHTML = `
+        <div style="display: grid; grid-template-columns: 0.5fr 1.5fr 1.5fr 1fr 1fr; gap: 0.5rem; flex-grow: 1;">
+            <input type="text" placeholder="S.No" class="form-control cms-iste-sno" value="${sno}">
+            <input type="text" placeholder="Professional Body" class="form-control cms-iste-body" value="${body}">
+            <input type="text" placeholder="Year Group" class="form-control cms-iste-year" value="${year}">
+            <input type="text" placeholder="Count" class="form-control cms-iste-count" value="${count}">
+            <input type="text" placeholder="Expiry" class="form-control cms-iste-expiry" value="${expiry}">
+        </div>
+        <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; margin-left: 0.5rem;" onclick="this.parentElement.remove()">🗑️</button>
+    `;
+    list.appendChild(div);
+}
+
+function cmsAddIsteRow() {
+    addIsteRowMarkup();
+}
+
+function reconstructIsteTableCmsDom() {
+    const tbody = indexDoc.getElementById('table-iste-data')?.querySelector('tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const rows = document.querySelectorAll('#cms-iste-list .cms-table-row-item-card');
+    rows.forEach(row => {
+        const sno = row.querySelector('.cms-iste-sno').value.trim();
+        const body = row.querySelector('.cms-iste-body').value.trim();
+        const year = row.querySelector('.cms-iste-year').value.trim();
+        const count = row.querySelector('.cms-iste-count').value.trim();
+        const expiry = row.querySelector('.cms-iste-expiry').value.trim();
+        
+        if (!body) return;
+        const tr = `
+            <tr>
+                <td>${sno}</td>
+                <td>${body}</td>
+                <td>${year}</td>
+                <td>${count}</td>
+                <td>${expiry}</td>
+            </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', tr);
+    });
+}
+
