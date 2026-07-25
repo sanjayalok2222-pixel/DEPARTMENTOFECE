@@ -132,6 +132,10 @@ function switchCmsTab(tabId) {
         }
     });
 
+    if (tabId === 'quiz-results') {
+        loadQuizResultsInDashboard();
+    }
+
     // Update main header title
     const titles = {
         'overview': 'Dashboard Overview',
@@ -140,6 +144,7 @@ function switchCmsTab(tabId) {
         'flyers': 'Carousel Event Flyers',
         'downloads': 'Downloads Directory Grid',
         'faculty': 'Faculty & Coordinator Profiles',
+        'quiz-results': 'Round 1 Quiz Leaderboard',
         'system': 'Database Configurations'
     };
     document.getElementById('cms-tab-title').textContent = titles[tabId] || 'CMS Admin Dashboard';
@@ -1411,6 +1416,121 @@ function reconstructActivityRoundsCmsDom() {
             </div>
         `;
         container.insertAdjacentHTML('beforeend', itemHtml);
+    });
+}
+
+// === 7. Round 1 Quiz Submissions & Leaderboard Systems ===
+function loadQuizResultsInDashboard() {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
+    
+    const tbody = document.getElementById('quiz-results-tbody');
+    if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: var(--accent-cyan);">Loading submissions leaderboard...</td></tr>`;
+    }
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        let resultsList = [];
+        if (data && data.length > 0) {
+            try {
+                resultsList = JSON.parse(data[0].value) || [];
+            } catch (e) {
+                resultsList = data[0].value || [];
+            }
+        }
+        
+        if (!tbody) return;
+        
+        if (resultsList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No quiz results recorded yet.</td></tr>`;
+            return;
+        }
+        
+        // Sort results: Score descending, Time Taken ascending
+        resultsList.sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+            const parseTime = str => {
+                if (!str) return 9999;
+                const parts = str.split(':');
+                return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            };
+            return parseTime(a.timeSpent) - parseTime(b.timeSpent);
+        });
+        
+        let html = '';
+        resultsList.forEach((res, rank) => {
+            const dateStr = res.submittedAt ? new Date(res.submittedAt).toLocaleString() : 'N/A';
+            html += `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 0.75rem; font-weight: bold; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${res.teamName || 'N/A'}</td>
+                    <td style="padding: 0.75rem; font-size: 0.95rem;">${res.student1 || 'N/A'}<br>${res.student2 || 'N/A'}</td>
+                    <td style="padding: 0.75rem;">${res.dept || 'N/A'} / ${res.year || 'N/A'} Yr</td>
+                    <td style="padding: 0.75rem; font-family: monospace;">${res.regnum || 'N/A'}</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / 25</td>
+                    <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
+                    <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">${dateStr}</td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    })
+    .catch(err => {
+        console.error('Error loading quiz results:', err);
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: #f87171;">Error loading results. Check Supabase connection key.</td></tr>`;
+        }
+    });
+}
+
+function clearAllQuizResults() {
+    if (!confirm('WARNING: Are you sure you want to permanently clear the entire quiz submissions leaderboard? This cannot be undone!')) {
+        return;
+    }
+    
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const postUrl = `${url}/rest/v1/vsb_ece_state`;
+    
+    fetch(postUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'quiz_results',
+            value: []
+        })
+    })
+    .then(() => {
+        alert('Leaderboard reset successfully!');
+        loadQuizResultsInDashboard();
+    })
+    .catch(err => {
+        console.error('Error clearing quiz results:', err);
+        alert('Failed to reset leaderboard.');
     });
 }
 

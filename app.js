@@ -1332,10 +1332,137 @@ const quizQuestions = [
 let currentQuizIndex = 0;
 let quizScore = 0;
 
+let currentTeamDetails = null;
+let quizTimerSeconds = 1200; // 20 minutes
+let quizTimerInterval = null;
+let quizStartTime = 0;
+
 function startRound1Quiz(idx) {
+    renderQuizRegistration();
+}
+
+function renderQuizRegistration() {
+    portalContent.innerHTML = `
+        <div class="quiz-registration-container" style="display: flex; flex-direction: column; width: 100%; max-width: 580px; margin: 0 auto; gap: 1.25rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); text-align: center; margin-bottom: 0.25rem;">Round 1 - Team Registration</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; margin-bottom: 0.5rem; line-height: 1.5;">Please enter team details to start the 20-minute Core Technical Quiz.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">TEAM NAME *</label>
+                    <input type="text" id="reg-team-name" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="e.g. Innovators ECE">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">STUDENT NAME 1 *</label>
+                        <input type="text" id="reg-student-1" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="First Participant">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">STUDENT NAME 2 *</label>
+                        <input type="text" id="reg-student-2" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="Second Participant">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">DEPARTMENT *</label>
+                        <input type="text" id="reg-dept" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="e.g. ECE">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">YEAR *</label>
+                        <select id="reg-year" class="form-control" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem; height: 41px;" required>
+                            <option value="" disabled selected>Select Year</option>
+                            <option value="I">I Year</option>
+                            <option value="II">II Year</option>
+                            <option value="III">III Year</option>
+                            <option value="IV">IV Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">REGISTER NUMBER *</label>
+                        <input type="text" id="reg-regnum" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="First Participant Reg No">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">MAIL *</label>
+                        <input type="email" id="reg-mail" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="e.g. student@vsbec.edu.in">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="event-reg-link" onclick="validateAndStartQuiz()" style="width: 100%; margin-top: 1rem; border: none; padding: 0.85rem; background: var(--accent-cyan); color: var(--bg-dark) !important; cursor: pointer; border-radius: 50px; font-weight: bold; letter-spacing: 1px;">START CHALLENGE</button>
+        </div>
+    `;
+}
+
+function validateAndStartQuiz() {
+    const teamName = document.getElementById('reg-team-name')?.value.trim();
+    const student1 = document.getElementById('reg-student-1')?.value.trim();
+    const student2 = document.getElementById('reg-student-2')?.value.trim();
+    const dept = document.getElementById('reg-dept')?.value.trim();
+    const year = document.getElementById('reg-year')?.value.trim();
+    const regnum = document.getElementById('reg-regnum')?.value.trim();
+    const mail = document.getElementById('reg-mail')?.value.trim();
+    
+    if (!teamName || !student1 || !student2 || !dept || !year || !regnum || !mail) {
+        alert('Please fill out all required fields marked with *');
+        return;
+    }
+    
+    currentTeamDetails = {
+        teamName,
+        student1,
+        student2,
+        dept,
+        year,
+        regnum,
+        mail
+    };
+    
     currentQuizIndex = 0;
     quizScore = 0;
+    quizTimerSeconds = 1200; // 20 minutes
+    quizStartTime = Date.now();
+    
+    if (quizTimerInterval) clearInterval(quizTimerInterval);
+    quizTimerInterval = setInterval(updateQuizTimer, 1000);
+    
     renderQuizQuestion();
+}
+
+function updateQuizTimer() {
+    quizTimerSeconds--;
+    
+    const timerDisplay = document.getElementById('quiz-timer-display');
+    if (timerDisplay) {
+        const mins = Math.floor(quizTimerSeconds / 60);
+        const secs = quizTimerSeconds % 60;
+        timerDisplay.innerText = `Time: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        if (quizTimerSeconds < 120) {
+            timerDisplay.style.color = '#f87171';
+            timerDisplay.style.textShadow = '0 0 10px rgba(248,113,113,0.5)';
+            timerDisplay.style.borderColor = '#f87171';
+            timerDisplay.style.background = 'rgba(248,113,113,0.05)';
+        }
+    }
+    
+    if (quizTimerSeconds <= 0) {
+        clearInterval(quizTimerInterval);
+        alert('Time is up! Your answers are being submitted.');
+        finishQuiz();
+    }
+}
+
+function exitQuizAlert() {
+    if (confirm("Are you sure you want to exit the quiz? Your progress will be lost!")) {
+        if (quizTimerInterval) clearInterval(quizTimerInterval);
+        openClubInterface('electronics');
+    }
 }
 
 function renderQuizQuestion() {
@@ -1361,11 +1488,17 @@ function renderQuizQuestion() {
         `;
     });
     
+    const mins = Math.floor(quizTimerSeconds / 60);
+    const secs = quizTimerSeconds % 60;
+    
     portalContent.innerHTML = `
         <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Exit Quiz</button>
-                <div style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">Score: ${quizScore} / ${quizQuestions.length}</div>
+                <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="exitQuizAlert()">← Exit Quiz</button>
+                <div style="display: flex; gap: 1.5rem; align-items: center;">
+                    <div id="quiz-timer-display" style="font-family: monospace; font-size: 0.95rem; font-weight: bold; color: var(--accent-cyan); background: rgba(0,210,255,0.05); padding: 0.25rem 0.75rem; border-radius: 6px; border: 1px solid rgba(0,210,255,0.15);">Time: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}</div>
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">Score: ${quizScore} / ${quizQuestions.length}</div>
+                </div>
             </div>
             
             <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 1.5rem; overflow: hidden; position: relative;">
@@ -1449,6 +1582,22 @@ function goToNextQuestion() {
 }
 
 function finishQuiz() {
+    if (quizTimerInterval) clearInterval(quizTimerInterval);
+    
+    const elapsedMs = Date.now() - quizStartTime;
+    const elapsedMins = Math.floor(elapsedMs / 60000);
+    const elapsedSecs = Math.floor((elapsedMs % 60000) / 1000);
+    const timeSpentStr = `${elapsedMins.toString().padStart(2, '0')}:${elapsedSecs.toString().padStart(2, '0')}`;
+    
+    const submission = {
+        ...currentTeamDetails,
+        score: quizScore,
+        timeSpent: timeSpentStr,
+        submittedAt: new Date().toISOString()
+    };
+    
+    saveQuizResultToSupabase(submission);
+    
     const scorePercent = Math.round((quizScore / quizQuestions.length) * 100);
     
     let badge = 'Novice';
@@ -1459,12 +1608,15 @@ function finishQuiz() {
     portalContent.innerHTML = `
         <div class="quiz-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; padding: 2rem 1rem;">
             <h3 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">Round 1 Complete!</h3>
-            <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.5rem;">Thank you for participating in the Electronics Club challenge.</p>
+            <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.25rem;">Thank you for participating in the Electronics Club challenge.</p>
+            
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;" id="submit-status">Submitting result to leaderboard...</div>
             
             <div style="background: rgba(8, 12, 23, 0.6); border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 12px; padding: 2rem; width: 100%; max-width: 320px; margin-bottom: 2rem;">
                 <div style="font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">Your Score</div>
                 <div style="font-family: 'Outfit', sans-serif; font-size: 3.2rem; font-weight: 900; color: var(--accent-cyan); line-height: 1; margin-bottom: 0.5rem;">${quizScore} <span style="font-size: 1.5rem; font-weight: 500; color: var(--text-secondary);">/ ${quizQuestions.length}</span></div>
-                <div style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #4ade80; margin-bottom: 1rem;">Accuracy: ${scorePercent}%</div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #4ade80; margin-bottom: 0.5rem;">Accuracy: ${scorePercent}%</div>
+                <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Time Taken: ${timeSpentStr}</div>
                 
                 <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
                     <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Achievement Rank</div>
@@ -1478,4 +1630,66 @@ function finishQuiz() {
             </div>
         </div>
     `;
+}
+
+function saveQuizResultToSupabase(submission) {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        let resultsList = [];
+        if (data && data.length > 0) {
+            try {
+                resultsList = JSON.parse(data[0].value) || [];
+            } catch (e) {
+                resultsList = data[0].value || [];
+            }
+        }
+        
+        resultsList.push(submission);
+        
+        const postUrl = `${url}/rest/v1/vsb_ece_state`;
+        return fetch(postUrl, {
+            method: 'POST',
+            headers: {
+                'apikey': key,
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify({
+                key: 'quiz_results',
+                value: resultsList
+            })
+        });
+    })
+    .then(() => {
+        console.log('Quiz result submitted successfully!');
+        const statusEl = document.getElementById('submit-status');
+        if (statusEl) {
+            statusEl.innerText = '✓ Leaderboard updated successfully!';
+            statusEl.style.color = '#4ade80';
+        }
+    })
+    .catch(err => {
+        console.error('Error saving quiz result:', err);
+        const statusEl = document.getElementById('submit-status');
+        if (statusEl) {
+            statusEl.innerText = '⚠️ Leaderboard sync failed - recorded locally.';
+            statusEl.style.color = '#f87171';
+        }
+    });
 }

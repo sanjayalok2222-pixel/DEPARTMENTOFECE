@@ -846,6 +846,11 @@ tr:hover td {
     box-shadow: 0 0 35px rgba(0, 210, 255, 0.35);
 }
 
+#clubPortalModal .modal-content {
+    max-width: 850px;
+    padding: 2rem 2.5rem;
+}
+
 .modal-close {
     position: absolute;
     top: 1.5rem;
