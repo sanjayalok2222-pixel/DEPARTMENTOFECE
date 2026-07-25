@@ -600,58 +600,92 @@ function cmsAddDownloadCardSlot() {
 }
 
 
-// C. Student Coordinators (5 Slots)
+// C. Student Coordinators Manager
 function populateCoordinatorsCmsList() {
-    const listContainer = document.getElementById('cms-coordinators-container');
+    const listContainer = document.getElementById('cms-coordinators-list');
+    if (!listContainer) return;
     listContainer.innerHTML = '';
 
-    for (let id = 1; id <= 5; id++) {
-        const nameEl = indexDoc.getElementById(`coord-name-${id}`);
+    const container = indexDoc.getElementById('coordinators-container');
+    if (!container) return;
+
+    const cards = container.querySelectorAll('.coord-card');
+    cards.forEach(card => {
+        const cardIdAttr = card.getAttribute('id') || '';
+        const id = cardIdAttr.replace('coord-', '') || Date.now();
+
+        const nameEl = card.querySelector('h4');
         const name = nameEl ? nameEl.innerText.trim() : '';
-        const roleEl = indexDoc.getElementById(`coord-role-${id}`);
+
+        const roleEl = card.querySelector('.coord-role');
         const role = roleEl ? roleEl.innerText.trim() : '';
-        const yearEl = indexDoc.getElementById(`coord-year-${id}`);
+
+        const yearEl = card.querySelector('.coord-year');
         const year = yearEl ? yearEl.innerText.trim() : '';
-        const imgEl = indexDoc.getElementById(`coord-img-${id}`);
-        const emojiEl = indexDoc.getElementById(`coord-emoji-${id}`);
+
+        const imgEl = card.querySelector('.coord-avatar img');
+        const emojiEl = card.querySelector('.coord-avatar .coord-initials');
+
         const initialsText = emojiEl ? emojiEl.innerText.trim() : 'SC';
         const imgUrl = imgEl ? imgEl.getAttribute('src') : '';
         const hasPhoto = imgEl && imgEl.style.display === 'block';
 
-        const itemHtml = `
-            <div class="photo-uploader-widget coordinator-cms-widget" style="margin-bottom: 1.5rem;" data-id="${id}">
-                <div class="photo-preview-circle">
-                    <img id="preview-coord-photo-${id}" src="${hasPhoto ? imgUrl : ''}" style="display:${hasPhoto ? 'block' : 'none'};">
-                    <span id="preview-coord-initials-${id}" class="photo-preview-initials" style="display:${hasPhoto ? 'none' : 'block'};">${initialsText}</span>
-                </div>
-                <div style="flex-grow:1; display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Coordinator Name</label>
-                        <input type="text" class="form-control cms-coord-name" value="${name}">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Coordinator Role</label>
-                        <input type="text" class="form-control cms-coord-role" value="${role}">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Year Group</label>
-                        <input type="text" class="form-control cms-coord-year" value="${year}">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
-                        <label>Profile photo controls</label>
-                        <div style="display:flex; gap:0.5rem;">
-                            <label class="btn-upload-file" style="margin:0;">
-                                📤 Photo
-                                <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">
-                            </label>
-                            <button class="btn-clear-photo" style="padding:0.4rem 1rem;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">🗑️ Reset</button>
-                        </div>
-                    </div>
+        addCoordinatorSlotMarkup(id, name, role, year, initialsText, imgUrl, hasPhoto);
+    });
+}
+
+function addCoordinatorSlotMarkup(id, name='', role='', year='', initialsText='SC', imgUrl='', hasPhoto=false) {
+    const listContainer = document.getElementById('cms-coordinators-list');
+    const div = document.createElement('div');
+    div.className = 'cms-list-item coordinator-cms-widget photo-uploader-widget';
+    div.setAttribute('data-id', id);
+    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; position: relative;';
+    div.innerHTML = `
+        <div class="photo-preview-circle">
+            <img id="preview-coord-photo-${id}" src="${hasPhoto ? imgUrl : ''}" style="display:${hasPhoto ? 'block' : 'none'};">
+            <span id="preview-coord-initials-${id}" class="photo-preview-initials" style="display:${hasPhoto ? 'none' : 'block'};">${initialsText}</span>
+        </div>
+        <div style="flex-grow:1; display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-right: 40px;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Coordinator Name</label>
+                <input type="text" class="form-control cms-coord-name" value="${name}">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Coordinator Role</label>
+                <input type="text" class="form-control cms-coord-role" value="${role}">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Year Group</label>
+                <input type="text" class="form-control cms-coord-year" value="${year}">
+            </div>
+            <div class="form-group" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
+                <label>Profile photo controls</label>
+                <div style="display:flex; gap:0.5rem;">
+                    <label class="btn-upload-file" style="margin:0;">
+                        📤 Photo
+                        <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">
+                    </label>
+                    <button class="btn-clear-photo" style="padding:0.4rem 1rem;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">🗑️ Reset</button>
                 </div>
             </div>
-        `;
-        listContainer.insertAdjacentHTML('beforeend', itemHtml);
-    }
+        </div>
+        
+        <button type="button" class="btn-delete-list-item" title="Delete Coordinator" onclick="this.closest('.cms-list-item').remove()" style="position: absolute; top: 1.25rem; right: 1.25rem;">🗑️</button>
+    `;
+    listContainer.appendChild(div);
+}
+
+function cmsAddCoordinatorSlot() {
+    const widgets = document.querySelectorAll('#cms-coordinators-list .coordinator-cms-widget');
+    let maxId = 0;
+    widgets.forEach(w => {
+        const idVal = parseInt(w.getAttribute('data-id'), 10);
+        if (!isNaN(idVal) && idVal > maxId) {
+            maxId = idVal;
+        }
+    });
+    const nextId = maxId + 1;
+    addCoordinatorSlotMarkup(nextId, '', 'Student Coordinator', 'III Year ECE', 'SC', '', false);
 }
 
 
@@ -918,28 +952,48 @@ function reconstructDownloadsCmsDom() {
 
 // Rebuild student coordinator elements inside indexDoc
 function reconstructCoordinatorsCmsDom() {
-    const widgets = document.querySelectorAll('.coordinator-cms-widget');
+    const container = indexDoc.getElementById('coordinators-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const widgets = document.querySelectorAll('#cms-coordinators-list .coordinator-cms-widget');
     widgets.forEach(widget => {
         const id = widget.getAttribute('data-id');
         const name = widget.querySelector('.cms-coord-name').value.trim();
         const role = widget.querySelector('.cms-coord-role').value.trim();
         const year = widget.querySelector('.cms-coord-year').value.trim();
-        
-        // Update coordinator name inside indexDoc
-        const docName = indexDoc.getElementById(`coord-name-${id}`);
-        if (docName) {
-            docName.innerText = name;
+
+        // Get photo uploader values
+        const pImg = widget.querySelector(`#preview-coord-photo-${id}`);
+        const imgUrl = pImg ? pImg.getAttribute('src') : '';
+        const hasPhoto = pImg && pImg.style.display === 'block';
+
+        let initials = 'SC';
+        if (name) {
+            const parts = name.split(' ');
+            if (parts.length >= 2) {
+                initials = (parts[0][0] + parts[1][0]).toUpperCase();
+            } else if (parts[0].length >= 2) {
+                initials = parts[0].substring(0, 2).toUpperCase();
+            } else {
+                initials = parts[0][0].toUpperCase();
+            }
         }
-        // Update coordinator role inside indexDoc
-        const docRole = indexDoc.getElementById(`coord-role-${id}`);
-        if (docRole) {
-            docRole.innerText = role;
-        }
-        // Update coordinator year inside indexDoc
-        const docYear = indexDoc.getElementById(`coord-year-${id}`);
-        if (docYear) {
-            docYear.innerText = year;
-        }
+
+        const coordHtml = `
+            <div class="coord-card tilt-card" id="coord-${id}">
+                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <img id="coord-img-${id}" src="${hasPhoto ? imgUrl : ''}" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: ${hasPhoto ? 'block' : 'none'};">
+                    <span id="coord-emoji-${id}" class="coord-initials" style="display: ${hasPhoto ? 'none' : 'block'};">${initials}</span>
+                    <input type="file" id="admin-coord-upload-${id}" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, ${id})">
+                    <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(${id})">✏️</button>
+                </div>
+                <h4 id="coord-name-${id}">${name}</h4>
+                <p class="coord-role" id="coord-role-${id}">${role}</p>
+                <p class="coord-year" id="coord-year-${id}">${year}</p>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', coordHtml);
     });
 }
 
@@ -968,18 +1022,21 @@ function extractCmsJsonState() {
     });
 
     const coordPhotosArray = [];
-    for (let id = 1; id <= 5; id++) {
-        const img = indexDoc.getElementById(`coord-img-${id}`);
-        const emoji = indexDoc.getElementById(`coord-emoji-${id}`);
+    const docCoordCards = indexDoc.querySelectorAll('#coordinators-container .coord-card');
+    docCoordCards.forEach(card => {
+        const idAttr = card.getAttribute('id') || '';
+        const id = idAttr.replace('coord-', '');
+        const img = card.querySelector('.coord-avatar img');
+        const emoji = card.querySelector('.coord-avatar .coord-initials');
         if (img && emoji) {
             coordPhotosArray.push({
                 id: id,
-                src: img.src,
+                src: img.getAttribute('src') || '',
                 displayImg: img.style.display,
                 displayEmoji: emoji.style.display
             });
         }
-    }
+    });
 
     return {
         edits: editsObj,

@@ -965,12 +965,14 @@
 
                 <!-- Student Coordinators Section -->
                 <div class="card">
-                    <h3>👥 Student Coordinators (5 Slots)</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 2rem;">Manage student coordinator names, details, and profile pictures. Resets to initials badge SB, RS, SS, KT, RP if image is cleared.</p>
+                    <h3>👥 Student Coordinators Manager</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage dynamic student coordinators. You can edit names, roles, years, upload custom photos, or delete/add new coordinators dynamically.</p>
                     
-                    <div id="cms-coordinators-container">
-                        <!-- 5 slot items generated programmatically -->
+                    <div class="cms-list-grid" id="cms-coordinators-list">
+                        <!-- Dynamic coordinator widgets populated by JS -->
                     </div>
+                    
+                    <button type="button" class="btn-add-list-item" onclick="cmsAddCoordinatorSlot()">➕ Add Additional Coordinator</button>
                 </div>
             </div>
 
