@@ -425,8 +425,9 @@ function enableAdminMode() {
     adminPosterAddGroup.style.display = 'block';
     adminDownloadAddGroup.style.display = 'block';
 
-    loginBtn.textContent = 'Admin Mode Active';
-    loginBtn.disabled = true;
+    loginBtn.textContent = 'Dashboard ⚙️';
+    loginBtn.disabled = false;
+    loginBtn.onclick = () => window.open('admin.html', '_blank');
 
     // Enable editing on all standard fields
     editableElements.forEach(id => {
@@ -465,6 +466,7 @@ function logoutAdmin() {
 
     loginBtn.textContent = 'Admin Login';
     loginBtn.disabled = false;
+    loginBtn.onclick = () => window.open('admin.html', '_blank');
 
     // Disable editing
     editableElements.forEach(id => {
