@@ -663,6 +663,11 @@ function handlePosterUpload(event, input) {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
         const card = input.closest('.poster-card');
@@ -747,6 +752,11 @@ function handleHodPhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
         displayHodPhoto(e.target.result);
@@ -776,6 +786,11 @@ function handleHodPhotoUpload2(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
         displayHodPhoto2(e.target.result);
@@ -803,6 +818,11 @@ function triggerCoordUpload(id) {
 function handleCoordPhotoUpload(event, id) {
     const file = event.target.files[0];
     if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -834,6 +854,11 @@ function handleAvatarUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
         document.getElementById('admin-profile-pic').src = e.target.result;
@@ -846,6 +871,11 @@ function handleAvatarUpload(event) {
 function handleNewFileUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {

@@ -440,6 +440,11 @@ function handleCmsPosterUploader(index, event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
+
     const reader = new FileReader();
     reader.onload = function(e) {
         document.getElementById(`poster-preview-img-${index}`).src = e.target.result;
@@ -553,6 +558,11 @@ function populateDownloadsCmsList() {
 function handleCmsDownloadFileUploader(index, event) {
     const file = event.target.files[0];
     if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -700,6 +710,11 @@ function cmsAddCoordinatorSlot() {
 function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
     const file = event.target.files[0];
     if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+        alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = function(e) {
