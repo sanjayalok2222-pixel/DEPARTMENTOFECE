@@ -1446,8 +1446,11 @@ function loadQuizResultsInDashboard() {
     
     const tbody = document.getElementById('quiz-results-tbody');
     if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: var(--accent-cyan);">Loading submissions leaderboard...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--accent-cyan);">Loading submissions leaderboard...</td></tr>`;
     }
+    
+    const filterEl = document.getElementById('leaderboard-year-filter');
+    const selectedFilterYear = filterEl ? filterEl.value : 'Second Year';
     
     fetch(getUrl, {
         method: 'GET',
@@ -1469,13 +1472,19 @@ function loadQuizResultsInDashboard() {
         
         if (!tbody) return;
         
-        if (resultsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No quiz results recorded yet.</td></tr>`;
+        // Filter by selected year
+        const filteredResults = resultsList.filter(res => {
+            if (!res || !res.year) return false;
+            return res.year.toLowerCase().trim() === selectedFilterYear.toLowerCase().trim();
+        });
+        
+        if (filteredResults.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No quiz results recorded for ${selectedFilterYear} yet.</td></tr>`;
             return;
         }
         
         // Sort results: Score descending, Time Taken ascending
-        resultsList.sort((a, b) => {
+        filteredResults.sort((a, b) => {
             if (b.score !== a.score) {
                 return b.score - a.score;
             }
@@ -1488,15 +1497,21 @@ function loadQuizResultsInDashboard() {
         });
         
         let html = '';
-        resultsList.forEach((res, rank) => {
+        filteredResults.forEach((res, rank) => {
             const dateStr = res.submittedAt ? new Date(res.submittedAt).toLocaleString() : 'N/A';
+            const studentName = res.studentName || res.teamName || 'N/A';
+            const regnum = res.regnum || res.student1 || 'N/A';
+            const dept = res.dept || 'N/A';
+            const sec = res.section || 'N/A';
+            const mail = res.mail || 'N/A';
+            
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <td style="padding: 0.75rem; font-weight: bold; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${res.teamName || 'N/A'}</td>
-                    <td style="padding: 0.75rem; font-size: 0.95rem;">${res.student1 || 'N/A'}<br>${res.student2 || 'N/A'}</td>
-                    <td style="padding: 0.75rem;">${res.dept || 'N/A'} / ${res.year || 'N/A'} Yr</td>
-                    <td style="padding: 0.75rem; font-family: monospace;">${res.regnum || 'N/A'}</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${studentName}</td>
+                    <td style="padding: 0.75rem; font-family: monospace;">${regnum}</td>
+                    <td style="padding: 0.75rem;">${dept} / ${res.year} (${sec})</td>
+                    <td style="padding: 0.75rem; font-size: 0.85rem; color: var(--text-secondary);">${mail}</td>
                     <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / 25</td>
                     <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
                     <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">${dateStr}</td>
@@ -1508,7 +1523,7 @@ function loadQuizResultsInDashboard() {
     .catch(err => {
         console.error('Error loading quiz results:', err);
         if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="8" style="padding: 2rem; text-align: center; color: #f87171;">Error loading results. Check Supabase connection key.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" style="padding: 2rem; text-align: center; color: #f87171;">Error loading results. Check Supabase connection key.</td></tr>`;
         }
     });
 }

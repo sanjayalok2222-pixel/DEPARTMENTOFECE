@@ -161,7 +161,7 @@ function openClubInterface(clubType) {
         activeClubRounds.forEach((round, idx) => {
             const isRound1 = idx === 0 || round.title.toLowerCase().includes('round 1') || round.title.toLowerCase().includes('round one');
             if (isRound1) {
-                roundsHtml += `<button onclick="startRound1Quiz(${idx})" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">${round.title}</button>`;
+                roundsHtml += `<button onclick="startTechnicalMcqSelection()" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">TECHNICAL MCQ</button>`;
             } else if (round.type === 'link') {
                 roundsHtml += `<a href="${round.url}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">${round.title}</a>`;
             } else {
@@ -171,7 +171,13 @@ function openClubInterface(clubType) {
 
         // Add public Leaderboard button below the rounds list
         roundsHtml += `
-            <button onclick="showPublicQuizResults()" class="event-reg-link" style="width: 100%; text-align: center; margin: 1.5rem 0 0 0; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">🏆 View Round 1 Leaderboard</button>
+            <div style="width: 100%; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); text-align: center; font-weight: bold; letter-spacing: 0.5px;">🏆 View Leaderboard</div>
+                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                    <button onclick="showPublicQuizResults('Second Year')" class="event-reg-link" style="flex: 1; text-align: center; margin: 0; padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">Second Yr</button>
+                    <button onclick="showPublicQuizResults('Third Year')" class="event-reg-link" style="flex: 1; text-align: center; margin: 0; padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">Third Yr</button>
+                </div>
+            </div>
         `;
 
         portalContent.innerHTML = `
@@ -1370,105 +1376,256 @@ let currentQuizIndex = 0;
 let quizScore = 0;
 
 let currentTeamDetails = null;
-let quizTimerSeconds = 1200; // 20 minutes
+let quizTimerSeconds = 2700; // 45 minutes
 let quizTimerInterval = null;
 let quizStartTime = 0;
 
-function startRound1Quiz(idx) {
-    renderQuizRegistration();
-}
+let selectedCmsYear = ''; // 'Second Year' or 'Third Year'
+let proctorViolations = 0;
+let isQuizActive = false;
 
-function renderQuizRegistration() {
+function startTechnicalMcqSelection() {
+    selectedCmsYear = '';
     portalContent.innerHTML = `
-        <div class="quiz-registration-container" style="display: flex; flex-direction: column; width: 100%; max-width: 580px; margin: 0 auto; gap: 1.25rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div class="mcq-selection-container" style="display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; gap: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif; text-align: center;">
             <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
-            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; color: var(--accent-cyan); text-align: center; margin-bottom: 0.25rem;">Round 1 - Team Registration</h3>
-            <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; margin-bottom: 0.5rem; line-height: 1.5;">Please enter team details to start the 20-minute Core Technical Quiz.</p>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: var(--accent-cyan); margin-bottom: 0.25rem;">TECHNICAL MCQ</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">Select your academic year to verify credentials and unlock the exam portal.</p>
             
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">TEAM NAME *</label>
-                    <input type="text" id="reg-team-name" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="e.g. Innovators ECE">
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">STUDENT NAME 1 *</label>
-                        <input type="text" id="reg-student-1" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="First Participant">
-                    </div>
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">STUDENT NAME 2 *</label>
-                        <input type="text" id="reg-student-2" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="Second Participant">
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">DEPARTMENT *</label>
-                        <input type="text" id="reg-dept" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="e.g. ECE">
-                    </div>
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">YEAR *</label>
-                        <select id="reg-year" class="form-control" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem; height: 41px;" required>
-                            <option value="" disabled selected>Select Year</option>
-                            <option value="I">I Year</option>
-                            <option value="II">II Year</option>
-                            <option value="III">III Year</option>
-                            <option value="IV">IV Year</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">REGISTER NUMBER *</label>
-                        <input type="text" id="reg-regnum" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="First Participant Reg No">
-                    </div>
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">MAIL *</label>
-                        <input type="email" id="reg-mail" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.7rem; color: #fff; font-size: 0.9rem;" required placeholder="e.g. student@vsbec.edu.in">
-                    </div>
-                </div>
+            <div id="year-selection-btns" style="display: flex; gap: 1rem; width: 100%;">
+                <button onclick="selectMcqYear('Second Year')" id="btn-select-2yr" class="event-reg-link" style="flex: 1; margin: 0; padding: 1rem 0; font-weight: bold; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #fff !important; cursor: pointer;">Second Year</button>
+                <button onclick="selectMcqYear('Third Year')" id="btn-select-3yr" class="event-reg-link" style="flex: 1; margin: 0; padding: 1rem 0; font-weight: bold; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #fff !important; cursor: pointer;">Third Year</button>
             </div>
             
-            <button class="event-reg-link" onclick="validateAndStartQuiz()" style="width: 100%; margin-top: 1rem; border: none; padding: 0.85rem; background: var(--accent-cyan); color: var(--bg-dark) !important; cursor: pointer; border-radius: 50px; font-weight: bold; letter-spacing: 1px;">START CHALLENGE</button>
+            <div id="pin-verification-area" style="display: none; flex-direction: column; gap: 1rem; margin-top: 1rem; padding: 1.5rem; background: rgba(8, 12, 23, 0.6); border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 12px;">
+                <label style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; text-align: left;">Enter PIN *</label>
+                <input type="password" id="mcq-auth-pin" class="form-control" maxlength="4" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.75rem; color: #fff; font-size: 1.1rem; text-align: center; letter-spacing: 4px;" placeholder="XXXX" required>
+                <div id="pin-error-msg" style="color: #f87171; font-size: 0.8rem; text-align: left; display: none;">Invalid PIN code! Please check your entry.</div>
+                <button onclick="verifyMcqAuthPin()" class="event-reg-link" style="width: 100%; margin-top: 0.5rem; border: none; padding: 0.75rem; background: var(--accent-cyan); color: var(--bg-dark) !important; font-weight: bold; letter-spacing: 1px; cursor: pointer;">VERIFY & PROCEED</button>
+            </div>
         </div>
     `;
 }
 
-function validateAndStartQuiz() {
-    const teamName = document.getElementById('reg-team-name')?.value.trim();
-    const student1 = document.getElementById('reg-student-1')?.value.trim();
-    const student2 = document.getElementById('reg-student-2')?.value.trim();
-    const dept = document.getElementById('reg-dept')?.value.trim();
-    const year = document.getElementById('reg-year')?.value.trim();
+function selectMcqYear(year) {
+    selectedCmsYear = year;
+    
+    const btn2 = document.getElementById('btn-select-2yr');
+    const btn3 = document.getElementById('btn-select-3yr');
+    
+    if (year === 'Second Year') {
+        if (btn2) {
+            btn2.style.borderColor = 'var(--accent-cyan)';
+            btn2.style.background = 'rgba(0, 210, 255, 0.05)';
+            btn2.style.color = 'var(--accent-cyan)';
+        }
+        if (btn3) {
+            btn3.style.borderColor = 'rgba(255,255,255,0.15)';
+            btn3.style.background = 'transparent';
+            btn3.style.color = '#fff';
+        }
+    } else {
+        if (btn3) {
+            btn3.style.borderColor = 'var(--accent-cyan)';
+            btn3.style.background = 'rgba(0, 210, 255, 0.05)';
+            btn3.style.color = 'var(--accent-cyan)';
+        }
+        if (btn2) {
+            btn2.style.borderColor = 'rgba(255,255,255,0.15)';
+            btn2.style.background = 'transparent';
+            btn2.style.color = '#fff';
+        }
+    }
+    
+    document.getElementById('pin-verification-area').style.display = 'flex';
+    document.getElementById('mcq-auth-pin').value = '';
+    document.getElementById('mcq-auth-pin').focus();
+    document.getElementById('pin-error-msg').style.display = 'none';
+}
+
+function verifyMcqAuthPin() {
+    const pinVal = document.getElementById('mcq-auth-pin').value.trim();
+    const errorMsg = document.getElementById('pin-error-msg');
+    
+    let isCorrect = false;
+    if (selectedCmsYear === 'Second Year' && pinVal === '2029') {
+        isCorrect = true;
+    } else if (selectedCmsYear === 'Third Year' && pinVal === '2028') {
+        isCorrect = true;
+    }
+    
+    if (isCorrect) {
+        if (errorMsg) errorMsg.style.display = 'none';
+        renderMcqRegistration();
+    } else {
+        if (errorMsg) errorMsg.style.display = 'block';
+    }
+}
+
+function renderMcqRegistration() {
+    portalContent.innerHTML = `
+        <div class="quiz-registration-container" style="display: flex; flex-direction: column; width: 100%; max-width: 760px; aspect-ratio: 16 / 9; margin: 0 auto; gap: 1rem; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; justify-content: center; padding: 1.5rem; background: rgba(8, 12, 23, 0.4); border-radius: 16px; border: 1px solid rgba(0, 210, 255, 0.15);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                <button class="btn-admin-logout" style="width: fit-content; padding: 0.3rem 1rem; margin: 0;" onclick="startTechnicalMcqSelection()">← Back</button>
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; color: var(--accent-cyan); margin: 0;">Registration (${selectedCmsYear})</h3>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem; margin: 0;">
+                    <label style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">STUDENT NAME *</label>
+                    <input type="text" id="reg-student-name" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.55rem; color: #fff; font-size: 0.85rem;" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem; margin: 0;">
+                    <label style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">REGISTER NUMBER *</label>
+                    <input type="text" id="reg-regnum" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.55rem; color: #fff; font-size: 0.85rem;" required placeholder="Enter Register Number">
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem; margin: 0;">
+                    <label style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">DEPARTMENT *</label>
+                    <input type="text" id="reg-dept" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.55rem; color: #fff; font-size: 0.85rem;" value="ECE" required>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem; margin: 0;">
+                    <label style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">YEAR</label>
+                    <input type="text" id="reg-year" class="form-control" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0.55rem; color: #aaa; font-size: 0.85rem;" value="${selectedCmsYear}" disabled readonly>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem; margin: 0;">
+                    <label style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">SECTION *</label>
+                    <input type="text" id="reg-section" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.55rem; color: #fff; font-size: 0.85rem;" required placeholder="e.g. A or B">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem; margin: 0;">
+                    <label style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">MAIL *</label>
+                    <input type="email" id="reg-mail" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.55rem; color: #fff; font-size: 0.85rem;" required placeholder="e.g. name@vsbec.edu.in">
+                </div>
+            </div>
+            
+            <button class="event-reg-link" onclick="validateAndStartMcqQuiz()" style="width: 100%; margin-top: 0.5rem; border: none; padding: 0.75rem; background: var(--accent-cyan); color: var(--bg-dark) !important; cursor: pointer; border-radius: 50px; font-weight: bold; letter-spacing: 1px; font-size: 0.9rem;">START TEST</button>
+        </div>
+    `;
+}
+
+function validateAndStartMcqQuiz() {
+    const studentName = document.getElementById('reg-student-name')?.value.trim();
     const regnum = document.getElementById('reg-regnum')?.value.trim();
+    const dept = document.getElementById('reg-dept')?.value.trim();
+    const section = document.getElementById('reg-section')?.value.trim();
     const mail = document.getElementById('reg-mail')?.value.trim();
     
-    if (!teamName || !student1 || !student2 || !dept || !year || !regnum || !mail) {
+    if (!studentName || !regnum || !dept || !section || !mail) {
         alert('Please fill out all required fields marked with *');
         return;
     }
     
     currentTeamDetails = {
-        teamName,
-        student1,
-        student2,
-        dept,
-        year,
+        studentName,
         regnum,
+        dept,
+        year: selectedCmsYear,
+        section,
         mail
     };
     
     currentQuizIndex = 0;
     quizScore = 0;
-    quizTimerSeconds = 1200; // 20 minutes
+    quizTimerSeconds = 2700; // 45 minutes
     quizStartTime = Date.now();
+    
+    // Request Fullscreen Mode
+    requestFullscreen();
+    setupProctoring();
     
     if (quizTimerInterval) clearInterval(quizTimerInterval);
     quizTimerInterval = setInterval(updateQuizTimer, 1000);
     
     renderQuizQuestion();
+}
+
+function requestFullscreen() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    else if (el.mozRequestFullScreen) el.mozRequestFullScreen().catch(()=>{});
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen().catch(()=>{});
+    else if (el.msRequestFullscreen) el.msRequestFullscreen().catch(()=>{});
+}
+
+function setupProctoring() {
+    proctorViolations = 0;
+    isQuizActive = true;
+    
+    // Add event listeners for proctor lock
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+}
+
+function removeProctoring() {
+    isQuizActive = false;
+    
+    document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Exit fullscreen
+    if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen().catch(()=>{});
+    else if (document.mozCancelFullScreen) document.mozCancelFullScreen().catch(()=>{});
+    else if (document.msExitFullscreen) document.msExitFullscreen().catch(()=>{});
+}
+
+function handleFullscreenChange() {
+    if (!isQuizActive) return;
+    
+    const isFullscreen = document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.mozFullScreenElement || 
+                         document.msFullscreenElement;
+                         
+    if (!isFullscreen) {
+        proctorViolations++;
+        if (proctorViolations >= 3) {
+            alert("Proctor Penalty: Multiple fullscreen exits detected. Your test is being submitted automatically.");
+            finishQuiz();
+        } else {
+            showFullscreenBlocker();
+        }
+    }
+}
+
+function showFullscreenBlocker() {
+    portalContent.innerHTML = `
+        <div class="proctor-blocker" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; height: 350px; padding: 2rem; background: rgba(239, 68, 68, 0.05); border: 2px solid var(--accent-red); border-radius: 12px; animation: fadeIn 0.3s ease;">
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; color: var(--accent-red); margin-bottom: 1rem;">⚠️ PROCTORING ALERT</h3>
+            <p style="color: var(--text-primary); font-size: 1rem; margin-bottom: 1.5rem; max-width: 480px;">Exiting Fullscreen Mode is strictly prohibited during the exam. You must stay in fullscreen until submission. (Violation ${proctorViolations} of 2)</p>
+            <button onclick="resumeFullscreenTest()" class="event-reg-link" style="width: auto; padding: 0.8rem 2.5rem; background: var(--accent-cyan); color: var(--bg-dark) !important; border: none; font-weight: bold; border-radius: 50px; cursor: pointer;">RE-ENTER FULLSCREEN</button>
+        </div>
+    `;
+}
+
+function resumeFullscreenTest() {
+    requestFullscreen();
+    setTimeout(renderQuizQuestion, 100);
+}
+
+function handleVisibilityChange() {
+    if (!isQuizActive) return;
+    if (document.hidden) {
+        proctorViolations++;
+        if (proctorViolations >= 3) {
+            finishQuiz();
+        } else {
+            alert(`Proctoring Warning: Tab/App switching detected! (Violation ${proctorViolations} of 2). Exiting again will auto-submit your test.`);
+        }
+    }
 }
 
 function updateQuizTimer() {
@@ -1498,6 +1655,7 @@ function updateQuizTimer() {
 function exitQuizAlert() {
     if (confirm("Are you sure you want to exit the quiz? Your progress will be lost!")) {
         if (quizTimerInterval) clearInterval(quizTimerInterval);
+        removeProctoring();
         openClubInterface('electronics');
     }
 }
@@ -1619,6 +1777,7 @@ function commitAnswerAndFinish() {
 
 function finishQuiz() {
     if (quizTimerInterval) clearInterval(quizTimerInterval);
+    removeProctoring();
     
     const elapsedMs = Date.now() - quizStartTime;
     const elapsedMins = Math.floor(elapsedMs / 60000);
@@ -1643,8 +1802,8 @@ function finishQuiz() {
     
     portalContent.innerHTML = `
         <div class="quiz-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%; padding: 2rem 1rem;">
-            <h3 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">Round 1 Complete!</h3>
-            <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.25rem;">Thank you for participating in the Electronics Club challenge.</p>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">TECHNICAL MCQ Complete!</h3>
+            <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 1.25rem;">Thank you for participating in the ECE MCQ challenge.</p>
             
             <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;" id="submit-status">Submitting result to leaderboard...</div>
             
@@ -1729,12 +1888,13 @@ function saveQuizResultToSupabase(submission) {
     });
 }
 
-function showPublicQuizResults() {
+function showPublicQuizResults(year) {
+    const selectedYear = year || 'Second Year';
     portalContent.innerHTML = `
         <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
-                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--accent-cyan); margin: 0;">🏆 Round 1 Leaderboard</h3>
+                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--accent-cyan); margin: 0;">🏆 ${selectedYear} Leaderboard</h3>
             </div>
             
             <div class="table-container" style="overflow-x: auto; background: rgba(8, 12, 23, 0.6); border: 1px solid rgba(0, 210, 255, 0.15); border-radius: 12px; padding: 1rem;">
@@ -1742,9 +1902,9 @@ function showPublicQuizResults() {
                     <thead>
                         <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
                             <th style="padding: 0.75rem;">Rank</th>
-                            <th style="padding: 0.75rem;">Team Name</th>
-                            <th style="padding: 0.75rem;">Students</th>
-                            <th style="padding: 0.75rem;">Dept / Year</th>
+                            <th style="padding: 0.75rem;">Student Name</th>
+                            <th style="padding: 0.75rem;">Register Number</th>
+                            <th style="padding: 0.75rem;">Dept / Sec</th>
                             <th style="padding: 0.75rem;">Score</th>
                             <th style="padding: 0.75rem;">Time Taken</th>
                         </tr>
@@ -1788,13 +1948,19 @@ function showPublicQuizResults() {
         
         if (!tbody) return;
         
-        if (resultsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No quiz results recorded yet.</td></tr>`;
+        // Filter by selected year
+        const filteredResults = resultsList.filter(res => {
+            if (!res || !res.year) return false;
+            return res.year.toLowerCase().trim() === selectedYear.toLowerCase().trim();
+        });
+        
+        if (filteredResults.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No quiz results recorded for ${selectedYear} yet.</td></tr>`;
             return;
         }
         
         // Sort results: Score descending, Time Taken ascending
-        resultsList.sort((a, b) => {
+        filteredResults.sort((a, b) => {
             if (b.score !== a.score) {
                 return b.score - a.score;
             }
@@ -1807,13 +1973,18 @@ function showPublicQuizResults() {
         });
         
         let html = '';
-        resultsList.forEach((res, rank) => {
+        filteredResults.forEach((res, rank) => {
+            const studentName = res.studentName || res.teamName || 'N/A';
+            const regnum = res.regnum || res.student1 || 'N/A';
+            const dept = res.dept || 'N/A';
+            const sec = res.section || 'N/A';
+            
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <td style="padding: 0.75rem; font-weight: bold; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${res.teamName || 'N/A'}</td>
-                    <td style="padding: 0.75rem; font-size: 0.85rem;">${res.student1 || 'N/A'}<br>${res.student2 || 'N/A'}</td>
-                    <td style="padding: 0.75rem; font-size: 0.85rem;">${res.dept || 'N/A'} / ${res.year || 'N/A'} Yr</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${studentName}</td>
+                    <td style="padding: 0.75rem; font-family: monospace;">${regnum}</td>
+                    <td style="padding: 0.75rem;">${dept} (Sec: ${sec})</td>
                     <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / 25</td>
                     <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
                 </tr>

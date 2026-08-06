@@ -1108,10 +1108,15 @@
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                         <div>
-                            <h3 style="margin: 0;">🏆 Round 1 Quiz Submissions</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Live student coordinator score tracking and submission timer metrics.</p>
+                            <h3 style="margin: 0;">🏆 TECHNICAL MCQ Submissions</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Live student score tracking and proctoring metrics.</p>
                         </div>
-                        <div style="display: flex; gap: 0.75rem;">
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <label style="color: var(--text-secondary); font-size: 0.85rem; font-weight: bold; margin: 0;">Filter:</label>
+                            <select id="leaderboard-year-filter" onchange="loadQuizResultsInDashboard()" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: bold; font-family: 'Space Grotesk', sans-serif;">
+                                <option value="Second Year">Second Year</option>
+                                <option value="Third Year">Third Year</option>
+                            </select>
                             <button type="button" class="btn-preview" onclick="loadQuizResultsInDashboard()">🔄 Refresh List</button>
                             <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;" onclick="clearAllQuizResults()">🗑️ Reset Leaderboard</button>
                         </div>
@@ -1122,10 +1127,10 @@
                             <thead>
                                 <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">
                                     <th style="padding: 0.75rem;">Rank</th>
-                                    <th style="padding: 0.75rem;">Team Name</th>
-                                    <th style="padding: 0.75rem;">Students</th>
-                                    <th style="padding: 0.75rem;">Dept / Year</th>
-                                    <th style="padding: 0.75rem;">Reg Number</th>
+                                    <th style="padding: 0.75rem;">Student Name</th>
+                                    <th style="padding: 0.75rem;">Register Number</th>
+                                    <th style="padding: 0.75rem;">Dept / Year (Sec)</th>
+                                    <th style="padding: 0.75rem;">Email</th>
                                     <th style="padding: 0.75rem;">Score</th>
                                     <th style="padding: 0.75rem;">Time Taken</th>
                                     <th style="padding: 0.75rem;">Submitted At</th>
