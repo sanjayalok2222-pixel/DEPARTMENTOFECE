@@ -2505,10 +2505,18 @@ function validateAndStartMcqQuiz() {
     };
     
     // Load the correct set of questions based on Year selection
+    let masterQuestions = [];
     if (selectedCmsYear === 'Third Year') {
-        quizQuestions = quizQuestions3rd;
+        masterQuestions = quizQuestions3rd;
     } else {
-        quizQuestions = quizQuestions2nd;
+        masterQuestions = quizQuestions2nd;
+    }
+    
+    // Fisher-Yates shuffle the questions to prevent cheating in simultaneous class testing
+    quizQuestions = [...masterQuestions];
+    for (let i = quizQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [quizQuestions[i], quizQuestions[j]] = [quizQuestions[j], quizQuestions[i]];
     }
     
     currentQuizIndex = 0;
