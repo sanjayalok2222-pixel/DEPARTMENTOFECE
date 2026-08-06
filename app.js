@@ -191,6 +191,12 @@ function openClubInterface(clubType) {
     }
 }
 
+function openMcqExamPortal(event) {
+    if (event) event.preventDefault();
+    openClubInterface('electronics');
+    startTechnicalMcqSelection();
+}
+
 function showRoundChallenge(idx) {
     const round = activeClubRounds[idx];
     if (!round) return;
