@@ -44,7 +44,7 @@
         <ul class="nav-links">
             <li><a href="#dept-info" class="active">Department Info</a></li>
             <li><a href="#event-registration">Event Registration</a></li>
-            <li><a href="#" onclick="openMcqExamPortal(event)">TECHNICAL MCQ</a></li>
+            <li><a href="#technical-mcq">TECHNICAL MCQ</a></li>
             <li><a href="#events">Club Activities</a></li>
             <li><a href="#event-file">Downloads</a></li>
             <li><a href="#certificate">Certificate Generator</a></li>
@@ -324,7 +324,7 @@
     <section id="events">
         <h2 class="section-title">Club Activities</h2>
         
-        <div class="events-container">
+        <div class="events-container" style="grid-template-columns: 1fr; max-width: 500px; margin: 0 auto;">
             <!-- Club 1: Electronics Club Only -->
             <div class="event-card tilt-card" style="text-align: center; align-items: center;">
                 <div style="width: 100%;">
@@ -334,22 +334,28 @@
                 </div>
                 <button class="btn-primary" style="width: 80%;" onclick="openClubInterface('electronics')">Activity</button>
             </div>
+        </div>
+    </section>
 
-            <!-- Club 2: MCQ Test Portal -->
-            <div class="event-card tilt-card" style="text-align: center; align-items: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+    <!-- Dedicated Technical MCQ Section -->
+    <section id="technical-mcq">
+        <h2 class="section-title">TECHNICAL MCQ</h2>
+        
+        <div class="mcq-portal-wrapper" style="max-width: 500px; margin: 0 auto;">
+            <div class="event-card tilt-card" style="text-align: center; align-items: center; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="width: 100%;">
                     <div class="event-icon">📝</div>
-                    <h3 style="font-family: 'Outfit'; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">Technical MCQ Portal</h3>
-                    <p style="margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 0.88rem; line-height: 1.6;">Core Electronic Devices, Digital System Design, and Circuit analysis concept evaluation exam portal.</p>
+                    <h3 style="font-family: 'Outfit'; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">Core Technical Exam</h3>
+                    <p style="margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">Access the exam portal for Electronic Devices, Digital Circuits, and Microcontroller concept evaluations.</p>
                 </div>
-                <div style="width: 100%; display: flex; flex-direction: column; gap: 0.75rem; align-items: center;">
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
                     <button class="btn-primary" style="width: 80%; font-weight: bold; background: var(--accent-cyan); border: none; color: var(--bg-dark);" onclick="openMcqExamPortal(event)">Start MCQ Test</button>
                     
-                    <div style="width: 80%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; letter-spacing: 0.5px; display: block; margin-bottom: 0.25rem;">🏆 View Leaderboard Results</span>
+                    <div style="width: 80%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; letter-spacing: 0.5px; display: block; margin-bottom: 0.5rem;">🏆 View Leaderboard Results</span>
                         <div style="display: flex; gap: 0.5rem; width: 100%;">
-                            <button class="event-reg-link" style="flex: 1; padding: 0.4rem; font-size: 0.75rem; margin: 0; background: transparent; border: 1px solid rgba(0, 210, 255, 0.4); color: var(--accent-cyan) !important; cursor: pointer;" onclick="showPublicResultsCard('Second Year')">2nd Year</button>
-                            <button class="event-reg-link" style="flex: 1; padding: 0.4rem; font-size: 0.75rem; margin: 0; background: transparent; border: 1px solid rgba(0, 210, 255, 0.4); color: var(--accent-cyan) !important; cursor: pointer;" onclick="showPublicResultsCard('Third Year')">3rd Year</button>
+                            <button class="event-reg-link" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; margin: 0; background: transparent; border: 1px solid rgba(0, 210, 255, 0.4); color: var(--accent-cyan) !important; cursor: pointer;" onclick="showPublicResultsCard('Second Year')">2nd Year</button>
+                            <button class="event-reg-link" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; margin: 0; background: transparent; border: 1px solid rgba(0, 210, 255, 0.4); color: var(--accent-cyan) !important; cursor: pointer;" onclick="showPublicResultsCard('Third Year')">3rd Year</button>
                         </div>
                     </div>
                 </div>
