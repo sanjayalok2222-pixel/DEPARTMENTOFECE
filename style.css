@@ -1799,3 +1799,10 @@ footer {
     box-shadow: 0 0 35px rgba(239, 68, 68, 0.15), inset 0 0 20px rgba(239, 68, 68, 0.05) !important;
     backdrop-filter: blur(12px) !important;
 }
+
+@media (min-width: 768px) {
+    .events-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        max-width: 900px !important;
+    }
+}

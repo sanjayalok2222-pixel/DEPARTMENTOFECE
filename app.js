@@ -197,6 +197,11 @@ function openMcqExamPortal(event) {
     startTechnicalMcqSelection();
 }
 
+function showPublicResultsCard(year) {
+    openClubInterface('electronics');
+    showPublicQuizResults(year);
+}
+
 function showRoundChallenge(idx) {
     const round = activeClubRounds[idx];
     if (!round) return;
