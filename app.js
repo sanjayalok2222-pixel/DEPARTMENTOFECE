@@ -1168,219 +1168,606 @@ window.onclick = function(event) {
 
 // === 8. Round 1 Quiz Game Implementation ===
 const quizQuestions2nd = [
-  {
-    id: 1,
-    q: "Of the four biasing circuits shown in figure, for a BJT, indicate the one which can have maximum bias stability",
-    hasImg: true,
-    img: "assets/quiz/q1.png",
-    options: ["Fig A", "Fig B", "Fig C", "Fig D"],
-    ans: "Fig A"
-  },
-  {
-    id: 2,
-    q: "Determine Vo in the circuit below.",
-    hasImg: true,
-    img: "assets/quiz/q2.png",
-    options: ["24V", "1v", "12V", "2V"],
-    ans: "12V"
-  },
-  {
-    id: 3,
-    q: "What is the voltage on capacitor C2 when all three switches are turned on?",
-    hasImg: true,
-    img: "assets/quiz/q3.png",
-    options: ["16V", "20V", "30V", "10V"],
-    ans: "10v"
-  },
-  {
-    id: 4,
-    q: "A 10V reference is drawn from the circuit shown in the figure. Zener diode of 10V, 400mW and with firing current of 5mA is used. The values of Rs is",
-    hasImg: true,
-    img: "assets/quiz/q4.png",
-    options: ["50 ohms", "100 ohm", "200 ohm", "0 ohms"],
-    ans: "100 ohm"
-  },
-  {
-    id: 5,
-    q: "What is the equivalent resistance for the circuit shown below",
-    hasImg: true,
-    img: "assets/quiz/q5.png",
-    options: ["Equal to 6", "Less than 6", "Greater than 6", "None of the above"],
-    ans: "Less than 6"
-  },
-  {
-    id: 6,
-    q: "What is the Output when Input is OV or 3.3V?",
-    hasImg: true,
-    img: "assets/quiz/q6.png",
-    options: ["3.3V, 0V", "3.3V,3.3V", "0V,3.3V", "Non deterministic, OV"],
-    ans: "3.3V, 0V"
-  },
-  {
-    id: 7,
-    q: "What is the output voltage across the 900 ohm in the circuit given below",
-    hasImg: true,
-    img: "assets/quiz/q7.png",
-    options: ["10V", "14.67V", "20 V", "9.47V"],
-    ans: "10V"
-  },
-  {
-    id: 8,
-    q: "Determine the output Y",
-    hasImg: true,
-    img: "assets/quiz/q8.png",
-    options: ["Y = AB", "Y = /(AB)", "Y=A+B", "Y = /(AB)+/(AB)"],
-    ans: "Y = AB"
-  },
-  {
-    id: 9,
-    q: "Two signals A & B are given at the same time to the circuit below whose propagation delays are mentioned in the figure. When will the output be available?",
-    hasImg: true,
-    img: "assets/quiz/q9.png",
-    options: ["20 ns", "25 ns", "30 ns", "35 ns"],
-    ans: "30 ns"
-  },
-  {
-    id: 10,
-    q: "For the RC circuit shown below, how would Vo waveform look like?",
-    hasImg: true,
-    img: "assets/quiz/q10.png",
-    options: ["Fig A", "Fig B", "Fig C", "Fig D"],
-    ans: "Fig D"
-  },
-  {
-    id: 11,
-    q: "If the inputs 1 & 2 are given to a digital logic EX-OR gate, what will be the appropriate output wave shape?",
-    hasImg: true,
-    img: "assets/quiz/q11.png",
-    options: ["W1", "W2", "W3", "W4"],
-    ans: "W4"
-  },
-  {
-    id: 12,
-    q: "What is the output pk-pk voltage in below circuit with Si diodes?",
-    hasImg: true,
-    img: "assets/quiz/q12.png",
-    options: ["7.4V", "6.7V", "11.7V", "6.4V"],
-    ans: "6.7V"
-  },
-  {
-    id: 13,
-    q: "If Y is \"1\", then, it implies that Data input D has",
-    hasImg: true,
-    img: "assets/quiz/q13.png",
-    options: [
-      "Changed from \"0\" to \"1\"",
-      "Changed from \"1\" to \"0\"",
-      "Not changed",
-      "Changed its state either from \"0\" to \"1\" or \"1\" to \"0\""
-    ],
-    ans: "Changed its state either from \"0\" to \"1\" or \"1\" to \"0\""
-  },
-  {
-    id: 14,
-    q: "Calculate the rise time of this wave shape",
-    hasImg: true,
-    img: "assets/quiz/q14.png",
-    options: ["30", "10", "8", "20"],
-    ans: "10"
-  },
-  {
-    id: 15,
-    q: "Find the voltage across 9 ohm resistor",
-    hasImg: true,
-    img: "assets/quiz/q15.png",
-    options: ["9 V", "5 V", "3 V", "Circuit incomplete"],
-    ans: "3 V"
-  },
-  {
-    id: 16,
-    q: "Calculate the output voltage Vo",
-    hasImg: true,
-    img: "assets/quiz/q16.png",
-    options: ["0.2 V", "0.4 V", "0.6 V", "0.8 V"],
-    ans: "0.6 V"
-  },
-  {
-    id: 17,
-    q: "Find the current through the 2 ohm resistor",
-    hasImg: true,
-    img: "assets/quiz/q17.png",
-    options: ["0.5 A", "4A", "6 A", "2A"],
-    ans: "2A"
-  },
-  {
-    id: 18,
-    q: "A voltage regulator having vref = 1.25V needs to generate 5V output. Assume that ladj = 100uA and R1 = 10kohm. What should be the value of R2?",
-    hasImg: true,
-    img: "assets/quiz/q18.png",
-    options: ["30kohm", "33.33kohm", "16.66kohm", "10kohm"],
-    ans: "30kohm"
-  },
-  {
-    id: 19,
-    q: "What will be the output of Not gate if we give Sine wave (3V pp with 1.5V dc base)?",
-    hasImg: false,
-    options: [
-      "Sine wave ranging from −Vcc/2 to +Vcc/2",
-      "Square wave ranging from −Vcc/2 to +Vcc/2",
-      "Sine wave ranging from 0V to +Vcc",
-      "Square wave ranging from 0V to +Vcc"
-    ],
-    ans: "Square wave ranging from 0V to +Vcc"
-  },
-  {
-    id: 20,
-    q: "An ideal current meter & volt meter should have",
-    hasImg: false,
-    options: [
-      "infinite resistance & Zero resistance",
-      "Finite resistance & Infinite resistance",
-      "Infinite resistance & Finite resistance",
-      "Zero resistance & Infinite resistance"
-    ],
-    ans: "Zero resistance & Infinite resistance"
-  },
-  {
-    id: 21,
-    q: "When an AC current of 5A and DC current of 5A flow simultaneously through a circuit then which of the following statement is true?",
-    hasImg: false,
-    options: [
-      "An AC ammeter will read less than 10A but more than 5A",
-      "An AC ammeter will read only 5A",
-      "A DC ammeter will read 10A",
-      "A DC ammeter will read zero"
-    ],
-    ans: "An AC ammeter will read less than 10A but more than 5A"
-  },
-  {
-    id: 22,
-    q: "The frequency modulated (FM) radio frequency range is nearly",
-    hasImg: false,
-    options: ["90 – 105 MHz", "30 – 70 MHz", "250 – 300 MHz", "150 – 200 MHz"],
-    ans: "90 – 105 MHz"
-  },
-  {
-    id: 23,
-    q: "An 8-bit SAR ADC has a full scale voltage of 2.5V. Its conversion time for an input of 0.5 volt is 20 μs. The conversion time for a 1.5 volts input is",
-    hasImg: false,
-    options: ["10 μs", "20 μs", "40 μs", "60 μs"],
-    ans: "20 μs"
-  },
-  {
-    id: 24,
-    q: "A 6 bit representation of decimal value -7 is",
-    hasImg: false,
-    options: ["111", "101001", "11111", "111001"],
-    ans: "111001"
-  },
-  {
-    id: 25,
-    q: "What is the lowest negative number you can express with 8 bits",
-    hasImg: false,
-    options: ["-8", "-64", "-128", "-256"],
-    ans: "-128"
-  }
+    {
+        "id": 1,
+        "q": "A PN junction diode is mainly used as a:",
+        "hasImg": false,
+        "options": [
+            "Amplifier",
+            "Rectifier",
+            "Oscillator",
+            "Filter"
+        ],
+        "ans": "Rectifier"
+    },
+    {
+        "id": 2,
+        "q": "The symbol 'P' in a PN junction represents:",
+        "hasImg": false,
+        "options": [
+            "Positive charge",
+            "Proton",
+            "P-type semiconductor",
+            "Power"
+        ],
+        "ans": "P-type semiconductor"
+    },
+    {
+        "id": 3,
+        "q": "The symbol 'N' in a PN junction represents:",
+        "hasImg": false,
+        "options": [
+            "Negative terminal",
+            "N-type semiconductor",
+            "Neutral material",
+            "None of these"
+        ],
+        "ans": "N-type semiconductor"
+    },
+    {
+        "id": 4,
+        "q": "The diode conducts current easily when it is:",
+        "hasImg": false,
+        "options": [
+            "Reverse biased",
+            "Forward biased",
+            "Unbiased",
+            "Open circuited"
+        ],
+        "ans": "Forward biased"
+    },
+    {
+        "id": 5,
+        "q": "During forward bias, the P-region is connected to:",
+        "hasImg": false,
+        "options": [
+            "Negative terminal",
+            "Ground only",
+            "Positive terminal",
+            "Neutral terminal"
+        ],
+        "ans": "Positive terminal"
+    },
+    {
+        "id": 6,
+        "q": "What is the primary function of a Zener diode?",
+        "hasImg": false,
+        "options": [
+            "Amplification",
+            "Rectification",
+            "Voltage regulation",
+            "Oscillation"
+        ],
+        "ans": "Voltage regulation"
+    },
+    {
+        "id": 7,
+        "q": "A Zener diode is designed to operate in which region?",
+        "hasImg": false,
+        "options": [
+            "Forward bias only",
+            "Reverse breakdown region",
+            "Cut-off region",
+            "Saturation region"
+        ],
+        "ans": "Reverse breakdown region"
+    },
+    {
+        "id": 8,
+        "q": "The breakdown voltage of a Zener diode is called:",
+        "hasImg": false,
+        "options": [
+            "Threshold voltage",
+            "Knee voltage",
+            "Zener voltage",
+            "Peak voltage"
+        ],
+        "ans": "Zener voltage"
+    },
+    {
+        "id": 9,
+        "q": "In forward bias, a Zener diode behaves like:",
+        "hasImg": false,
+        "options": [
+            "Capacitor",
+            "Inductor",
+            "Ordinary silicon diode",
+            "Transistor"
+        ],
+        "ans": "Ordinary silicon diode"
+    },
+    {
+        "id": 10,
+        "q": "The unit of Zener voltage is:",
+        "hasImg": false,
+        "options": [
+            "Ampere",
+            "Volt",
+            "Ohm",
+            "Watt"
+        ],
+        "ans": "Volt"
+    },
+    {
+        "id": 11,
+        "q": "What is the primary purpose of a Zener diode?",
+        "hasImg": false,
+        "options": [
+            "Rectification",
+            "Amplification",
+            "Voltage regulation",
+            "Oscillation"
+        ],
+        "ans": "Voltage regulation"
+    },
+    {
+        "id": 12,
+        "q": "A Zener diode is normally operated in:",
+        "hasImg": false,
+        "options": [
+            "Forward bias",
+            "Reverse bias",
+            "Zero bias",
+            "Both forward and reverse bias"
+        ],
+        "ans": "Reverse bias"
+    },
+    {
+        "id": 13,
+        "q": "The voltage across a Zener diode in the breakdown region is called:",
+        "hasImg": false,
+        "options": [
+            "Forward voltage",
+            "Reverse voltage",
+            "Zener voltage",
+            "Threshold voltage"
+        ],
+        "ans": "Zener voltage"
+    },
+    {
+        "id": 14,
+        "q": "Which region of the Zener diode is used for voltage regulation?",
+        "hasImg": false,
+        "options": [
+            "Forward conduction region",
+            "Reverse breakdown region",
+            "Cut-off region",
+            "Saturation region"
+        ],
+        "ans": "Reverse breakdown region"
+    },
+    {
+        "id": 15,
+        "q": "The unit of Zener voltage is:",
+        "hasImg": false,
+        "options": [
+            "Ampere",
+            "Ohm",
+            "Volt",
+            "Watt"
+        ],
+        "ans": "Volt"
+    },
+    {
+        "id": 16,
+        "q": "What is the full form of SCR?",
+        "hasImg": false,
+        "options": [
+            "Silicon Current Rectifier",
+            "Silicon Controlled Rectifier",
+            "Semiconductor Current Regulator",
+            "Silicon Control Relay"
+        ],
+        "ans": "Silicon Controlled Rectifier"
+    },
+    {
+        "id": 17,
+        "q": "An SCR belongs to which family of devices?",
+        "hasImg": false,
+        "options": [
+            "Bipolar transistor",
+            "MOSFET",
+            "Thyristor",
+            "IGBT"
+        ],
+        "ans": "Thyristor"
+    },
+    {
+        "id": 18,
+        "q": "An SCR has how many semiconductor layers?",
+        "hasImg": false,
+        "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+        ],
+        "ans": "4"
+    },
+    {
+        "id": 19,
+        "q": "An SCR consists of _______ junctions.",
+        "hasImg": false,
+        "options": [
+            "One",
+            "Two",
+            "Three",
+            "Four"
+        ],
+        "ans": "Three"
+    },
+    {
+        "id": 20,
+        "q": "How many terminals does an SCR have?",
+        "hasImg": false,
+        "options": [
+            "Two",
+            "Three",
+            "Four",
+            "Five"
+        ],
+        "ans": "Three"
+    },
+    {
+        "id": 21,
+        "q": "What is the primary function of a half-wave rectifier?",
+        "hasImg": false,
+        "options": [
+            "Amplification",
+            "Oscillation",
+            "Conversion of AC to pulsating DC",
+            "Voltage regulation"
+        ],
+        "ans": "Conversion of AC to pulsating DC"
+    },
+    {
+        "id": 22,
+        "q": "A half-wave rectifier uses how many diodes?",
+        "hasImg": false,
+        "options": [
+            "1",
+            "2",
+            "4",
+            "6"
+        ],
+        "ans": "1"
+    },
+    {
+        "id": 23,
+        "q": "During the positive half-cycle of the input AC, the diode is:",
+        "hasImg": false,
+        "options": [
+            "Reverse biased",
+            "Forward biased",
+            "Open-circuited",
+            "Short-circuited"
+        ],
+        "ans": "Forward biased"
+    },
+    {
+        "id": 24,
+        "q": "During the negative half-cycle, the diode is:",
+        "hasImg": false,
+        "options": [
+            "Forward biased",
+            "Reverse biased",
+            "Saturated",
+            "Conducting fully"
+        ],
+        "ans": "Reverse biased"
+    },
+    {
+        "id": 25,
+        "q": "The output waveform of a half-wave rectifier contains:",
+        "hasImg": false,
+        "options": [
+            "Both positive and negative half cycles",
+            "Only positive half cycles (assuming positive rectification)",
+            "Only negative half cycles",
+            "A constant DC voltage"
+        ],
+        "ans": "Only positive half cycles (assuming positive rectification)"
+    },
+    {
+        "id": 26,
+        "q": "During reverse bias, the P-region is connected to:",
+        "hasImg": false,
+        "options": [
+            "Positive terminal",
+            "Negative terminal",
+            "Neutral terminal",
+            "Load"
+        ],
+        "ans": "Negative terminal"
+    },
+    {
+        "id": 27,
+        "q": "The barrier potential of a Silicon diode is approximately:",
+        "hasImg": false,
+        "options": [
+            "0.3 V",
+            "0.7 V",
+            "1.5 V",
+            "5 V"
+        ],
+        "ans": "0.7 V"
+    },
+    {
+        "id": 28,
+        "q": "The barrier potential of a Germanium diode is approximately:",
+        "hasImg": false,
+        "options": [
+            "0.3 V",
+            "0.7 V",
+            "1.2 V",
+            "5 V"
+        ],
+        "ans": "0.3 V"
+    },
+    {
+        "id": 29,
+        "q": "The current in reverse bias is called:",
+        "hasImg": false,
+        "options": [
+            "Forward current",
+            "Leakage current",
+            "Saturation current",
+            "Load current"
+        ],
+        "ans": "Leakage current"
+    },
+    {
+        "id": 30,
+        "q": "The graph between current and voltage of a diode is called:",
+        "hasImg": false,
+        "options": [
+            "Transfer characteristic",
+            "V-I characteristic",
+            "Frequency response",
+            "Output characteristic"
+        ],
+        "ans": "V-I characteristic"
+    },
+    {
+        "id": 31,
+        "q": "Which instrument is used to measure voltage across the Zener diode?",
+        "hasImg": false,
+        "options": [
+            "Ammeter",
+            "Wattmeter",
+            "Voltmeter",
+            "Galvanometer"
+        ],
+        "ans": "Voltmeter"
+    },
+    {
+        "id": 32,
+        "q": "Which instrument measures current through the Zener diode?",
+        "hasImg": false,
+        "options": [
+            "Voltmeter",
+            "Ammeter",
+            "Ohmmeter",
+            "CRO"
+        ],
+        "ans": "Ammeter"
+    },
+    {
+        "id": 33,
+        "q": "The reverse current before breakdown is called:",
+        "hasImg": false,
+        "options": [
+            "Leakage current",
+            "Saturation current",
+            "Drift current",
+            "Ripple current"
+        ],
+        "ans": "Leakage current"
+    },
+    {
+        "id": 34,
+        "q": "The graph plotted in this experiment is between:",
+        "hasImg": false,
+        "options": [
+            "Voltage and Resistance",
+            "Voltage and Current",
+            "Current and Power",
+            "Voltage and Power"
+        ],
+        "ans": "Voltage and Current"
+    },
+    {
+        "id": 35,
+        "q": "The symbol of a Zener diode differs from a PN diode because of:",
+        "hasImg": false,
+        "options": [
+            "Curved cathode line",
+            "Zig-zag cathode line",
+            "Longer anode",
+            "Circular symbol"
+        ],
+        "ans": "Zig-zag cathode line"
+    },
+    {
+        "id": 36,
+        "q": "Which electronic component is connected in series with a Zener diode to limit current?",
+        "hasImg": false,
+        "options": [
+            "Capacitor",
+            "Inductor",
+            "Resistor",
+            "Transistor"
+        ],
+        "ans": "Resistor"
+    },
+    {
+        "id": 37,
+        "q": "The Zener diode maintains a nearly constant output voltage despite changes in:",
+        "hasImg": false,
+        "options": [
+            "Input voltage",
+            "Load current",
+            "Both A and B",
+            "Frequency"
+        ],
+        "ans": "Both A and B"
+    },
+    {
+        "id": 38,
+        "q": "The breakdown voltage of a Zener diode is determined during:",
+        "hasImg": false,
+        "options": [
+            "Fabrication",
+            "Packaging",
+            "Testing",
+            "Installation"
+        ],
+        "ans": "Fabrication"
+    },
+    {
+        "id": 39,
+        "q": "Which parameter indicates the effectiveness of voltage regulation?",
+        "hasImg": false,
+        "options": [
+            "Current gain",
+            "Voltage regulation",
+            "Power factor",
+            "Efficiency"
+        ],
+        "ans": "Voltage regulation"
+    },
+    {
+        "id": 40,
+        "q": "The symbol of a Zener diode differs from a normal diode because of:",
+        "hasImg": false,
+        "options": [
+            "Curved cathode line",
+            "Straight cathode line",
+            "Additional terminal",
+            "Larger anode"
+        ],
+        "ans": "Curved cathode line"
+    },
+    {
+        "id": 41,
+        "q": "The three terminals of an SCR are:",
+        "hasImg": false,
+        "options": [
+            "Emitter, Base, Collector",
+            "Drain, Gate, Source",
+            "Anode, Cathode, Gate",
+            "Input, Output, Ground"
+        ],
+        "ans": "Anode, Cathode, Gate"
+    },
+    {
+        "id": 42,
+        "q": "The gate terminal is used to:",
+        "hasImg": false,
+        "options": [
+            "Turn OFF the SCR",
+            "Trigger the SCR into conduction",
+            "Increase voltage",
+            "Reduce current"
+        ],
+        "ans": "Trigger the SCR into conduction"
+    },
+    {
+        "id": 43,
+        "q": "The SCR conducts when:",
+        "hasImg": false,
+        "options": [
+            "Reverse biased",
+            "Forward biased and gate pulse is applied",
+            "Gate is open",
+            "Cathode voltage is high"
+        ],
+        "ans": "Forward biased and gate pulse is applied"
+    },
+    {
+        "id": 44,
+        "q": "The minimum gate current required to turn ON an SCR is called:",
+        "hasImg": false,
+        "options": [
+            "Holding current",
+            "Latching current",
+            "Gate trigger current",
+            "Leakage current"
+        ],
+        "ans": "Gate trigger current"
+    },
+    {
+        "id": 45,
+        "q": "Which current is required to keep the SCR continuously ON?",
+        "hasImg": false,
+        "options": [
+            "Reverse current",
+            "Holding current",
+            "Gate current",
+            "Breakdown current"
+        ],
+        "ans": "Holding current"
+    },
+    {
+        "id": 46,
+        "q": "The average DC output voltage of an ideal half-wave rectifier is:",
+        "hasImg": false,
+        "options": [
+            "Vm/pi",
+            "2Vm/pi",
+            "Vm/2",
+            "Vm"
+        ],
+        "ans": "Vm/pi"
+    },
+    {
+        "id": 47,
+        "q": "The RMS output voltage of an ideal half-wave rectifier is:",
+        "hasImg": false,
+        "options": [
+            "Vm/2",
+            "Vm/sqrt(2)",
+            "Vm/pi",
+            "Vm"
+        ],
+        "ans": "Vm/2"
+    },
+    {
+        "id": 48,
+        "q": "The ripple factor of a half-wave rectifier is approximately:",
+        "hasImg": false,
+        "options": [
+            "0.482",
+            "0.812",
+            "1.21",
+            "1.57"
+        ],
+        "ans": "1.21"
+    },
+    {
+        "id": 49,
+        "q": "The maximum rectification efficiency of a half-wave rectifier is:",
+        "hasImg": false,
+        "options": [
+            "40.6%",
+            "50%",
+            "81.2%",
+            "100%"
+        ],
+        "ans": "40.6%"
+    },
+    {
+        "id": 50,
+        "q": "The Peak Inverse Voltage (PIV) of the diode in a half-wave rectifier is:",
+        "hasImg": false,
+        "options": [
+            "Vm",
+            "2Vm",
+            "Vm/2",
+            "4Vm"
+        ],
+        "ans": "Vm"
+    }
 ];
 
 const quizQuestions3rd = [

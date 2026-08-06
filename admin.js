@@ -1,6 +1,7 @@
 // === 1. Secure Authentication & Tab Navigation ===
 let indexDoc = null; // Background parsed DOM document of index.html
 let activeTab = 'overview';
+let cachedResultsList = [];
 
 // Check persistent admin session on load
 let globalSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
@@ -1435,6 +1436,7 @@ function reconstructActivityRoundsCmsDom() {
 }
 
 // === 7. Round 1 Quiz Submissions & Leaderboard Systems ===
+// === 7. Round 1 Quiz Submissions & Leaderboard Systems ===
 function loadQuizResultsInDashboard() {
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
@@ -1470,6 +1472,8 @@ function loadQuizResultsInDashboard() {
             }
         }
         
+        cachedResultsList = resultsList;
+        
         if (!tbody) return;
         
         // Filter by selected year
@@ -1498,6 +1502,7 @@ function loadQuizResultsInDashboard() {
         
         let html = '';
         filteredResults.forEach((res, rank) => {
+            const originalIndex = resultsList.indexOf(res);
             const dateStr = res.submittedAt ? new Date(res.submittedAt).toLocaleString() : 'N/A';
             const studentName = res.studentName || res.teamName || 'N/A';
             const regnum = res.regnum || res.student1 || 'N/A';
@@ -1512,9 +1517,13 @@ function loadQuizResultsInDashboard() {
                     <td style="padding: 0.75rem; font-family: monospace;">${regnum}</td>
                     <td style="padding: 0.75rem;">${dept} / ${res.year} (${sec})</td>
                     <td style="padding: 0.75rem; font-size: 0.85rem; color: var(--text-secondary);">${mail}</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / 25</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score}</td>
                     <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
                     <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">${dateStr}</td>
+                    <td style="padding: 0.75rem;">
+                        <button type="button" class="btn-preview" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 0.25rem;" onclick="openEditResultModal(${originalIndex})">✏️ Edit</button>
+                        <button type="button" class="btn-admin-logout" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin: 0;" onclick="deleteMcqResult(${originalIndex})">🗑️ Delete</button>
+                    </td>
                 </tr>
             `;
         });
@@ -1525,6 +1534,94 @@ function loadQuizResultsInDashboard() {
         if (tbody) {
             tbody.innerHTML = `<tr><td colspan="10" style="padding: 2rem; text-align: center; color: #f87171;">Error loading results. Check Supabase connection key.</td></tr>`;
         }
+    });
+}
+
+function openEditResultModal(index) {
+    const res = cachedResultsList[index];
+    if (!res) return;
+    
+    document.getElementById('edit-result-index').value = index;
+    document.getElementById('edit-student-name').value = res.studentName || res.teamName || '';
+    document.getElementById('edit-regnum').value = res.regnum || res.student1 || '';
+    document.getElementById('edit-dept').value = res.dept || '';
+    document.getElementById('edit-section').value = res.section || '';
+    document.getElementById('edit-score').value = res.score !== undefined ? res.score : 0;
+    document.getElementById('edit-time-spent').value = res.timeSpent || '';
+    document.getElementById('edit-mail').value = res.mail || '';
+    
+    document.getElementById('editResultModal').style.display = 'flex';
+}
+
+function closeEditResultModal() {
+    document.getElementById('editResultModal').style.display = 'none';
+}
+
+function saveEditedMcqResult(event) {
+    if (event) event.preventDefault();
+    
+    const index = parseInt(document.getElementById('edit-result-index').value);
+    if (isNaN(index) || !cachedResultsList[index]) return;
+    
+    const studentName = document.getElementById('edit-student-name').value.trim();
+    const regnum = document.getElementById('edit-regnum').value.trim();
+    const dept = document.getElementById('edit-dept').value.trim();
+    const section = document.getElementById('edit-section').value.trim();
+    const score = parseInt(document.getElementById('edit-score').value);
+    const timeSpent = document.getElementById('edit-time-spent').value.trim();
+    const mail = document.getElementById('edit-mail').value.trim();
+    
+    cachedResultsList[index].studentName = studentName;
+    cachedResultsList[index].teamName = studentName; 
+    cachedResultsList[index].regnum = regnum;
+    cachedResultsList[index].student1 = regnum;
+    cachedResultsList[index].dept = dept;
+    cachedResultsList[index].section = section;
+    cachedResultsList[index].score = score;
+    cachedResultsList[index].timeSpent = timeSpent;
+    cachedResultsList[index].mail = mail;
+    
+    saveResultsListToSupabase(cachedResultsList);
+    closeEditResultModal();
+}
+
+function deleteMcqResult(index) {
+    if (!confirm("Are you sure you want to delete this result?")) return;
+    
+    cachedResultsList.splice(index, 1);
+    saveResultsListToSupabase(cachedResultsList);
+}
+
+function saveResultsListToSupabase(resultsList) {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const postUrl = `${url}/rest/v1/vsb_ece_state`;
+    
+    fetch(postUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'quiz_results',
+            value: resultsList
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to save");
+        alert("Submissions leaderboard updated successfully!");
+        loadQuizResultsInDashboard(); 
+    })
+    .catch(err => {
+        console.error(err);
+        alert("⚠️ Failed to sync changes with Supabase!");
     });
 }
 

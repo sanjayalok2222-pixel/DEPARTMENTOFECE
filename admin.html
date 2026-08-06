@@ -762,7 +762,7 @@
                 <li class="sidebar-item" data-tab="flyers"><button onclick="switchCmsTab('flyers')">🎟️ Event Flyers</button></li>
                 <li class="sidebar-item" data-tab="downloads"><button onclick="switchCmsTab('downloads')">📂 Downloads Grid</button></li>
                 <li class="sidebar-item" data-tab="faculty"><button onclick="switchCmsTab('faculty')">🎓 HODs & Faculty</button></li>
-                <li class="sidebar-item" data-tab="quiz-results"><button onclick="switchCmsTab('quiz-results')">🏆 Quiz Leaderboard</button></li>
+                <li class="sidebar-item" data-tab="quiz-results"><button onclick="switchCmsTab('quiz-results')">📝 Technical MCQ</button></li>
                 <li class="sidebar-item" data-tab="system"><button onclick="switchCmsTab('system')">⚙️ Database Setup</button></li>
             </ul>
 
@@ -1134,6 +1134,7 @@
                                     <th style="padding: 0.75rem;">Score</th>
                                     <th style="padding: 0.75rem;">Time Taken</th>
                                     <th style="padding: 0.75rem;">Submitted At</th>
+                                    <th style="padding: 0.75rem;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="quiz-results-tbody">
@@ -1168,6 +1169,52 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Edit Quiz Result Modal -->
+    <div id="editResultModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: #090e1a; border: 1px solid rgba(0, 210, 255, 0.25); box-shadow: 0 0 30px rgba(0, 210, 255, 0.15); border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; margin: 1rem; color: #fff;">
+            <h3 style="font-family: 'Outfit', sans-serif; color: var(--accent-cyan); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">✏️ Edit MCQ Result</h3>
+            <form id="edit-result-form" onsubmit="saveEditedMcqResult(event)">
+                <input type="hidden" id="edit-result-index">
+                <div class="form-group" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">STUDENT NAME</label>
+                    <input type="text" id="edit-student-name" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">REGISTER NUMBER</label>
+                    <input type="text" id="edit-regnum" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">DEPARTMENT</label>
+                        <input type="text" id="edit-dept" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">SECTION</label>
+                        <input type="text" id="edit-section" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">SCORE</label>
+                        <input type="number" id="edit-score" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">TIME SPENT</label>
+                        <input type="text" id="edit-time-spent" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" placeholder="MM:SS" required>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">MAIL</label>
+                    <input type="email" id="edit-mail" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn-admin-logout" style="width: auto; margin: 0; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #fff;" onclick="closeEditResultModal()">Cancel</button>
+                    <button type="submit" class="event-reg-link" style="width: auto; margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); color: var(--bg-dark) !important; font-weight: bold; border: none; cursor: pointer;">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 
