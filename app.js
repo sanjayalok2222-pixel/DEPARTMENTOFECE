@@ -314,6 +314,10 @@ function copyToClipboard(button) {
 }
 
 function closeClubModal() {
+    if (isQuizActive) {
+        // Do not allow closing modal when quiz is active to prevent accidental clicks outside
+        return;
+    }
     clubModal.classList.remove('active');
 }
 
