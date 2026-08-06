@@ -1167,7 +1167,7 @@ window.onclick = function(event) {
 }
 
 // === 8. Round 1 Quiz Game Implementation ===
-const quizQuestions = [
+const quizQuestions2nd = [
   {
     id: 1,
     q: "Of the four biasing circuits shown in figure, for a BJT, indicate the one which can have maximum bias stability",
@@ -1383,6 +1383,583 @@ const quizQuestions = [
   }
 ];
 
+const quizQuestions3rd = [
+    {
+        "id": 1,
+        "q": "Calculate the current through 48 ohm resistor in the circuit shown. Assume the diode drop is 0.7V.",
+        "hasImg": true,
+        "img": "assets/quiz/q1.png",
+        "options": [
+            "1.72mA",
+            "17.2mA",
+            "172mA",
+            "0.172mA"
+        ],
+        "ans": "1.72mA"
+    },
+    {
+        "id": 2,
+        "q": "Find the voltage VA in the circuit shown below",
+        "hasImg": true,
+        "img": "assets/quiz/q2.png",
+        "options": [
+            "19.7V",
+            "20V",
+            "12V",
+            "0.7V"
+        ],
+        "ans": "19.7V"
+    },
+    {
+        "id": 3,
+        "q": "Find the current which passes through the circuit shown below",
+        "hasImg": true,
+        "img": "assets/quiz/q3.png",
+        "options": [
+            "0.5A",
+            "1A",
+            "1.5A",
+            "2A"
+        ],
+        "ans": "0.5A"
+    },
+    {
+        "id": 4,
+        "q": "Consider the circuit with R1 = 5 ohms and R2 = 3 ohms and current source I1 = 5A. Determine the voltage drop(Vs) across the current source using KVL.",
+        "hasImg": true,
+        "img": "assets/quiz/q4.png",
+        "options": [
+            "40V",
+            "15V",
+            "25V",
+            "10V"
+        ],
+        "ans": "40V"
+    },
+    {
+        "id": 5,
+        "q": "Determine current through each diode in the circuit shown below. Assume diodes to be similar.",
+        "hasImg": true,
+        "img": "assets/quiz/q5.png",
+        "options": [
+            "14.3mA",
+            "28.6mA",
+            "7.15mA",
+            "0mA"
+        ],
+        "ans": "14.3mA"
+    },
+    {
+        "id": 6,
+        "q": "What is the equivalent resistance if three resistances of 6 ohm, 3 ohm, and 8 ohm are connected in parallel?",
+        "hasImg": false,
+        "options": [
+            "1.6 Ohms",
+            "2 Ohms",
+            "17 Ohms",
+            "0.6 Ohms"
+        ],
+        "ans": "1.6 Ohms"
+    },
+    {
+        "id": 7,
+        "q": "Find the equivalent resistance for the circuit shown below.",
+        "hasImg": true,
+        "img": "assets/quiz/q7.png",
+        "options": [
+            "9.6 Ohms",
+            "10 Ohms",
+            "12 Ohms",
+            "8.4 Ohms"
+        ],
+        "ans": "9.6 Ohms"
+    },
+    {
+        "id": 8,
+        "q": "Find the equivalent resistance for the circuit shown below",
+        "hasImg": true,
+        "img": "assets/quiz/q8.png",
+        "options": [
+            "17 Ohms",
+            "20 Ohms",
+            "15 Ohms",
+            "30 Ohms"
+        ],
+        "ans": "17 Ohms"
+    },
+    {
+        "id": 9,
+        "q": "How to connect Ammeter and Voltmeter in a circuit?",
+        "hasImg": false,
+        "options": [
+            "Ammeter in series, Voltmeter in parallel",
+            "Ammeter in parallel, Voltmeter in series",
+            "Both in series",
+            "Both in parallel"
+        ],
+        "ans": "Ammeter in series, Voltmeter in parallel"
+    },
+    {
+        "id": 10,
+        "q": "How many select lines would be required for an 32-line-to-1-line multiplexer?",
+        "hasImg": false,
+        "options": [
+            "5",
+            "4",
+            "6",
+            "32"
+        ],
+        "ans": "5"
+    },
+    {
+        "id": 11,
+        "q": "In the given 4-to-1 multiplexer, if c1 = 0 and c0 = 1 then the output M is ___________",
+        "hasImg": true,
+        "img": "assets/quiz/q11.png",
+        "options": [
+            "X0",
+            "X1",
+            "X2",
+            "X3"
+        ],
+        "ans": "X1"
+    },
+    {
+        "id": 12,
+        "q": "A Multiplexer has _______ inputs, _______ output, and _______ selection lines.",
+        "hasImg": false,
+        "options": [
+            "2^n inputs, 1 output and n selection lines",
+            "n inputs, 1 output and 2^n selection lines",
+            "2^n inputs, n outputs and 1 selection line",
+            "2 inputs, 1 output and 1 selection line"
+        ],
+        "ans": "2^n inputs, 1 output and n selection lines"
+    },
+    {
+        "id": 13,
+        "q": "The output waveform of the following circuit is.",
+        "hasImg": true,
+        "img": "assets/quiz/q13.png",
+        "options": [
+            "Clamped positively to 8V",
+            "Clamped negatively to -8V",
+            "Sine wave shifted upwards with peaks at 16V and 8V",
+            "Rectified half sine wave"
+        ],
+        "ans": "Sine wave shifted upwards with peaks at 16V and 8V"
+    },
+    {
+        "id": 14,
+        "q": "In a full wave rectification the input frequency is 50Hz and what will be the output frequency?",
+        "hasImg": false,
+        "options": [
+            "50Hz",
+            "100Hz",
+            "25Hz",
+            "200Hz"
+        ],
+        "ans": "100Hz"
+    },
+    {
+        "id": 15,
+        "q": "What will be the output if 100V DC is supplied to 1:2 transformer?",
+        "hasImg": false,
+        "options": [
+            "0V",
+            "200V",
+            "50V",
+            "100V"
+        ],
+        "ans": "0V"
+    },
+    {
+        "id": 16,
+        "q": "For the following inverting operational amplifier find the closed loop voltage gain",
+        "hasImg": true,
+        "img": "assets/quiz/q16.png",
+        "options": [
+            "-4",
+            "-2",
+            "4",
+            "-0.25"
+        ],
+        "ans": "-4"
+    },
+    {
+        "id": 17,
+        "q": "Draw the output wave form for the below circuit.",
+        "hasImg": true,
+        "img": "assets/quiz/q17.png",
+        "options": [
+            "Inverted sine wave with 2V peak",
+            "Non-inverted sine wave with 2V peak",
+            "Square wave with 2V peak",
+            "Inverted sine wave with 1V peak"
+        ],
+        "ans": "Inverted sine wave with 2V peak"
+    },
+    {
+        "id": 18,
+        "q": "Bulb 1 is labeled as 60W, 120V and bulb 2 is labeled as 120W, 120V. Which one would be brighter when connected in series?",
+        "hasImg": false,
+        "options": [
+            "60W Bulb",
+            "120W Bulb",
+            "Both equally bright",
+            "Neither will glow"
+        ],
+        "ans": "60W Bulb"
+    },
+    {
+        "id": 19,
+        "q": "Bulb 1 is labeled as 60W, 120V and bulb 2 is labeled as 120W, 120V. Which one would be brighter when connected in Parallel?",
+        "hasImg": false,
+        "options": [
+            "60W Bulb",
+            "120W Bulb",
+            "Both equally bright",
+            "Neither will glow"
+        ],
+        "ans": "120W Bulb"
+    },
+    {
+        "id": 20,
+        "q": "When 5 DC sources with rating of 3V, 1A each are connected in series and in parallel. What will be the effective voltage and current delivered?",
+        "hasImg": false,
+        "options": [
+            "Series = 15V & 1A, Parallel = 3V & 5A",
+            "Series = 3V & 5A, Parallel = 15V & 1A",
+            "Series = 15V & 5A, Parallel = 3V & 1A",
+            "Series = 3V & 1A, Parallel = 15V & 5A"
+        ],
+        "ans": "Series = 15V & 1A, Parallel = 3V & 5A"
+    },
+    {
+        "id": 21,
+        "q": "Calculate the maximum safe current that can pass through a 1.8 kOhm resistor rated at 0.5W.",
+        "hasImg": false,
+        "options": [
+            "16.7mA",
+            "27.8mA",
+            "5.5mA",
+            "1.67mA"
+        ],
+        "ans": "16.7mA"
+    },
+    {
+        "id": 22,
+        "q": "Obtain the source current I and the total power delivered by the current source to the circuit in the figure.",
+        "hasImg": true,
+        "img": "assets/quiz/q22.png",
+        "options": [
+            "6A",
+            "4A",
+            "10A",
+            "2A"
+        ],
+        "ans": "6A"
+    },
+    {
+        "id": 23,
+        "q": "Calculate the equivalent capacitance across the terminal A and B.",
+        "hasImg": true,
+        "img": "assets/quiz/q23.png",
+        "options": [
+            "6.66uF",
+            "30uF",
+            "15uF",
+            "5uF"
+        ],
+        "ans": "6.66uF"
+    },
+    {
+        "id": 24,
+        "q": "Find out the voltage across diode (Vo) for the circuits shown below",
+        "hasImg": true,
+        "img": "assets/quiz/q24.png",
+        "options": [
+            "3V",
+            "0V",
+            "0.7V",
+            "1.4V"
+        ],
+        "ans": "3V"
+    },
+    {
+        "id": 25,
+        "q": "Find out the voltage across diode (Vo) for the circuits shown below",
+        "hasImg": true,
+        "img": "assets/quiz/q25.png",
+        "options": [
+            "0V",
+            "3V",
+            "0.7V",
+            "1.5V"
+        ],
+        "ans": "0V"
+    },
+    {
+        "id": 26,
+        "q": "Write the truth table of XOR gate.",
+        "hasImg": false,
+        "options": [
+            "0 for same inputs, 1 for different inputs",
+            "1 for same inputs, 0 for different inputs",
+            "Always 1",
+            "Always 0"
+        ],
+        "ans": "0 for same inputs, 1 for different inputs"
+    },
+    {
+        "id": 27,
+        "q": "What is the given circuit called as?",
+        "hasImg": true,
+        "img": "assets/quiz/q27.png",
+        "options": [
+            "Positive clipper",
+            "Negative clipper",
+            "Clamper",
+            "Rectifier"
+        ],
+        "ans": "Positive clipper"
+    },
+    {
+        "id": 28,
+        "q": "In below given circuits determine the boolean equations",
+        "hasImg": true,
+        "img": "assets/quiz/q28.png",
+        "options": [
+            "Y = A'.B + A'.Y, X = A.B' + B'.X",
+            "Y = A.B + A.Y, X = A'.B' + B.X",
+            "Y = A+B, X = A'+B'",
+            "Y = AB, X = A'B'"
+        ],
+        "ans": "Y = A'.B + A'.Y, X = A.B' + B'.X"
+    },
+    {
+        "id": 29,
+        "q": "Consider the counter shown in figure. Let the initial state before clock is applied be (Q1Q2Q3Q4) = 1010. After the first CLK, what will be the values for (Q1Q2Q3Q4) and Z?",
+        "hasImg": true,
+        "img": "assets/quiz/q29.png",
+        "options": [
+            "0101, 1",
+            "1010, 0",
+            "1100, 1",
+            "0011, 0"
+        ],
+        "ans": "0101, 1"
+    },
+    {
+        "id": 30,
+        "q": "Consider the counter shown in figure. Let the initial state before clock is applied be (Q1Q2Q3Q4) = 1010. After the second CLK, what will be the values for (Q1Q2Q3Q4) and Z?",
+        "hasImg": true,
+        "img": "assets/quiz/q30.png",
+        "options": [
+            "1010, 0",
+            "0101, 1",
+            "1111, 1",
+            "0000, 0"
+        ],
+        "ans": "1010, 0"
+    },
+    {
+        "id": 31,
+        "q": "The circuit shown in the figure represents a:",
+        "hasImg": true,
+        "img": "assets/quiz/q31.png",
+        "options": [
+            "Voltage Controlled Voltage Source",
+            "Voltage controlled Current source",
+            "Current Controlled current source",
+            "Current controlled Current source"
+        ],
+        "ans": "Current controlled Current source"
+    },
+    {
+        "id": 32,
+        "q": "The minimum number of 2-input NAND gates required to implement a 2-input XOR gate is:",
+        "hasImg": false,
+        "options": [
+            "4",
+            "3",
+            "5",
+            "6"
+        ],
+        "ans": "4"
+    },
+    {
+        "id": 33,
+        "q": "The output of the logic gate in figure is:",
+        "hasImg": true,
+        "img": "assets/quiz/q33.png",
+        "options": [
+            "A'",
+            "A",
+            "0",
+            "1"
+        ],
+        "ans": "A'"
+    },
+    {
+        "id": 34,
+        "q": "In the circuit shown below, P and Q are the inputs. The logical function realized is:",
+        "hasImg": true,
+        "img": "assets/quiz/q34.png",
+        "options": [
+            "Y = P XOR Q",
+            "Y = PQ",
+            "Y = P + Q",
+            "Y = P'Q"
+        ],
+        "ans": "Y = P XOR Q"
+    },
+    {
+        "id": 35,
+        "q": "What is the condition for sampling process with respect to message signal and carrier signal frequency?",
+        "hasImg": false,
+        "options": [
+            "Fs >= 2fm",
+            "Fs < 2fm",
+            "Fs = fm",
+            "Fs = 1/2 fm"
+        ],
+        "ans": "Fs >= 2fm"
+    },
+    {
+        "id": 36,
+        "q": "Binary number 1101.101 is equivalent to decimal number:",
+        "hasImg": false,
+        "options": [
+            "13.625",
+            "13.5",
+            "13.75",
+            "14.625"
+        ],
+        "ans": "13.625"
+    },
+    {
+        "id": 37,
+        "q": "In figure v1 = 8 V and v2 = 4 V. Which diode will conduct?",
+        "hasImg": true,
+        "img": "assets/quiz/q37.png",
+        "options": [
+            "D1",
+            "D2",
+            "Both D1 and D2",
+            "Neither D1 nor D2"
+        ],
+        "ans": "D1"
+    },
+    {
+        "id": 38,
+        "q": "The input impedance of op-amp circuit of figure is:",
+        "hasImg": true,
+        "img": "assets/quiz/q38.png",
+        "options": [
+            "10K Ohm",
+            "20K Ohm",
+            "Infinite",
+            "0 Ohm"
+        ],
+        "ans": "10K Ohm"
+    },
+    {
+        "id": 39,
+        "q": "Crossover distortion behaviour is characteristic of which amplifier?",
+        "hasImg": true,
+        "img": "assets/quiz/q39.png",
+        "options": [
+            "Class B",
+            "Class A",
+            "Class AB",
+            "Class C"
+        ],
+        "ans": "Class B"
+    },
+    {
+        "id": 40,
+        "q": "A potential difference across 24 ohm resistor is 12V. What is the current through the resistor?",
+        "hasImg": true,
+        "img": "assets/quiz/q40.png",
+        "options": [
+            "0.5A",
+            "2A",
+            "1.2A",
+            "0.25A"
+        ],
+        "ans": "0.5A"
+    },
+    {
+        "id": 41,
+        "q": "Calculate equivalent resistance for circuit connected to 24 V battery and find potential difference across 4 ohm and 6 ohm resistors.",
+        "hasImg": true,
+        "img": "assets/quiz/q41.png",
+        "options": [
+            "Req = 10 Ohm, V1 = 9.6V, V2 = 14.4V",
+            "Req = 5 Ohm, V1 = 12V, V2 = 12V",
+            "Req = 10 Ohm, V1 = 12V, V2 = 12V",
+            "Req = 2.4 Ohm, V1 = 9.6V, V2 = 14.4V"
+        ],
+        "ans": "Req = 10 Ohm, V1 = 9.6V, V2 = 14.4V"
+    },
+    {
+        "id": 42,
+        "q": "Calculate equivalent resistance in the circuit and find the currents I, I1 and I2.",
+        "hasImg": true,
+        "img": "assets/quiz/q42.png",
+        "options": [
+            "Req = 2.4 Ohm, I1 = 6A, I2 = 4A",
+            "Req = 10 Ohm, I1 = 2.4A, I2 = 2.4A",
+            "Req = 2.4 Ohm, I1 = 4A, I2 = 6A",
+            "Req = 5 Ohm, I1 = 6A, I2 = 4A"
+        ],
+        "ans": "Req = 2.4 Ohm, I1 = 6A, I2 = 4A"
+    },
+    {
+        "id": 43,
+        "q": "Calculate the equivalent resistance in the following circuit:",
+        "hasImg": true,
+        "img": "assets/quiz/q43.png",
+        "options": [
+            "6 Ohm",
+            "12 Ohm",
+            "3 Ohm",
+            "1.6 Ohm"
+        ],
+        "ans": "6 Ohm"
+    },
+    {
+        "id": 44,
+        "q": "What is the name of the following circuit?",
+        "hasImg": true,
+        "img": "assets/quiz/q44.png",
+        "options": [
+            "Positive series Clipper",
+            "Negative series Clipper",
+            "Positive shunt Clipper",
+            "Negative shunt Clipper"
+        ],
+        "ans": "Positive series Clipper"
+    },
+    {
+        "id": 45,
+        "q": "What is the name of the following circuit?",
+        "hasImg": true,
+        "img": "assets/quiz/q45.png",
+        "options": [
+            "Positive shunt Clipper",
+            "Negative shunt Clipper",
+            "Positive series Clipper",
+            "Negative series Clipper"
+        ],
+        "ans": "Positive shunt Clipper"
+    }
+];
+
+let quizQuestions = [];
+let selectedAnswers = {}; // Keep track of selected answer index for each question index (key: question index, value: selected option index)
+
 let currentQuizIndex = 0;
 let quizScore = 0;
 
@@ -1540,8 +2117,16 @@ function validateAndStartMcqQuiz() {
         mail
     };
     
+    // Load the correct set of questions based on Year selection
+    if (selectedCmsYear === 'Third Year') {
+        quizQuestions = quizQuestions3rd;
+    } else {
+        quizQuestions = quizQuestions2nd;
+    }
+    
     currentQuizIndex = 0;
     quizScore = 0;
+    selectedAnswers = {}; // reset selections
     quizTimerSeconds = 2700; // 45 minutes
     quizStartTime = Date.now();
     
@@ -1684,10 +2269,16 @@ function renderQuizQuestion() {
         `;
     }
     
+    // Retrieve previously selected answer if any
+    const savedIdx = selectedAnswers[currentQuizIndex] !== undefined ? selectedAnswers[currentQuizIndex] : null;
+    
     let optionsHtml = '';
     q.options.forEach((opt, oIdx) => {
+        const isSelected = savedIdx === oIdx;
+        const borderStyle = isSelected ? 'border-color: var(--accent-cyan); background: rgba(0, 210, 255, 0.05); color: var(--accent-cyan);' : 'border-color: rgba(255,255,255,0.08); background: #060913; color: var(--text-primary);';
+        
         optionsHtml += `
-            <button class="quiz-option-btn" onclick="selectQuizOption(this, ${oIdx})" style="width: 100%; text-align: left; padding: 1rem; background: #060913; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: var(--text-primary); cursor: pointer; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between;">
+            <button class="quiz-option-btn" onclick="selectQuizOption(this, ${oIdx})" style="width: 100%; text-align: left; padding: 1rem; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; ${borderStyle}">
                 <span>${opt}</span>
                 <span class="option-feedback" style="display: none; font-weight: bold;"></span>
             </button>
@@ -1696,6 +2287,22 @@ function renderQuizQuestion() {
     
     const mins = Math.floor(quizTimerSeconds / 60);
     const secs = quizTimerSeconds % 60;
+    
+    // Show back button only if we are past the first question to allow students to edit prior answers
+    const hasBack = currentQuizIndex > 0;
+    const backBtnHtml = hasBack ? `
+        <button class="event-reg-link" style="margin: 0; padding: 0.6rem 2.0rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff !important; cursor: pointer;" onclick="navigatePrevQuestion()">
+            Previous
+        </button>
+    ` : '';
+    
+    const isLast = currentQuizIndex === quizQuestions.length - 1;
+    const btnText = isLast ? 'Finish Quiz' : 'Next Question';
+    const actionBtnHtml = `
+        <button class="event-reg-link" style="margin: 0; padding: 0.6rem 2.5rem; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important; cursor: pointer;" onclick="navigateNextQuestion()">
+            ${btnText}
+        </button>
+    `;
     
     portalContent.innerHTML = `
         <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem;">
@@ -1719,16 +2326,17 @@ function renderQuizQuestion() {
                 ${optionsHtml}
             </div>
             
-            <div id="quiz-action-area" style="margin-top: 1.5rem; display: flex; justify-content: flex-end; min-height: 40px;">
+            <div id="quiz-action-area" style="margin-top: 1.5rem; display: flex; justify-content: space-between; min-height: 40px; align-items: center;">
+                <div>${backBtnHtml}</div>
+                <div>${actionBtnHtml}</div>
             </div>
         </div>
     `;
 }
 
-let selectedQuizAnswerIdx = null;
-
 function selectQuizOption(selectedBtn, selectedIdx) {
-    selectedQuizAnswerIdx = selectedIdx;
+    // Record selection
+    selectedAnswers[currentQuizIndex] = selectedIdx;
     
     // Clear selection highlights from all buttons
     const optionButtons = document.querySelectorAll('.quiz-option-btn');
@@ -1742,48 +2350,44 @@ function selectQuizOption(selectedBtn, selectedIdx) {
     selectedBtn.style.borderColor = 'var(--accent-cyan)';
     selectedBtn.style.background = 'rgba(0, 210, 255, 0.05)';
     selectedBtn.style.color = 'var(--accent-cyan)';
+}
+
+function navigatePrevQuestion() {
+    if (currentQuizIndex > 0) {
+        currentQuizIndex--;
+        renderQuizQuestion();
+    }
+}
+
+function navigateNextQuestion() {
+    // Verify that student selected an option before navigating next
+    if (selectedAnswers[currentQuizIndex] === undefined) {
+        alert("Please select an answer before proceeding.");
+        return;
+    }
     
-    const actionArea = document.getElementById('quiz-action-area');
     const isLast = currentQuizIndex === quizQuestions.length - 1;
-    const btnText = isLast ? 'Finish Quiz' : 'Next Question';
-    const nextFn = isLast ? 'commitAnswerAndFinish()' : 'commitAnswerAndNext()';
-    
-    actionArea.innerHTML = `
-        <button class="event-reg-link" style="margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important; cursor: pointer;" onclick="${nextFn}">
-            ${btnText}
-        </button>
-    `;
+    if (isLast) {
+        // Calculate the score when exam is finished
+        calculateMcqQuizScore();
+        finishQuiz();
+    } else {
+        currentQuizIndex++;
+        renderQuizQuestion();
+    }
 }
 
-function commitAnswerAndNext() {
-    if (selectedQuizAnswerIdx === null) return;
-    
-    const q = quizQuestions[currentQuizIndex];
-    const selectedText = q.options[selectedQuizAnswerIdx];
-    const isCorrect = selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase();
-    
-    if (isCorrect) {
-        quizScore++;
-    }
-    
-    selectedQuizAnswerIdx = null;
-    currentQuizIndex++;
-    renderQuizQuestion();
-}
-
-function commitAnswerAndFinish() {
-    if (selectedQuizAnswerIdx === null) return;
-    
-    const q = quizQuestions[currentQuizIndex];
-    const selectedText = q.options[selectedQuizAnswerIdx];
-    const isCorrect = selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase();
-    
-    if (isCorrect) {
-        quizScore++;
-    }
-    
-    selectedQuizAnswerIdx = null;
-    finishQuiz();
+function calculateMcqQuizScore() {
+    quizScore = 0;
+    quizQuestions.forEach((q, idx) => {
+        const selectedIdx = selectedAnswers[idx];
+        if (selectedIdx !== undefined) {
+            const selectedText = q.options[selectedIdx];
+            if (selectedText.trim().toLowerCase() === q.ans.trim().toLowerCase()) {
+                quizScore++;
+            }
+        }
+    });
 }
 
 function finishQuiz() {
@@ -1831,10 +2435,15 @@ function finishQuiz() {
             </div>
             
             <div style="display: flex; gap: 1rem; width: 100%; max-width: 320px;">
-                <button class="event-reg-link" style="width: 100%; padding: 0.75rem; margin: 0; border: none; background: var(--accent-cyan); color: var(--bg-dark) !important;" onclick="openClubInterface('electronics')">Back to Rounds</button>
+                <button class="event-reg-link" style="width: 100%; padding: 0.75rem; margin: 0; border: none; background: var(--accent-cyan); color: var(--bg-dark) !important;" onclick="closeClubModal()">Finish & Exit</button>
             </div>
         </div>
     `;
+    
+    // Automatically close modal after 6 seconds
+    setTimeout(() => {
+        closeClubModal();
+    }, 6000);
 }
 
 function saveQuizResultToSupabase(submission) {
