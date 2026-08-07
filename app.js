@@ -2547,9 +2547,58 @@ function requestFullscreen() {
     else if (el.msRequestFullscreen) el.msRequestFullscreen().catch(()=>{});
 }
 
+let lastViolationTime = 0;
+
+function preventProhibitedQuizActions(e) {
+    e.preventDefault();
+}
+
+function registerProctorViolation(reason) {
+    if (!isQuizActive) return;
+    
+    const now = Date.now();
+    if (now - lastViolationTime < 1500) {
+        return;
+    }
+    lastViolationTime = now;
+    
+    proctorViolations++;
+    if (proctorViolations >= 3) {
+        alert(`Proctor Warning: 3 violations reached (${reason}). Auto-submitting your test.`);
+        finishQuiz();
+    } else {
+        alert(`⚠️ PROCTORING ALERT: ${reason}! (Violation ${proctorViolations} of 2)`);
+    }
+}
+
+function handleWindowBlur() {
+    registerProctorViolation("Screen search, Screenshot overlay, or Google Lens invocation detected");
+}
+
 function setupProctoring() {
     proctorViolations = 0;
     isQuizActive = true;
+    
+    // Inject anti-copy style during setup
+    if (!document.getElementById('quiz-anti-copy-style')) {
+        const style = document.createElement('style');
+        style.id = 'quiz-anti-copy-style';
+        style.innerHTML = `
+            .quiz-active-mode {
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+                user-select: none !important;
+            }
+            .quiz-active-mode img {
+                pointer-events: none !important;
+                -webkit-touch-callout: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.classList.add('quiz-active-mode');
     
     // Add event listeners for proctor lock
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -2558,10 +2607,18 @@ function setupProctoring() {
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    
+    // Disable text operations
+    document.addEventListener('contextmenu', preventProhibitedQuizActions);
+    document.addEventListener('copy', preventProhibitedQuizActions);
+    document.addEventListener('cut', preventProhibitedQuizActions);
+    document.addEventListener('selectstart', preventProhibitedQuizActions);
 }
 
 function removeProctoring() {
     isQuizActive = false;
+    document.body.classList.remove('quiz-active-mode');
     
     document.removeEventListener('fullscreenchange', handleFullscreenChange);
     document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -2569,6 +2626,13 @@ function removeProctoring() {
     document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     
     document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.removeEventListener('blur', handleWindowBlur);
+    
+    // Enable text operations back
+    document.removeEventListener('contextmenu', preventProhibitedQuizActions);
+    document.removeEventListener('copy', preventProhibitedQuizActions);
+    document.removeEventListener('cut', preventProhibitedQuizActions);
+    document.removeEventListener('selectstart', preventProhibitedQuizActions);
     
     // Exit fullscreen
     if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
@@ -2614,12 +2678,7 @@ function resumeFullscreenTest() {
 function handleVisibilityChange() {
     if (!isQuizActive) return;
     if (document.hidden) {
-        proctorViolations++;
-        if (proctorViolations >= 3) {
-            finishQuiz();
-        } else {
-            alert(`Proctoring Warning: Tab/App switching detected! (Violation ${proctorViolations} of 2). Exiting again will auto-submit your test.`);
-        }
+        registerProctorViolation("Tab/App switching or background minimization detected");
     }
 }
 
