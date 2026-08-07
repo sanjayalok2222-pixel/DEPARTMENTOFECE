@@ -1105,6 +1105,25 @@
 
             <!-- Tab PANEL 7: Quiz Leaderboard Results -->
             <div id="panel-quiz-results" class="workspace-panel">
+                <div class="card" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; background: rgba(0, 210, 255, 0.02); border-color: rgba(0, 210, 255, 0.15);">
+                    <div>
+                        <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🔒 Exam Portal Access Control</h4>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Independently lock or unlock academic year exam entry doors.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                            <span style="font-size: 0.85rem; font-weight: bold; color: #fff;">2nd Year:</span>
+                            <span id="label-lock-2yr" style="font-size: 0.8rem; font-weight: bold; color: #4ade80;">UNLOCKED</span>
+                            <button type="button" class="btn-preview" id="btn-toggle-lock-2yr" style="margin: 0; padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="toggleMcqLock('Second Year')">Lock</button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                            <span style="font-size: 0.85rem; font-weight: bold; color: #fff;">3rd Year:</span>
+                            <span id="label-lock-3yr" style="font-size: 0.8rem; font-weight: bold; color: #4ade80;">UNLOCKED</span>
+                            <button type="button" class="btn-preview" id="btn-toggle-lock-3yr" style="margin: 0; padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="toggleMcqLock('Third Year')">Lock</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                         <div>

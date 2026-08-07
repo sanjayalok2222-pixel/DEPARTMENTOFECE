@@ -2434,11 +2434,70 @@ function verifyMcqAuthPin() {
     }
     
     if (isCorrect) {
+        checkMcqLockStatusAndProceed();
+    } else {
+        if (errorMsg) {
+            errorMsg.style.display = 'block';
+            errorMsg.style.color = '#ef4444';
+            errorMsg.textContent = 'Invalid Access PIN code.';
+        }
+    }
+}
+
+function checkMcqLockStatusAndProceed() {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
+    
+    const errorMsg = document.getElementById('pin-error-msg');
+    if (errorMsg) {
+        errorMsg.style.display = 'block';
+        errorMsg.style.color = '#38bdf8';
+        errorMsg.textContent = 'Checking test status...';
+    }
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        let locks = { secondYearLocked: false, thirdYearLocked: false };
+        if (data && data.length > 0) {
+            try {
+                locks = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+            } catch (e) {
+                locks = data[0].value || locks;
+            }
+        }
+        
+        const isLocked = selectedCmsYear === 'Second Year' ? locks.secondYearLocked : locks.thirdYearLocked;
+        
+        if (isLocked) {
+            if (errorMsg) {
+                errorMsg.style.display = 'block';
+                errorMsg.style.color = '#f87171';
+                errorMsg.textContent = `⚠️ The MCQ Test for ${selectedCmsYear} is currently locked by the administrator!`;
+            }
+            alert(`⚠️ The MCQ Test for ${selectedCmsYear} is currently locked by the administrator. Please wait for the admin to unlock the test!`);
+        } else {
+            if (errorMsg) errorMsg.style.display = 'none';
+            renderMcqRegistration();
+        }
+    })
+    .catch(err => {
+        console.error("Error checking MCQ locks:", err);
+        // Fallback: if network fails, let it proceed
         if (errorMsg) errorMsg.style.display = 'none';
         renderMcqRegistration();
-    } else {
-        if (errorMsg) errorMsg.style.display = 'block';
-    }
+    });
 }
 
 function renderMcqRegistration() {

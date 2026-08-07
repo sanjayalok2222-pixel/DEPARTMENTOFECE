@@ -135,6 +135,7 @@ function switchCmsTab(tabId) {
 
     if (tabId === 'quiz-results') {
         loadQuizResultsInDashboard();
+        fetchMcqLocksInDashboard();
     }
 
     // Update main header title
@@ -1772,5 +1773,119 @@ function downloadLeaderboardPDF() {
     // Save generated PDF
     const safeFileName = selectedFilterYear.replace(/\s+/g, '_');
     doc.save(`VSB_ECE_${safeFileName}_MCQ_Results.pdf`);
+}
+
+let currentMcqLocks = { secondYearLocked: false, thirdYearLocked: false };
+
+function fetchMcqLocksInDashboard() {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            try {
+                currentMcqLocks = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+            } catch (e) {
+                currentMcqLocks = data[0].value || currentMcqLocks;
+            }
+        }
+        updateMcqLockLabels();
+    })
+    .catch(err => {
+        console.error("Error fetching locks:", err);
+    });
+}
+
+function updateMcqLockLabels() {
+    const label2yr = document.getElementById('label-lock-2yr');
+    const btn2yr = document.getElementById('btn-toggle-lock-2yr');
+    const label3yr = document.getElementById('label-lock-3yr');
+    const btn3yr = document.getElementById('btn-toggle-lock-3yr');
+    
+    if (label2yr && btn2yr) {
+        if (currentMcqLocks.secondYearLocked) {
+            label2yr.textContent = 'LOCKED';
+            label2yr.style.color = '#f87171'; // red
+            btn2yr.textContent = 'Unlock';
+            btn2yr.style.background = '#22c55e'; // green
+            btn2yr.style.color = '#fff';
+        } else {
+            label2yr.textContent = 'UNLOCKED';
+            label2yr.style.color = '#4ade80'; // green
+            btn2yr.textContent = 'Lock';
+            btn2yr.style.background = '#ef4444'; // red
+            btn2yr.style.color = '#fff';
+        }
+    }
+    
+    if (label3yr && btn3yr) {
+        if (currentMcqLocks.thirdYearLocked) {
+            label3yr.textContent = 'LOCKED';
+            label3yr.style.color = '#f87171'; // red
+            btn3yr.textContent = 'Unlock';
+            btn3yr.style.background = '#22c55e'; // green
+            btn3yr.style.color = '#fff';
+        } else {
+            label3yr.textContent = 'UNLOCKED';
+            label3yr.style.color = '#4ade80'; // green
+            btn3yr.textContent = 'Lock';
+            btn3yr.style.background = '#ef4444'; // red
+            btn3yr.style.color = '#fff';
+        }
+    }
+}
+
+function toggleMcqLock(year) {
+    if (year === 'Second Year') {
+        currentMcqLocks.secondYearLocked = !currentMcqLocks.secondYearLocked;
+    } else {
+        currentMcqLocks.thirdYearLocked = !currentMcqLocks.thirdYearLocked;
+    }
+    
+    // Save to Supabase
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const postUrl = `${url}/rest/v1/vsb_ece_state`;
+    
+    fetch(postUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'mcq_locks',
+            value: currentMcqLocks
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to toggle lock");
+        const action = (year === 'Second Year' ? currentMcqLocks.secondYearLocked : currentMcqLocks.thirdYearLocked) ? 'LOCKED' : 'UNLOCKED';
+        alert(`Successfully ${action} the exam portal for ${year}!`);
+        updateMcqLockLabels();
+    })
+    .catch(err => {
+        console.error("Error updating lock:", err);
+        alert("Failed to toggle access lock state.");
+    });
 }
 
