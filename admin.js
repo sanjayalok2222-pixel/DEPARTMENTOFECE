@@ -1661,3 +1661,114 @@ function clearAllQuizResults() {
     });
 }
 
+function downloadLeaderboardPDF() {
+    const filterEl = document.getElementById('leaderboard-year-filter');
+    const selectedFilterYear = filterEl ? filterEl.value : 'Second Year';
+    
+    // Filter the results in cachedResultsList
+    const filteredResults = cachedResultsList.filter(res => {
+        if (!res || !res.year) return false;
+        return res.year.toLowerCase().trim() === selectedFilterYear.toLowerCase().trim();
+    });
+    
+    if (filteredResults.length === 0) {
+        alert(`No results recorded for ${selectedFilterYear} to download.`);
+        return;
+    }
+    
+    // Sort results: Score descending, Time Taken ascending
+    filteredResults.sort((a, b) => {
+        if (b.score !== a.score) {
+            return b.score - a.score;
+        }
+        const parseTime = str => {
+            if (!str) return 9999;
+            const parts = str.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        };
+        return parseTime(a.timeSpent) - parseTime(b.timeSpent);
+    });
+    
+    // Generate PDF using jsPDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    
+    // Title & Header branding
+    doc.setFillColor(6, 9, 19); // dark theme brand bg
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    doc.setTextColor(0, 210, 255); // accent cyan
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("V.S.B. ENGINEERING COLLEGE, KARUR", 105, 14, { align: "center" });
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.text(`DEPARTMENT OF ECE - TECHNICAL MCQ RESULTS`, 105, 22, { align: "center" });
+    
+    doc.setTextColor(200, 200, 200);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(`Academic Year: ${selectedFilterYear}  |  Generated on: ${new Date().toLocaleString()}`, 105, 30, { align: "center" });
+    
+    // Table content mapping
+    const tableData = [];
+    filteredResults.forEach((res, index) => {
+        const studentName = res.studentName || res.teamName || 'N/A';
+        const regnum = res.regnum || res.student1 || 'N/A';
+        const dept = res.dept || 'ECE';
+        const section = res.section || 'N/A';
+        const mail = res.mail || 'N/A';
+        const score = res.score !== undefined ? res.score : 0;
+        const timeSpent = res.timeSpent || 'N/A';
+        const submittedAtStr = res.submittedAt ? new Date(res.submittedAt).toLocaleDateString() : 'N/A';
+        
+        tableData.push([
+            index + 1,
+            studentName,
+            regnum,
+            `${dept} (${section})`,
+            mail,
+            score,
+            timeSpent,
+            submittedAtStr
+        ]);
+    });
+    
+    // Generate beautiful AutoTable
+    doc.autoTable({
+        startY: 48,
+        head: [['Rank', 'Student Name', 'Register No', 'Dept (Sec)', 'Email ID', 'Score', 'Time Spent', 'Submitted On']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: {
+            fillColor: [0, 210, 255],
+            textColor: [9, 14, 26],
+            fontSize: 9,
+            fontStyle: 'bold',
+            halign: 'center'
+        },
+        bodyStyles: {
+            fontSize: 8,
+            textColor: [40, 40, 40]
+        },
+        columnStyles: {
+            0: { halign: 'center', cellWidth: 12 },
+            1: { fontStyle: 'bold' },
+            2: { halign: 'center', cellWidth: 25 },
+            3: { halign: 'center', cellWidth: 25 },
+            5: { halign: 'center', fontStyle: 'bold', textColor: [34, 139, 34] },
+            6: { halign: 'center', cellWidth: 20 },
+            7: { halign: 'center', cellWidth: 22 }
+        },
+        styles: {
+            overflow: 'linebreak',
+            cellPadding: 3
+        }
+    });
+    
+    // Save generated PDF
+    const safeFileName = selectedFilterYear.replace(/\s+/g, '_');
+    doc.save(`VSB_ECE_${safeFileName}_MCQ_Results.pdf`);
+}
+
