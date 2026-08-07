@@ -1510,6 +1510,7 @@ function loadQuizResultsInDashboard() {
             const sec = res.section || 'N/A';
             const mail = res.mail || 'N/A';
             
+            const maxQ = res.year === 'Third Year' ? 45 : 50;
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <td style="padding: 0.75rem; font-weight: bold; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
@@ -1517,7 +1518,7 @@ function loadQuizResultsInDashboard() {
                     <td style="padding: 0.75rem; font-family: monospace;">${regnum}</td>
                     <td style="padding: 0.75rem;">${dept} / ${res.year} (${sec})</td>
                     <td style="padding: 0.75rem; font-size: 0.85rem; color: var(--text-secondary);">${mail}</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score}</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / ${maxQ}</td>
                     <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
                     <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">${dateStr}</td>
                     <td style="padding: 0.75rem;">
@@ -1719,7 +1720,8 @@ function downloadLeaderboardPDF() {
         const dept = res.dept || 'ECE';
         const section = res.section || 'N/A';
         const mail = res.mail || 'N/A';
-        const score = res.score !== undefined ? res.score : 0;
+        const maxQ = res.year === 'Third Year' ? 45 : 50;
+        const score = `${res.score !== undefined ? res.score : 0} / ${maxQ}`;
         const timeSpent = res.timeSpent || 'N/A';
         const submittedAtStr = res.submittedAt ? new Date(res.submittedAt).toLocaleDateString() : 'N/A';
         

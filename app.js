@@ -2997,6 +2997,7 @@ function showPublicQuizResults(year) {
             const regnum = res.regnum || res.student1 || 'N/A';
             const dept = res.dept || 'N/A';
             const sec = res.section || 'N/A';
+            const maxQ = res.year === 'Third Year' ? 45 : 50;
             
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
@@ -3004,7 +3005,7 @@ function showPublicQuizResults(year) {
                     <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${studentName}</td>
                     <td style="padding: 0.75rem; font-family: monospace;">${regnum}</td>
                     <td style="padding: 0.75rem;">${dept} (Sec: ${sec})</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / 25</td>
+                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / ${maxQ}</td>
                     <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
                 </tr>
             `;
