@@ -152,20 +152,9 @@
             display: flex;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar Navigation (Hidden) */
         .sidebar {
-            width: 280px;
-            background: rgba(10, 16, 30, 0.9);
-            border-right: 1px solid var(--border-card);
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            position: fixed;
-            height: 100vh;
-            top: 0;
-            left: 0;
-            z-index: 100;
+            display: none !important;
         }
 
         .sidebar-header {
@@ -279,7 +268,7 @@
 
         /* Content Panel Wrapper */
         .main-content {
-            margin-left: 280px;
+            margin-left: 0 !important;
             flex-grow: 1;
             padding: 3rem;
             min-height: 100vh;
@@ -344,12 +333,11 @@
 
         /* Workspace Panels */
         .workspace-panel {
-            display: none; /* Shown dynamically depending on active tab */
+            display: block !important; /* All visible scrolling vertically */
+            margin-bottom: 5rem;
             animation: fadeIn 0.4s ease;
-        }
-
-        .workspace-panel.active {
-            display: block;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.05);
+            padding-bottom: 3rem;
         }
 
         .card {
@@ -613,41 +601,19 @@
             }
             
             .sidebar {
-                width: 100% !important;
-                height: auto !important;
-                position: relative !important;
-                border-right: none !important;
-                border-bottom: 1px solid var(--border-card) !important;
-                padding: 1.25rem 1rem !important;
+                display: none !important;
             }
             
             .sidebar-header {
-                margin-bottom: 1.25rem !important;
-                padding-bottom: 0.75rem !important;
-                justify-content: center !important;
+                display: none !important;
             }
             
             .sidebar-menu {
-                flex-direction: row !important;
-                overflow-x: auto !important;
-                padding-bottom: 0.5rem !important;
-                gap: 0.5rem !important;
-                scrollbar-width: none;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .sidebar-menu::-webkit-scrollbar {
-                display: none;
-            }
-            
-            .sidebar-item button {
-                padding: 0.6rem 1rem !important;
-                font-size: 0.85rem !important;
-                white-space: nowrap !important;
+                display: none !important;
             }
             
             .sidebar-footer {
-                display: none !important; /* Hide profile photo/info to save vertical space on mobile */
+                display: none !important;
             }
             
             .main-content {
@@ -780,14 +746,18 @@
 
         <!-- Main CMS Editing Panel -->
         <div class="main-content">
-            <div class="content-header">
-                <div>
-                    <h2 id="cms-tab-title">Dashboard Overview</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Manage and update all site elements programmatically.</p>
+            <div class="content-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 1.5rem; margin-bottom: 3rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <img src="assets/ece-logo.png" alt="ECE Logo" style="width: 50px; height: 50px;">
+                    <div>
+                        <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; color: #fff; margin: 0;">VSB ECE Control Panel</h2>
+                        <p style="font-size: 0.85rem; color: var(--accent-cyan); margin: 0.25rem 0 0 0; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Production Admin Mode</p>
+                    </div>
                 </div>
-                <div class="publish-bar">
-                    <button class="btn-preview" onclick="previewLiveWebsite()">👁️ Preview Site</button>
-                    <button class="btn-publish" onclick="publishCmsChanges()">💾 Save & Sync Changes</button>
+                <div class="publish-bar" style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn-preview" onclick="previewLiveWebsite()" style="padding: 0.75rem 1.75rem; border-radius: 30px; font-weight: 700;">👁️ Preview Site</button>
+                    <button class="btn-publish" onclick="publishCmsChanges()" style="padding: 0.75rem 2rem; font-weight: 800; border-radius: 30px;">💾 Save & Sync Changes</button>
+                    <button class="btn-logout" onclick="handleCmsLogout()" style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 0.75rem 1.5rem; border-radius: 30px; cursor: pointer; font-weight: bold; margin-left: 0.5rem; transition: all 0.3s ease;">Logout</button>
                 </div>
             </div>
 

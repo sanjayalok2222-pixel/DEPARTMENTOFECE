@@ -109,47 +109,8 @@ function handleCmsLogout() {
     window.location.reload();
 }
 
-// Switch Sidebar tabs
 function switchCmsTab(tabId) {
-    activeTab = tabId;
-    
-    // Highlight sidebar items
-    const menuItems = document.querySelectorAll('.sidebar-item');
-    menuItems.forEach(item => {
-        if (item.getAttribute('data-tab') === tabId) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
-        }
-    });
-
-    // Show workspace panels
-    const panels = document.querySelectorAll('.workspace-panel');
-    panels.forEach(panel => {
-        if (panel.getAttribute('id') === `panel-${tabId}`) {
-            panel.classList.add('active');
-        } else {
-            panel.classList.remove('active');
-        }
-    });
-
-    if (tabId === 'quiz-results') {
-        loadQuizResultsInDashboard();
-        fetchMcqLocksInDashboard();
-    }
-
-    // Update main header title
-    const titles = {
-        'overview': 'Dashboard Overview',
-        'header-hero': 'Header & Hero Area CMS',
-        'about-info': 'About & Vision Statements',
-        'flyers': 'Carousel Event Flyers',
-        'downloads': 'Downloads Directory Grid',
-        'faculty': 'Faculty & Coordinator Profiles',
-        'quiz-results': 'Round 1 Quiz Leaderboard',
-        'system': 'Database Configurations'
-    };
-    document.getElementById('cms-tab-title').textContent = titles[tabId] || 'CMS Admin Dashboard';
+    // No-op - All panels are visible on a single page
 }
 
 
@@ -377,6 +338,10 @@ function populateCmsForms() {
     // Updates Quick Stats overview counters
     document.getElementById('stat-flyers-count').textContent = document.querySelectorAll('.cms-poster-item-card').length;
     document.getElementById('stat-files-count').textContent = document.querySelectorAll('.cms-download-item-card').length;
+
+    // Load Quiz Results and lock statuses on load
+    loadQuizResultsInDashboard();
+    fetchMcqLocksInDashboard();
 }
 
 // Helper to copy innerHTML of elements into form fields
