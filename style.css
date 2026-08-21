@@ -183,64 +183,6 @@ header.header-hidden {
     background: rgba(0, 210, 255, 0.05);
 }
 
-/* Secondary Sub-nav (Static flow, scrolls away) */
-.sub-nav {
-    background: rgba(8, 12, 23, 0.95);
-    border-bottom: 1px solid rgba(0, 210, 255, 0.1);
-    position: relative;
-    width: 100%;
-    z-index: 99;
-}
-
-.nav-links {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 0 1rem;
-    overflow-x: auto;
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
-    flex-wrap: nowrap;
-}
-
-@media (max-width: 1024px) {
-    .nav-links {
-        justify-content: flex-start;
-        display: flex;
-        flex-wrap: nowrap;
-        white-space: nowrap;
-        padding-bottom: 0.25rem;
-    }
-}
-
-.nav-links::-webkit-scrollbar {
-    display: none; 
-}
-
-.nav-links li a {
-    display: block;
-    padding: 1.2rem 1.5rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
-}
-
-.nav-links li a:hover, 
-.nav-links li a.active {
-    color: var(--accent-cyan);
-    border-bottom: 3px solid var(--accent-cyan);
-    text-shadow: var(--text-glow);
-}
-
 /* Main Hero Section */
 .hero {
     padding: 8rem 2rem;
