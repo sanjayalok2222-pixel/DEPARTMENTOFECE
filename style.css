@@ -222,9 +222,9 @@ header.header-hidden {
     flex-wrap: nowrap;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .nav-links {
-        justify-content: flex-start;
+        justify-content: flex-start !important;
         display: flex;
         flex-wrap: nowrap;
         white-space: nowrap;
