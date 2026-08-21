@@ -3172,3 +3172,13 @@ function showPublicQuizResults(year) {
         }
     });
 }
+
+function openDownloadsModal() {
+    const modal = document.getElementById('downloads-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeDownloadsModal() {
+    const modal = document.getElementById('downloads-modal');
+    if (modal) modal.classList.remove('active');
+}

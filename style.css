@@ -217,6 +217,18 @@ header.header-hidden {
     padding: 0 1rem;
     overflow-x: auto;
     scrollbar-width: none; 
+    -ms-overflow-style: none;
+    flex-wrap: nowrap;
+}
+
+@media (max-width: 1024px) {
+    .nav-links {
+        justify-content: flex-start;
+        display: flex;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        padding-bottom: 0.25rem;
+    }
 }
 
 .nav-links::-webkit-scrollbar {
