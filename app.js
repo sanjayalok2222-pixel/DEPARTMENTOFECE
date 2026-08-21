@@ -730,8 +730,9 @@ function addNewPosterSlot() {
     newCard.querySelector('.admin-link-url').value = '#';
     newCard.querySelector('.admin-poster-image-url').value = 'assets/ece-logo.png';
 
-    // Append to container
-    document.getElementById('posters-carousel-container').appendChild(newCard);
+    // Insert at the beginning of the container (newest first)
+    const container = document.getElementById('posters-carousel-container');
+    container.insertBefore(newCard, container.firstChild);
 
     // Switch focus to the new card
     activeCard.classList.remove('active');

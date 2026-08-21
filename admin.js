@@ -464,13 +464,36 @@ function previewCmsPosterLinkUrl(index, input) {
     }
 }
 
+function reindexCmsPosters() {
+    const cards = document.querySelectorAll('.cms-poster-item-card');
+    cards.forEach((card, idx) => {
+        card.setAttribute('data-index', idx);
+        const img = card.querySelector('.cms-list-img-preview');
+        if (img) img.id = `poster-preview-img-${idx}`;
+        
+        const uploadInput = card.querySelector('.btn-upload-file input');
+        if (uploadInput) {
+            uploadInput.setAttribute('onchange', `handleCmsPosterUploader(${idx}, event)`);
+        }
+        
+        const urlInput = card.querySelector('.cms-poster-image-url');
+        if (urlInput) {
+            urlInput.setAttribute('onchange', `previewCmsPosterLinkUrl(${idx}, this)`);
+        }
+        
+        const deleteBtn = card.querySelector('.btn-delete-list-item');
+        if (deleteBtn) {
+            deleteBtn.setAttribute('onclick', `cmsDeletePosterCardSlot(${idx})`);
+        }
+    });
+}
+
 function cmsDeletePosterCardSlot(index) {
     if (confirm('Are you sure you want to delete this event flyer slide?')) {
-        const cards = indexDoc.querySelectorAll('#posters-carousel-container .poster-card');
+        const cards = document.querySelectorAll('.cms-poster-item-card');
         if (cards[index]) {
             cards[index].remove();
-            // Re-render
-            populatePostersCarouselList();
+            reindexCmsPosters();
             showNotification('Event slide removed from DOM memory.');
         }
     }
@@ -507,10 +530,11 @@ function cmsAddPosterCardSlot() {
                     </div>
                 </div>
             </div>
-            <button class="btn-delete-list-item" title="Delete Slide" onclick="this.closest('.cms-list-item').remove()">🗑️</button>
+            <button class="btn-delete-list-item" title="Delete Slide" onclick="cmsDeletePosterCardSlot(${index})">🗑️</button>
         </div>
     `;
-    listContainer.insertAdjacentHTML('beforeend', itemHtml);
+    listContainer.insertAdjacentHTML('afterbegin', itemHtml);
+    reindexCmsPosters();
 }
 
 
