@@ -17,33 +17,24 @@
 
 
 
-    <!-- Main Header -->
-    <header>
-        <div class="header-container">
-            <div class="logo-section">
-                <!-- VSB yellow logo left-aligned first -->
-                <img src="assets/vsb-yellow-logo.png" alt="VSB Engineering College Logo" class="vsb-logo">
-                <div class="college-title">
-                    <h1 id="college-name-header">V.S.B. ENGINEERING COLLEGE</h1>
-                    <p class="college-subtitle" id="college-auth-header">(An Autonomous Institution) (Anna University Recognized Research Institute)</p>
-                    <p class="college-details-line" id="college-appr-header">Approved by AICTE, New Delhi, Affiliated to Anna University, Chennai</p>
-                    <p class="college-details-line" id="college-nba-header">NBA Accredited Courses, Accredited by NAAC</p>
-                </div>
-                <!-- VSB 25-Years diamond logo right-aligned last of college title -->
-                <img src="assets/vsb-trust-logo.png" alt="VSB Educational Trust Logo" class="vsb-trust-logo">
-            </div>
-            <div class="header-actions">
-                <div class="dept-badge">
-                    <img src="assets/ece-logo.png" alt="ECE Chip Logo">
-                    <span>ECE Department</span>
-                </div>
-                <!-- Admin Login Button -->
-                <button class="btn-admin" id="admin-login-btn" onclick="window.open('admin.html', '_blank')">Admin Login</button>
-            </div>
-        </div>
-    </header>
 
 
+
+
+    <!-- Top Navigation Headings Taskbar -->
+    <nav class="sub-nav">
+        <ul class="nav-links">
+            <li><a href="#dept-info" class="active">Department Info</a></li>
+            <li><a href="#event-registration">Event Registration</a></li>
+            <li><a href="#technical-mcq">TECHNICAL MCQ</a></li>
+            <li><a href="#events">Club Activities</a></li>
+            <li><a href="#event-file">Downloads</a></li>
+            <li><a href="#certificate">Certificate Generator</a></li>
+            <li><a href="#hod">HOD</a></li>
+            <li><a href="#coordinators">Coordinators</a></li>
+            <li class="admin-nav-item"><a href="admin.html" target="_blank" style="color: var(--accent-cyan); border-bottom: none; font-weight: bold; background: rgba(0, 210, 255, 0.15); border: 1px solid var(--accent-cyan); padding: 0.4rem 1rem; border-radius: 20px; margin-left: 1rem; transition: all 0.3s ease;">Admin Login</a></li>
+        </ul>
+    </nav>
 
     <!-- Hero Section -->
     <div class="hero">
@@ -361,9 +352,68 @@
     <section id="event-file">
         <h2 class="section-title">Department Downloads</h2>
         
-        <div class="download-grid" id="download-grid-container">
+        <!-- 1. Topic Selection Grid View -->
+        <div class="download-grid" id="downloads-topics-grid">
+            <div class="download-card tilt-card" onclick="openDownloadTopic('syllabus')" style="cursor: pointer; position: relative;">
+                <div class="file-info">
+                    <div class="file-icon">📄</div>
+                    <div class="file-details">
+                        <h4>Curriculum Syllabus</h4>
+                        <p>View curriculum schemes and syllabi</p>
+                    </div>
+                </div>
+                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+            </div>
+
+            <div class="download-card tilt-card" onclick="openDownloadTopic('newsletter')" style="cursor: pointer; position: relative;">
+                <div class="file-info">
+                    <div class="file-icon">📰</div>
+                    <div class="file-details">
+                        <h4>Department Newsletter</h4>
+                        <p>Read ECE news and newsletters</p>
+                    </div>
+                </div>
+                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+            </div>
+
+            <div class="download-card tilt-card" onclick="openDownloadTopic('academic')" style="cursor: pointer; position: relative;">
+                <div class="file-info">
+                    <div class="file-icon">📊</div>
+                    <div class="file-details">
+                        <h4>Academic Planning</h4>
+                        <p>View academic schedules and planners</p>
+                    </div>
+                </div>
+                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+            </div>
+
+            <div class="download-card tilt-card" onclick="openDownloadTopic('events')" style="cursor: pointer; position: relative;">
+                <div class="file-info">
+                    <div class="file-icon">🏆</div>
+                    <div class="file-details">
+                        <h4>Previous ECE Events</h4>
+                        <p>Explore event summaries and archives</p>
+                    </div>
+                </div>
+                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+            </div>
+        </div>
+
+        <!-- 2. Dynamically Rendered Files List View (Inside same page) -->
+        <div id="downloads-files-view" style="display: none; animation: fadeIn 0.4s ease;">
+            <button class="event-reg-link" onclick="closeDownloadTopic()" style="margin-bottom: 2rem; width: auto; padding: 0.6rem 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important; font-family: 'Outfit'; font-weight: 700; cursor: pointer; border-radius: 30px;">
+                ← Back to Topics
+            </button>
+            <h3 id="downloads-topic-title" style="color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.8rem; margin-bottom: 1.5rem;">📂 Category Files</h3>
+            <div class="download-grid" id="downloads-topic-files-grid">
+                <!-- Clicked topic files clone here in client browser -->
+            </div>
+        </div>
+
+        <!-- Hidden database container for actual uploaded files -->
+        <div id="download-grid-container" style="display: none;">
             <!-- Default downloads are hardcoded so they are natively available globally -->
-            <div class="download-card tilt-card">
+            <div class="download-card tilt-card" data-category="syllabus">
                 <div class="file-info">
                     <div class="file-icon">📄</div>
                     <div class="file-details">
@@ -374,7 +424,7 @@
                 <a href="ECE_Syllabus_2025_26.pdf" download="ECE_Syllabus_2025_26.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Syllabus_2025_26.pdf')">↓</a>
             </div>
 
-            <div class="download-card tilt-card">
+            <div class="download-card tilt-card" data-category="newsletter">
                 <div class="file-info">
                     <div class="file-icon">📰</div>
                     <div class="file-details">
@@ -385,7 +435,7 @@
                 <a href="ECE_Newsletter_V10.pdf" download="ECE_Newsletter_V10.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Newsletter_V10.pdf')">↓</a>
             </div>
 
-            <div class="download-card tilt-card">
+            <div class="download-card tilt-card" data-category="academic">
                 <div class="file-info">
                     <div class="file-icon">📊</div>
                     <div class="file-details">
@@ -396,7 +446,7 @@
                 <a href="ECE_Academic_Planner.xlsx" download="ECE_Academic_Planner.xlsx" class="btn-download" onclick="showDownloadNotify('ECE_Academic_Planner.xlsx')">↓</a>
             </div>
 
-            <div class="download-card tilt-card">
+            <div class="download-card tilt-card" data-category="events">
                 <div class="file-info">
                     <div class="file-icon">🏆</div>
                     <div class="file-details">
@@ -600,6 +650,15 @@
                 <div class="form-group">
                     <label for="new-file-meta">File Meta / Details</label>
                     <input type="text" id="new-file-meta" required placeholder="e.g. PDF Document • 150 KB">
+                </div>
+                <div class="form-group">
+                    <label for="new-file-category">Topic Category</label>
+                    <select id="new-file-category" class="admin-text-field" style="width: 100%; background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.8rem; border-radius: 8px; font-weight: bold;">
+                        <option value="syllabus">Curriculum Syllabus</option>
+                        <option value="newsletter">Department Newsletter</option>
+                        <option value="academic">Academic Planning</option>
+                        <option value="events">Previous ECE Events</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="new-file-upload">Upload File (Optional - Mock link created automatically)</label>

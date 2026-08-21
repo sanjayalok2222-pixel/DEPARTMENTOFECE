@@ -341,16 +341,38 @@ function showDownloadNotify(fileName) {
 let lastScrollY = window.scrollY;
 
 window.addEventListener('scroll', () => {
-    // Scroll-to-Hide Header
-    const header = document.querySelector('header');
-    if (header) {
-        if (window.scrollY > lastScrollY && window.scrollY > 180) {
-            header.classList.add('header-hidden');
+    // Scroll-to-Hide Sub-navigation Menu
+    const subNav = document.querySelector('.sub-nav');
+    
+    if (subNav) {
+        if (window.scrollY > lastScrollY && window.scrollY > 80) {
+            // Scrolling down: translate header off-screen
+            subNav.classList.add('header-hidden');
         } else {
-            header.classList.remove('header-hidden');
+            // Scrolling up: slide header back in
+            subNav.classList.remove('header-hidden');
         }
     }
     lastScrollY = window.scrollY;
+
+    // Active Tab Link highlight
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-links li a');
+    let currentSection = '';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (window.scrollY >= (sectionTop - 150)) {
+            currentSection = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSection}`) {
+            link.classList.add('active');
+        }
+    });
 });
 
 
@@ -908,15 +930,16 @@ function submitAddNewFile(event) {
     event.preventDefault();
     const name = document.getElementById('new-file-name').value;
     const meta = document.getElementById('new-file-meta').value;
+    const category = document.getElementById('new-file-category').value;
 
     const customCardId = "custom-" + Date.now();
     const container = document.getElementById('download-grid-container');
 
     const isAdmin = localStorage.getItem('vsb_ece_is_admin') === 'true';
 
-    // Insert new download card directly to DOM grid container
+    // Insert new download card directly to DOM grid container (with data-category)
     const newCardHtml = `
-        <div class="download-card tilt-card custom-dl-card" id="${customCardId}" style="position: relative;">
+        <div class="download-card tilt-card custom-dl-card" id="${customCardId}" data-category="${category}" style="position: relative;">
             <div class="file-info">
                 <div class="file-icon">📁</div>
                 <div class="file-details">
@@ -934,6 +957,13 @@ function submitAddNewFile(event) {
     container.insertAdjacentHTML('beforeend', newCardHtml);
     closeAddFileModal();
     apply3DTilt();
+
+    // Dynamically refresh active category view if displayed
+    const filesView = document.getElementById('downloads-files-view');
+    if (filesView && filesView.style.display !== 'none') {
+        openDownloadTopic(category);
+    }
+
     alert('New download file card added to DOM! Click "Save & Sync Changes" to write it to disk.');
 }
 
@@ -941,6 +971,13 @@ function deleteCustomDownloadCard(btn) {
     if (confirm('Are you sure you want to delete this custom download file?')) {
         const card = btn.closest('.download-card');
         if (card) {
+            const cardId = card.getAttribute('id');
+            if (cardId) {
+                const originalCard = document.querySelector(`#download-grid-container #${cardId}`);
+                if (originalCard) {
+                    originalCard.remove();
+                }
+            }
             card.remove();
         }
     }
@@ -3144,6 +3181,86 @@ function showPublicQuizResults(year) {
             tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: #f87171;">Error loading leaderboard.</td></tr>`;
         }
     });
+}
+
+// === 12. Dynamic Department Downloads Topic Viewer Section ===
+function openDownloadTopic(category) {
+    const topicsGrid = document.getElementById('downloads-topics-grid');
+    const filesView = document.getElementById('downloads-files-view');
+    const filesGrid = document.getElementById('downloads-topic-files-grid');
+    const titleEl = document.getElementById('downloads-topic-title');
+    
+    // Set title based on category
+    const titles = {
+        'syllabus': '📄 Curriculum Syllabus Downloads',
+        'newsletter': '📰 Department Newsletter Downloads',
+        'academic': '📊 Academic Planning Planners',
+        'events': '🏆 Previous ECE Events Reports'
+    };
+    titleEl.innerHTML = titles[category] || '📂 Download Files';
+
+    // Clear previous items in grid
+    filesGrid.innerHTML = '';
+
+    // Filter files from hidden container
+    const allFiles = document.querySelectorAll('#download-grid-container .download-card');
+    let count = 0;
+    
+    allFiles.forEach(card => {
+        let fileCat = card.getAttribute('data-category');
+        if (!fileCat) {
+            // Infer category from title or links as fallback
+            const titleElText = card.querySelector('h4') ? card.querySelector('h4').textContent.toLowerCase() : '';
+            const downloadBtn = card.querySelector('a.btn-download');
+            const hrefText = downloadBtn ? (downloadBtn.getAttribute('href') || '').toLowerCase() : '';
+            if (titleElText.includes('syllabus') || hrefText.includes('syllabus')) {
+                fileCat = 'syllabus';
+            } else if (titleElText.includes('newsletter') || hrefText.includes('newsletter')) {
+                fileCat = 'newsletter';
+            } else if (titleElText.includes('planner') || hrefText.includes('planner')) {
+                fileCat = 'academic';
+            } else if (titleElText.includes('report') || hrefText.includes('report') || hrefText.includes('event')) {
+                fileCat = 'events';
+            } else {
+                fileCat = 'general';
+            }
+        }
+
+        if (fileCat === category) {
+            // Clone card and append
+            const clone = card.cloneNode(true);
+            
+            // Check if admin edit controls are visible and ensure they display nicely in files view
+            const adminDelBtn = clone.querySelector('.btn-admin-only-inline');
+            if (adminDelBtn && localStorage.getItem('vsb_ece_is_admin') === 'true') {
+                adminDelBtn.style.display = 'inline-flex';
+            }
+            
+            filesGrid.appendChild(clone);
+            count++;
+        }
+    });
+
+    if (count === 0) {
+        filesGrid.innerHTML = `<div style="grid-column: span 3; text-align: center; color: var(--text-secondary); padding: 3rem; background: var(--bg-card); border: 1px dashed var(--border-card); border-radius: 16px;">No documents uploaded in this category yet.</div>`;
+    }
+
+    // Hide topics and show files view
+    topicsGrid.style.display = 'none';
+    filesView.style.display = 'block';
+    
+    // Scroll smoothly to downloads header
+    document.getElementById('event-file').scrollIntoView({ behavior: 'smooth' });
+}
+
+function closeDownloadTopic() {
+    const topicsGrid = document.getElementById('downloads-topics-grid');
+    const filesView = document.getElementById('downloads-files-view');
+    
+    filesView.style.display = 'none';
+    topicsGrid.style.display = 'grid';
+    
+    document.getElementById('event-file').scrollIntoView({ behavior: 'smooth' });
 }
 
 
