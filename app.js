@@ -3240,3 +3240,13 @@ function closeDownloadsModal() {
     const modal = document.getElementById('downloads-modal');
     if (modal) modal.classList.remove('active');
 }
+
+function scrollSubNav(offset) {
+    const navLinks = document.getElementById('sub-nav-links');
+    if (navLinks) {
+        navLinks.scrollBy({
+            left: offset,
+            behavior: 'smooth'
+        });
+    }
+}
