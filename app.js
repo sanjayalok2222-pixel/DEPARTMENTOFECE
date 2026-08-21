@@ -341,15 +341,16 @@ function showDownloadNotify(fileName) {
 let lastScrollY = window.scrollY;
 
 window.addEventListener('scroll', () => {
-    // Scroll-to-Hide Sub-navigation Menu
+    // Scroll-to-Hide Header & Sub-navigation Menu
+    const header = document.querySelector('header');
     const subNav = document.querySelector('.sub-nav');
     
-    if (subNav) {
-        if (window.scrollY > lastScrollY && window.scrollY > 80) {
-            // Scrolling down: translate header off-screen
+    if (header && subNav) {
+        if (window.scrollY > lastScrollY && window.scrollY > 180) {
+            header.classList.add('header-hidden');
             subNav.classList.add('header-hidden');
         } else {
-            // Scrolling up: slide header back in
+            header.classList.remove('header-hidden');
             subNav.classList.remove('header-hidden');
         }
     }
@@ -362,7 +363,7 @@ window.addEventListener('scroll', () => {
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        if (window.scrollY >= (sectionTop - 150)) {
+        if (window.scrollY >= (sectionTop - 250)) {
             currentSection = section.getAttribute('id');
         }
     });
