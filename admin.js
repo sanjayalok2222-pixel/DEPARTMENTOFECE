@@ -651,7 +651,7 @@ function cmsAddDownloadFileToCategory(category) {
                 </div>
                 <div class="form-group" style="margin-bottom:0.5rem;">
                     <label>Meta Details (PDF/Excel Size)</label>
-                    <input type="text" class="form-control cms-download-meta" value="Official PDF Document • 150 KB">
+                    <input type="text" class="form-control cms-download-meta" value="Official PDF Document • 10 MB">
                 </div>
                 <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                     <label>Attached Document Destination</label>
