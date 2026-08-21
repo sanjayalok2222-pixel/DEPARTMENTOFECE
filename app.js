@@ -338,21 +338,7 @@ function showDownloadNotify(fileName) {
 }
 
 
-// === 6. Dynamic Navigation & Scroll Hide Header system ===
-let lastScrollY = window.scrollY;
 
-window.addEventListener('scroll', () => {
-    // Scroll-to-Hide Header
-    const header = document.querySelector('header');
-    if (header) {
-        if (window.scrollY > lastScrollY && window.scrollY > 180) {
-            header.classList.add('header-hidden');
-        } else {
-            header.classList.remove('header-hidden');
-        }
-    }
-    lastScrollY = window.scrollY;
-});
 
 
 // === 7. Real Admin Controls & Dynamic Data Systems ===

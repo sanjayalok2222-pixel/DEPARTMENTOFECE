@@ -26,12 +26,12 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
-    padding-top: 155px;
+    padding-top: 0;
 }
 
 @media (max-width: 1024px) {
     body {
-        padding-top: 130px;
+        padding-top: 0 !important;
     }
 }
 
@@ -1003,7 +1003,7 @@ body.admin-mode [contenteditable="true"]:focus {
 /* Mobile Phones (max-width: 600px) */
 @media (max-width: 600px) {
     body {
-        padding-top: 130px !important;
+        padding-top: 0 !important;
     }
 
     header {
