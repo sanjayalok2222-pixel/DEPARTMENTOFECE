@@ -371,17 +371,55 @@
     <section id="event-file">
         <h2 class="section-title">Department Downloads</h2>
         
-        <div class="registration-container" style="max-width: 600px; margin: 0 auto;">
-            <div class="download-card tilt-card" onclick="openDownloadsModal()" style="cursor: pointer; text-align: center; padding: 3rem 2rem; border-color: rgba(0, 210, 255, 0.3); background: rgba(0, 210, 255, 0.02); transition: all 0.3s ease;">
-                <div style="font-size: 3.5rem; margin-bottom: 1rem; filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.4));">📂</div>
-                <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">Access Department Download Center</h3>
-                <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">Click here to view and download ECE Syllabus, Academic Planner, Newsletters, and event files.</p>
-                <span class="event-reg-link" style="display: inline-block; width: auto; padding: 0.8rem 2.5rem; border-radius: 50px;">Open Download Center</span>
+        <div class="download-grid" id="download-grid-container">
+            <!-- Default downloads are hardcoded so they are natively available globally -->
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">📄</div>
+                    <div class="file-details">
+                        <h4 id="dl-syllabus-title">ECE Curriculum Syllabus 2025-26</h4>
+                        <p id="dl-syllabus-meta">Official PDF Document • 120 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Syllabus_2025_26.pdf" download="ECE_Syllabus_2025_26.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Syllabus_2025_26.pdf')">↓</a>
+            </div>
+
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">📰</div>
+                    <div class="file-details">
+                        <h4 id="dl-newsletter-title">ECE Department Newsletter (Vol. X)</h4>
+                        <p id="dl-newsletter-meta">Official PDF Document • 135 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Newsletter_V10.pdf" download="ECE_Newsletter_V10.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Newsletter_V10.pdf')">↓</a>
+            </div>
+
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">📊</div>
+                    <div class="file-details">
+                        <h4 id="dl-planner-title">Academic Planning Template (Excel)</h4>
+                        <p id="dl-planner-meta">Spreadsheet Template • 5 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Academic_Planner.xlsx" download="ECE_Academic_Planner.xlsx" class="btn-download" onclick="showDownloadNotify('ECE_Academic_Planner.xlsx')">↓</a>
+            </div>
+
+            <div class="download-card tilt-card">
+                <div class="file-info">
+                    <div class="file-icon">🏆</div>
+                    <div class="file-details">
+                        <h4 id="dl-report-title">Previous ECE Events Summary Report</h4>
+                        <p id="dl-report-meta">PDF Summary Report • 150 KB</p>
+                    </div>
+                </div>
+                <a href="ECE_Previous_Events_Report.pdf" download="ECE_Previous_Events_Report.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Previous_Events_Report.pdf')">↓</a>
             </div>
         </div>
 
         <!-- Admin Add File Control (visible only in admin mode) -->
-        <div class="admin-only-block" id="admin-download-controls" style="display:none; margin-top: 2rem; text-align: center;">
+        <div class="admin-only-block" id="admin-download-controls" style="display:none; margin-top: 3rem; text-align: center;">
             <button class="btn-primary" onclick="openAddFileModal()">➕ Add New Download File</button>
         </div>
     </section>
@@ -627,59 +665,6 @@ void loop() {
         </div>
     </div>
 
-    <!-- Department Downloads Modal (Dynamic Download Center) -->
-    <div id="downloads-modal" class="modal">
-        <div class="modal-content" style="max-width: 850px; width: 100%;">
-            <button class="modal-close" onclick="closeDownloadsModal()">×</button>
-            <h3 style="margin: 0 0 1.5rem 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.8rem; filter: drop-shadow(0 0 8px rgba(0, 210, 255, 0.4)); text-align: center;">📂 Department Download Center</h3>
-            <div class="download-grid" id="download-grid-container">
-                <!-- Default downloads are hardcoded so they are natively available globally -->
-                <div class="download-card tilt-card">
-                    <div class="file-info">
-                        <div class="file-icon">📄</div>
-                        <div class="file-details">
-                            <h4 id="dl-syllabus-title">ECE Curriculum Syllabus 2025-26</h4>
-                            <p id="dl-syllabus-meta">Official PDF Document • 120 KB</p>
-                        </div>
-                    </div>
-                    <a href="ECE_Syllabus_2025_26.pdf" download="ECE_Syllabus_2025_26.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Syllabus_2025_26.pdf')">↓</a>
-                </div>
-
-                <div class="download-card tilt-card">
-                    <div class="file-info">
-                        <div class="file-icon">📰</div>
-                        <div class="file-details">
-                            <h4 id="dl-newsletter-title">ECE Department Newsletter (Vol. X)</h4>
-                            <p id="dl-newsletter-meta">Official PDF Document • 135 KB</p>
-                        </div>
-                    </div>
-                    <a href="ECE_Newsletter_V10.pdf" download="ECE_Newsletter_V10.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Newsletter_V10.pdf')">↓</a>
-                </div>
-
-                <div class="download-card tilt-card">
-                    <div class="file-info">
-                        <div class="file-icon">📊</div>
-                        <div class="file-details">
-                            <h4 id="dl-planner-title">Academic Planning Template (Excel)</h4>
-                            <p id="dl-planner-meta">Spreadsheet Template • 5 KB</p>
-                        </div>
-                    </div>
-                    <a href="ECE_Academic_Planner.xlsx" download="ECE_Academic_Planner.xlsx" class="btn-download" onclick="showDownloadNotify('ECE_Academic_Planner.xlsx')">↓</a>
-                </div>
-
-                <div class="download-card tilt-card">
-                    <div class="file-info">
-                        <div class="file-icon">🏆</div>
-                        <div class="file-details">
-                            <h4 id="dl-report-title">Previous ECE Events Summary Report</h4>
-                            <p id="dl-report-meta">PDF Summary Report • 150 KB</p>
-                        </div>
-                    </div>
-                    <a href="ECE_Previous_Events_Report.pdf" download="ECE_Previous_Events_Report.pdf" class="btn-download" onclick="showDownloadNotify('ECE_Previous_Events_Report.pdf')">↓</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Notification Toast for Downloads -->
     <div id="toast-notify" style="display:none; position:fixed; bottom: 2rem; right: 2rem; background: #00d2ff; color: #070a13; padding: 1rem 2rem; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 5px 15px rgba(0,210,255,0.4); transition: all 0.3s ease;">
