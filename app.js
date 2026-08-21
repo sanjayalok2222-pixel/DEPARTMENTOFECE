@@ -3173,9 +3173,48 @@ function showPublicQuizResults(year) {
     });
 }
 
-function openDownloadsModal() {
+function openTopicDownloadsModal(category) {
     const modal = document.getElementById('downloads-modal');
-    if (modal) modal.classList.add('active');
+    const titleEl = document.getElementById('downloads-modal-title');
+    const listContainer = document.getElementById('topic-downloads-list');
+    
+    if (!modal || !listContainer) return;
+    
+    // Update title based on category
+    const titles = {
+        'syllabus': '📄 Curriculum & Syllabus Files',
+        'newsletter': '📰 Department Newsletters',
+        'academic': '📊 Academic Planning Templates',
+        'events': '🏆 Previous ECE Events Reports',
+        'general': '📂 Other Download Files'
+    };
+    if (titleEl) {
+        titleEl.textContent = titles[category] || '📂 Department Downloads';
+    }
+    
+    // Clear list container
+    listContainer.innerHTML = '';
+    
+    // Query matching cards from the hidden #download-grid-container
+    const allFiles = document.querySelectorAll('#download-grid-container .download-card');
+    let count = 0;
+    allFiles.forEach(file => {
+        const fileCat = file.getAttribute('data-category') || 'general';
+        if (fileCat === category) {
+            // Clone the card so interactions/styles match perfectly
+            const clonedCard = file.cloneNode(true);
+            // Ensure inline styles are normal (not hidden)
+            clonedCard.style.display = '';
+            listContainer.appendChild(clonedCard);
+            count++;
+        }
+    });
+    
+    if (count === 0) {
+        listContainer.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); margin: 2rem 0; font-family: 'Space Grotesk', sans-serif;">No files uploaded under this category yet.</p>`;
+    }
+    
+    modal.classList.add('active');
 }
 
 function closeDownloadsModal() {

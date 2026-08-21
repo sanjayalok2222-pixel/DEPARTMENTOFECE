@@ -550,6 +550,7 @@ function populateDownloadsCmsList() {
         const dlBtn = card.querySelector('.btn-download');
         const dlUrl = dlBtn ? dlBtn.getAttribute('href') : '';
         const isCustom = card.classList.contains('custom-dl-card');
+        const category = card.getAttribute('data-category') || 'general';
 
         const itemHtml = `
             <div class="cms-list-item cms-download-item-card" data-index="${index}" data-custom="${isCustom ? 'true' : 'false'}">
@@ -562,6 +563,16 @@ function populateDownloadsCmsList() {
                     <div class="form-group" style="margin-bottom:0.5rem;">
                         <label>Meta Details (PDF/Excel Size)</label>
                         <input type="text" class="form-control cms-download-meta" value="${meta}">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2; margin-bottom:0.5rem;">
+                        <label>Topic Category</label>
+                        <select class="form-control cms-download-category" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: bold; width: 100%;">
+                            <option value="syllabus" ${category === 'syllabus' ? 'selected' : ''}>Curriculum Syllabus</option>
+                            <option value="newsletter" ${category === 'newsletter' ? 'selected' : ''}>Department Newsletter</option>
+                            <option value="academic" ${category === 'academic' ? 'selected' : ''}>Academic Planning</option>
+                            <option value="events" ${category === 'events' ? 'selected' : ''}>Previous ECE Events</option>
+                            <option value="general" ${category === 'general' ? 'selected' : ''}>General / Others</option>
+                        </select>
                     </div>
                     <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                         <label>Attached Document Destination</label>
@@ -624,6 +635,16 @@ function cmsAddDownloadCardSlot() {
                 <div class="form-group" style="margin-bottom:0.5rem;">
                     <label>Meta Details (PDF/Excel Size)</label>
                     <input type="text" class="form-control cms-download-meta" value="Official PDF Document • 150 KB">
+                </div>
+                <div class="form-group" style="grid-column: span 2; margin-bottom:0.5rem;">
+                    <label>Topic Category</label>
+                    <select class="form-control cms-download-category" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: bold; width: 100%;">
+                        <option value="syllabus">Curriculum Syllabus</option>
+                        <option value="newsletter">Department Newsletter</option>
+                        <option value="academic">Academic Planning</option>
+                        <option value="events">Previous ECE Events</option>
+                        <option value="general" selected>General / Others</option>
+                    </select>
                 </div>
                 <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                     <label>Attached Document Destination</label>
@@ -978,11 +999,12 @@ function reconstructDownloadsCmsDom() {
         const meta = item.querySelector('.cms-download-meta').value.trim();
         const fileUrl = item.querySelector('.cms-download-url').value.trim();
         const isCustom = item.getAttribute('data-custom') === 'true';
+        const category = item.querySelector('.cms-download-category').value;
 
         const fileIcon = fileUrl.includes('.xlsx') || fileUrl.includes('Excel') ? '📊' : '📄';
 
         const cardHtml = `
-            <div class="download-card tilt-card ${isCustom ? 'custom-dl-card' : ''}">
+            <div class="download-card tilt-card ${isCustom ? 'custom-dl-card' : ''}" data-category="${category}">
                 <div class="file-info">
                     <div class="file-icon">${fileIcon}</div>
                     <div class="file-details">
