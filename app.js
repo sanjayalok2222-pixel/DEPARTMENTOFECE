@@ -337,8 +337,47 @@ function showDownloadNotify(fileName) {
     }, 2500);
 }
 
+// === 6. Dynamic Navigation & Scroll Hide Header system ===
+let lastScrollY = window.scrollY;
 
+window.addEventListener('scroll', () => {
+    // 1. Scroll-to-Hide Header & Sub-navigation Menu
+    const header = document.querySelector('header');
+    const subNav = document.querySelector('.sub-nav');
+    
+    if (header && subNav) {
+        if (window.scrollY > lastScrollY && window.scrollY > 180) {
+            // Scrolling down: translate headers off-screen
+            header.classList.add('header-hidden');
+            subNav.classList.add('header-hidden');
+        } else {
+            // Scrolling up: slide headers back in
+            header.classList.remove('header-hidden');
+            subNav.classList.remove('header-hidden');
+        }
+    }
+    lastScrollY = window.scrollY;
 
+    // 2. Active Tab Link highlight
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-links li a');
+    let currentSection = '';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= (sectionTop - 250)) {
+            currentSection = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSection}`) {
+            link.classList.add('active');
+        }
+    });
+});
 
 
 // === 7. Real Admin Controls & Dynamic Data Systems ===
