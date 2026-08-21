@@ -209,10 +209,10 @@ header.header-hidden {
 }
 
 .nav-links {
-    max-width: 1200px;
+    max-width: max-content;
     margin: 0 auto;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     list-style: none;
     padding: 0 1rem;
@@ -220,6 +220,7 @@ header.header-hidden {
     scrollbar-width: none; 
     -ms-overflow-style: none;
     flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 1200px) {

@@ -377,6 +377,62 @@ window.addEventListener('scroll', () => {
 });
 
 
+// === 6b. Drag-to-Scroll for Navigation Taskbar (Desktop Mouse Support) ===
+const navLinksContainer = document.querySelector('.nav-links');
+if (navLinksContainer) {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let hasDragged = false;
+
+    navLinksContainer.addEventListener('mousedown', (e) => {
+        isDown = true;
+        hasDragged = false;
+        startX = e.pageX - navLinksContainer.offsetLeft;
+        scrollLeft = navLinksContainer.scrollLeft;
+        navLinksContainer.style.cursor = 'grabbing';
+    });
+
+    navLinksContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+        navLinksContainer.style.cursor = 'grab';
+    });
+
+    navLinksContainer.addEventListener('mouseup', (e) => {
+        isDown = false;
+        navLinksContainer.style.cursor = 'grab';
+        
+        if (hasDragged) {
+            // Prevent click on links during drag
+            const preventClick = (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            };
+            
+            // Capture click event phase and block it once
+            window.addEventListener('click', preventClick, true);
+            setTimeout(() => {
+                window.removeEventListener('click', preventClick, true);
+            }, 50);
+        }
+    });
+
+    navLinksContainer.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - navLinksContainer.offsetLeft;
+        const walk = (x - startX) * 1.5; // Drag sensitivity multiplier
+        if (Math.abs(x - startX) > 5) {
+            hasDragged = true;
+        }
+        navLinksContainer.scrollLeft = scrollLeft - walk;
+    });
+
+    // Set grab cursor as default for navigation menu
+    navLinksContainer.style.cursor = 'grab';
+}
+
+
 // === 7. Real Admin Controls & Dynamic Data Systems ===
 const loginModal = document.getElementById('adminLoginModal');
 const addFileModal = document.getElementById('addFileModal');
