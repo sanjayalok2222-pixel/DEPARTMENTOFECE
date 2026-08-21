@@ -655,6 +655,11 @@ function nextPoster() {
         cards[activeIdx].classList.remove('active');
         const nextIdx = (activeIdx + 1) % cards.length;
         cards[nextIdx].classList.add('active');
+        
+        const container = document.getElementById('posters-carousel-container');
+        if (container) {
+            container.style.transform = `translateX(-${nextIdx * 100}%)`;
+        }
     }
 }
 
@@ -673,6 +678,11 @@ function prevPoster() {
         cards[activeIdx].classList.remove('active');
         const prevIdx = (activeIdx - 1 + cards.length) % cards.length;
         cards[prevIdx].classList.add('active');
+        
+        const container = document.getElementById('posters-carousel-container');
+        if (container) {
+            container.style.transform = `translateX(-${prevIdx * 100}%)`;
+        }
     }
 }
 
@@ -737,6 +747,7 @@ function addNewPosterSlot() {
     // Switch focus to the new card
     activeCard.classList.remove('active');
     newCard.classList.add('active');
+    container.style.transform = 'translateX(0%)';
 
     // Make sure edits are enabled if in admin mode
     if (localStorage.getItem('vsb_ece_is_admin') === 'true') {
@@ -762,6 +773,18 @@ function deleteActivePoster() {
         activeCard.remove();
         if (sibling) {
             sibling.classList.add('active');
+        }
+        
+        const newCards = getPosterCards();
+        let activeIdx = 0;
+        newCards.forEach((card, idx) => {
+            if (card.classList.contains('active')) {
+                activeIdx = idx;
+            }
+        });
+        const container = document.getElementById('posters-carousel-container');
+        if (container) {
+            container.style.transform = `translateX(-${activeIdx * 100}%)`;
         }
     }
 }
@@ -1043,7 +1066,18 @@ function applyFetchedState(state) {
 
     // 2. Restore posters carousel HTML
     if (state.postersHtml) {
-        document.getElementById('posters-carousel-container').innerHTML = state.postersHtml;
+        const container = document.getElementById('posters-carousel-container');
+        if (container) {
+            container.innerHTML = state.postersHtml;
+            const cards = container.querySelectorAll('.poster-card');
+            let activeIdx = 0;
+            cards.forEach((card, idx) => {
+                if (card.classList.contains('active')) {
+                    activeIdx = idx;
+                }
+            });
+            container.style.transform = `translateX(-${activeIdx * 100}%)`;
+        }
     }
 
     // 3. Restore downloads HTML

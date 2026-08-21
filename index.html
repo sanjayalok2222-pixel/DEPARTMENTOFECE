@@ -283,27 +283,29 @@
         <div class="registration-container">
             <div class="carousel-wrapper">
                 <button class="carousel-control prev" onclick="prevPoster()">❮</button>
-                <div class="poster-card-container" id="posters-carousel-container">
-                    <!-- Default initial ArduFusion poster card -->
-                    <div class="poster-card tilt-card active">
-                        <div class="poster-image-container">
-                            <!-- 1:1 Poster Image (ArduFusion) -->
-                            <img class="poster-1to1" src="assets/ardufusion-poster.jpg" alt="ArduFusion Poster">
-                            <!-- Admin Edit Image Trigger -->
-                            <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
-                            <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
-                        </div>
-                        <div class="poster-details">
-                            <h3 class="event-title-text">ArduFusion</h3>
-                            <p class="event-date-text">Date: July 25.07.2026 (Saturday)</p>
-                            <!-- Custom Link Below Poster - styled as a beautiful button -->
-                            <div class="link-action-container">
-                                <a class="event-reg-link" href="https://forms.gle/MBd6YtJUSsTDWSfs6" target="_blank">Register Now</a>
-                                <!-- Editable fields shown only to admin -->
-                                <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
-                                    <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
-                                    <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://forms.gle/MBd6YtJUSsTDWSfs6" onchange="updateActivePosterLink(this)">
-                                    <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/ardufusion-poster.jpg" onchange="updateActivePosterImageByUrl(this)">
+                <div class="poster-viewport">
+                    <div class="poster-card-container" id="posters-carousel-container">
+                        <!-- Default initial ArduFusion poster card -->
+                        <div class="poster-card tilt-card active">
+                            <div class="poster-image-container">
+                                <!-- 1:1 Poster Image (ArduFusion) -->
+                                <img class="poster-1to1" src="assets/ardufusion-poster.jpg" alt="ArduFusion Poster">
+                                <!-- Admin Edit Image Trigger -->
+                                <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
+                                <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
+                            </div>
+                            <div class="poster-details">
+                                <h3 class="event-title-text">ArduFusion</h3>
+                                <p class="event-date-text">Date: July 25.07.2026 (Saturday)</p>
+                                <!-- Custom Link Below Poster - styled as a beautiful button -->
+                                <div class="link-action-container">
+                                    <a class="event-reg-link" href="https://forms.gle/MBd6YtJUSsTDWSfs6" target="_blank">Register Now</a>
+                                    <!-- Editable fields shown only to admin -->
+                                    <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
+                                        <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
+                                        <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://forms.gle/MBd6YtJUSsTDWSfs6" onchange="updateActivePosterLink(this)">
+                                        <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/ardufusion-poster.jpg" onchange="updateActivePosterImageByUrl(this)">
+                                    </div>
                                 </div>
                             </div>
                         </div>
