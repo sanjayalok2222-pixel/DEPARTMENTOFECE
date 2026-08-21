@@ -550,7 +550,23 @@ function populateDownloadsCmsList() {
         const dlBtn = card.querySelector('.btn-download');
         const dlUrl = dlBtn ? dlBtn.getAttribute('href') : '';
         const isCustom = card.classList.contains('custom-dl-card');
-        const category = card.getAttribute('data-category') || 'general';
+        
+        let category = card.getAttribute('data-category');
+        if (!category) {
+            const titleText = title.toLowerCase();
+            const hrefText = dlUrl.toLowerCase();
+            if (titleText.includes('syllabus') || hrefText.includes('syllabus')) {
+                category = 'syllabus';
+            } else if (titleText.includes('newsletter') || hrefText.includes('newsletter')) {
+                category = 'newsletter';
+            } else if (titleText.includes('planner') || hrefText.includes('planner')) {
+                category = 'academic';
+            } else if (titleText.includes('report') || hrefText.includes('report') || hrefText.includes('event')) {
+                category = 'events';
+            } else {
+                category = 'general';
+            }
+        }
 
         const itemHtml = `
             <div class="cms-list-item cms-download-item-card" data-index="${index}" data-custom="${isCustom ? 'true' : 'false'}">

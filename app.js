@@ -3199,7 +3199,26 @@ function openTopicDownloadsModal(category) {
     const allFiles = document.querySelectorAll('#download-grid-container .download-card');
     let count = 0;
     allFiles.forEach(file => {
-        const fileCat = file.getAttribute('data-category') || 'general';
+        let fileCat = file.getAttribute('data-category');
+        if (!fileCat) {
+            const h4 = file.querySelector('h4');
+            const titleText = h4 ? h4.textContent.toLowerCase() : '';
+            const dlBtn = file.querySelector('.btn-download');
+            const hrefText = dlBtn ? (dlBtn.getAttribute('href') || '').toLowerCase() : '';
+            
+            if (titleText.includes('syllabus') || hrefText.includes('syllabus')) {
+                fileCat = 'syllabus';
+            } else if (titleText.includes('newsletter') || hrefText.includes('newsletter')) {
+                fileCat = 'newsletter';
+            } else if (titleText.includes('planner') || hrefText.includes('planner')) {
+                fileCat = 'academic';
+            } else if (titleText.includes('report') || hrefText.includes('report') || hrefText.includes('event')) {
+                fileCat = 'events';
+            } else {
+                fileCat = 'general';
+            }
+        }
+        
         if (fileCat === category) {
             // Clone the card so interactions/styles match perfectly
             const clonedCard = file.cloneNode(true);
