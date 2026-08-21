@@ -993,15 +993,44 @@
 
             <!-- Tab PANEL 5: Downloads Grid -->
             <div id="panel-downloads" class="workspace-panel">
-                <div class="card">
-                    <h3>📂 Manage Download Center Resources</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage dynamic academic brochures and syllabus PDF downloads. Admin can edit text titles, modify details, delete files, or attach new PDF/spreadsheet documents.</p>
-                    
-                    <div class="cms-list-grid" id="cms-downloads-list">
-                        <!-- Dynamic elements populated by JS -->
+                <!-- Curriculum Syllabus Section -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>📄 Curriculum Syllabus Files</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Curriculum Syllabus' topic.</p>
+                    <div class="cms-list-grid" id="cms-dl-list-syllabus">
+                        <!-- Dynamic syllabus elements populated by JS -->
                     </div>
-                    
-                    <button class="btn-add-list-item" onclick="cmsAddDownloadCardSlot()">➕ Add Additional Download Card Slot</button>
+                    <button class="btn-add-list-item" onclick="cmsAddDownloadFileToCategory('syllabus')">➕ Add Syllabus Document</button>
+                </div>
+
+                <!-- Department Newsletter Section -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>📰 Department Newsletter Files</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Department Newsletter' topic.</p>
+                    <div class="cms-list-grid" id="cms-dl-list-newsletter">
+                        <!-- Dynamic newsletter elements populated by JS -->
+                    </div>
+                    <button class="btn-add-list-item" onclick="cmsAddDownloadFileToCategory('newsletter')">➕ Add Newsletter Document</button>
+                </div>
+
+                <!-- Academic Planning Section -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>📊 Academic Planning Files</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Academic Planning' topic.</p>
+                    <div class="cms-list-grid" id="cms-dl-list-academic">
+                        <!-- Dynamic academic elements populated by JS -->
+                    </div>
+                    <button class="btn-add-list-item" onclick="cmsAddDownloadFileToCategory('academic')">➕ Add Academic Planner</button>
+                </div>
+
+                <!-- Previous ECE Events Section -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3>🏆 Previous ECE Events Files</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Previous ECE Events' topic.</p>
+                    <div class="cms-list-grid" id="cms-dl-list-events">
+                        <!-- Dynamic events elements populated by JS -->
+                    </div>
+                    <button class="btn-add-list-item" onclick="cmsAddDownloadFileToCategory('events')">➕ Add Event Report</button>
                 </div>
             </div>
 

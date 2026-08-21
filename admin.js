@@ -540,8 +540,10 @@ function cmsAddPosterCardSlot() {
 
 // B. Downloads directory list manager
 function populateDownloadsCmsList() {
-    const listContainer = document.getElementById('cms-downloads-list');
-    listContainer.innerHTML = '';
+    document.getElementById('cms-dl-list-syllabus').innerHTML = '';
+    document.getElementById('cms-dl-list-newsletter').innerHTML = '';
+    document.getElementById('cms-dl-list-academic').innerHTML = '';
+    document.getElementById('cms-dl-list-events').innerHTML = '';
 
     const cards = indexDoc.querySelectorAll('#download-grid-container .download-card');
     cards.forEach((card, index) => {
@@ -564,12 +566,20 @@ function populateDownloadsCmsList() {
             } else if (titleText.includes('report') || hrefText.includes('report') || hrefText.includes('event')) {
                 category = 'events';
             } else {
-                category = 'general';
+                category = 'syllabus';
             }
         }
+        
+        if (!['syllabus', 'newsletter', 'academic', 'events'].includes(category)) {
+            category = 'syllabus';
+        }
+
+        const uniqueId = Math.random().toString(36).substr(2, 9);
+        const container = document.getElementById(`cms-dl-list-${category}`);
+        if (!container) return;
 
         const itemHtml = `
-            <div class="cms-list-item cms-download-item-card" data-index="${index}" data-custom="${isCustom ? 'true' : 'false'}">
+            <div class="cms-list-item cms-download-item-card" data-category="${category}" data-custom="${isCustom ? 'true' : 'false'}">
                 <div style="font-size: 2.2rem; margin-right: 0.5rem;">📁</div>
                 <div class="cms-list-fields">
                     <div class="form-group" style="margin-bottom:0.5rem;">
@@ -580,35 +590,25 @@ function populateDownloadsCmsList() {
                         <label>Meta Details (PDF/Excel Size)</label>
                         <input type="text" class="form-control cms-download-meta" value="${meta}">
                     </div>
-                    <div class="form-group" style="grid-column: span 2; margin-bottom:0.5rem;">
-                        <label>Topic Category</label>
-                        <select class="form-control cms-download-category" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: bold; width: 100%;">
-                            <option value="syllabus" ${category === 'syllabus' ? 'selected' : ''}>Curriculum Syllabus</option>
-                            <option value="newsletter" ${category === 'newsletter' ? 'selected' : ''}>Department Newsletter</option>
-                            <option value="academic" ${category === 'academic' ? 'selected' : ''}>Academic Planning</option>
-                            <option value="events" ${category === 'events' ? 'selected' : ''}>Previous ECE Events</option>
-                            <option value="general" ${category === 'general' ? 'selected' : ''}>General / Others</option>
-                        </select>
-                    </div>
                     <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                         <label>Attached Document Destination</label>
                         <div style="display:flex; gap:0.5rem; align-items:center;">
-                            <input type="text" class="form-control cms-download-url" id="cms-dl-url-${index}" style="flex-grow:1;" value="${dlUrl}" placeholder="Paste raw hyperlink or choose file">
+                            <input type="text" class="form-control cms-download-url" id="cms-dl-url-${uniqueId}" style="flex-grow:1;" value="${dlUrl}" placeholder="Paste raw hyperlink or choose file">
                             <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
                                 📤 Attach
-                                <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader(${index}, event)">
+                                <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader('${uniqueId}', event)">
                             </label>
                         </div>
                     </div>
                 </div>
-                <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(${index})">🗑️</button>
+                <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(this)">🗑️</button>
             </div>
         `;
-        listContainer.insertAdjacentHTML('beforeend', itemHtml);
+        container.insertAdjacentHTML('beforeend', itemHtml);
     });
 }
 
-function handleCmsDownloadFileUploader(index, event) {
+function handleCmsDownloadFileUploader(uniqueId, event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -619,29 +619,30 @@ function handleCmsDownloadFileUploader(index, event) {
 
     const reader = new FileReader();
     reader.onload = function(e) {
-        document.getElementById(`cms-dl-url-${index}`).value = e.target.result; // Stores file Base64 target
+        document.getElementById(`cms-dl-url-${uniqueId}`).value = e.target.result; // Stores file Base64 target
         showNotification(`File attachment '${file.name}' converted successfully.`);
     };
     reader.readAsDataURL(file);
 }
 
-function cmsDeleteDownloadCardSlot(index) {
+function cmsDeleteDownloadCardSlot(btn) {
     if (confirm('Are you sure you want to delete this download document slot?')) {
-        const cards = indexDoc.querySelectorAll('#download-grid-container .download-card');
-        if (cards[index]) {
-            cards[index].remove();
-            populateDownloadsCmsList();
-            showNotification('Download card removed from DOM memory.');
+        const item = btn.closest('.cms-download-item-card');
+        if (item) {
+            item.remove();
+            showNotification('Download card removed from editor list.');
         }
     }
 }
 
-function cmsAddDownloadCardSlot() {
-    const listContainer = document.getElementById('cms-downloads-list');
-    const index = document.querySelectorAll('.cms-download-item-card').length;
+function cmsAddDownloadFileToCategory(category) {
+    const container = document.getElementById(`cms-dl-list-${category}`);
+    if (!container) return;
+
+    const uniqueId = Math.random().toString(36).substr(2, 9);
 
     const itemHtml = `
-        <div class="cms-list-item cms-download-item-card new-item" data-index="${index}" data-custom="true">
+        <div class="cms-list-item cms-download-item-card new-item" data-category="${category}" data-custom="true">
             <div style="font-size: 2.2rem; margin-right: 0.5rem;">📁</div>
             <div class="cms-list-fields">
                 <div class="form-group" style="margin-bottom:0.5rem;">
@@ -652,31 +653,21 @@ function cmsAddDownloadCardSlot() {
                     <label>Meta Details (PDF/Excel Size)</label>
                     <input type="text" class="form-control cms-download-meta" value="Official PDF Document • 150 KB">
                 </div>
-                <div class="form-group" style="grid-column: span 2; margin-bottom:0.5rem;">
-                    <label>Topic Category</label>
-                    <select class="form-control cms-download-category" style="background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: bold; width: 100%;">
-                        <option value="syllabus">Curriculum Syllabus</option>
-                        <option value="newsletter">Department Newsletter</option>
-                        <option value="academic">Academic Planning</option>
-                        <option value="events">Previous ECE Events</option>
-                        <option value="general" selected>General / Others</option>
-                    </select>
-                </div>
                 <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                     <label>Attached Document Destination</label>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <input type="text" class="form-control cms-download-url" id="cms-dl-url-${index}" style="flex-grow:1;" value="#" placeholder="Paste raw hyperlink or choose file">
+                        <input type="text" class="form-control cms-download-url" id="cms-dl-url-${uniqueId}" style="flex-grow:1;" value="#" placeholder="Paste raw hyperlink or choose file">
                         <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
                             📤 Attach
-                            <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader(${index}, event)">
+                            <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader('${uniqueId}', event)">
                         </label>
                     </div>
                 </div>
             </div>
-            <button class="btn-delete-list-item" title="Delete Card" onclick="this.closest('.cms-list-item').remove()">🗑️</button>
+            <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(this)">🗑️</button>
         </div>
     `;
-    listContainer.insertAdjacentHTML('beforeend', itemHtml);
+    container.insertAdjacentHTML('beforeend', itemHtml);
 }
 
 
@@ -1015,7 +1006,7 @@ function reconstructDownloadsCmsDom() {
         const meta = item.querySelector('.cms-download-meta').value.trim();
         const fileUrl = item.querySelector('.cms-download-url').value.trim();
         const isCustom = item.getAttribute('data-custom') === 'true';
-        const category = item.querySelector('.cms-download-category').value;
+        const category = item.getAttribute('data-category');
 
         const fileIcon = fileUrl.includes('.xlsx') || fileUrl.includes('Excel') ? '📊' : '📄';
 
