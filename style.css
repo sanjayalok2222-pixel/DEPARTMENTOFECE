@@ -195,42 +195,6 @@ header.header-hidden {
     transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), top 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.nav-scroll-btn {
-    display: none;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 210, 255, 0.25);
-    border: 1px solid var(--accent-cyan);
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    backdrop-filter: blur(8px);
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    font-size: 0.9rem;
-    padding: 0;
-    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
-}
-
-.nav-scroll-btn:hover {
-    background: var(--accent-cyan);
-    color: var(--bg-dark);
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
-}
-
-.nav-scroll-btn.left {
-    left: 8px;
-}
-
-.nav-scroll-btn.right {
-    right: 8px;
-}
-
 .sub-nav.header-hidden {
     transform: translateY(-235px);
 }
@@ -1196,12 +1160,8 @@ body.admin-mode [contenteditable="true"]:focus {
         transform: translateY(-120px) !important;
     }
 
-    .nav-scroll-btn {
-        display: flex !important;
-    }
-
     .nav-links {
-        padding: 0 2.2rem !important;
+        padding: 0 0.5rem !important;
         justify-content: flex-start !important;
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
