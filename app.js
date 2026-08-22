@@ -1106,7 +1106,7 @@ function loadFromSupabase() {
                 if (!isEnabled) {
                     btn.style.opacity = '0.5';
                     btn.style.cursor = 'not-allowed';
-                    btn.innerText = 'Activity (Closed)';
+                    btn.innerText = 'Activities Locked';
                 } else {
                     btn.style.opacity = '1';
                     btn.style.cursor = 'pointer';
@@ -3431,8 +3431,8 @@ function openClubActivityPortal() {
         }
         
         if (!isEnabled) {
-            showNotification('Club Activity is currently disabled by Admin!', 'error');
-            alert('Club Activity is currently disabled by Admin!');
+            showNotification('Admin locked the activities', 'error');
+            alert('Admin locked the activities');
             return;
         }
         
