@@ -1849,3 +1849,155 @@ footer {
 }
 
 
+/* === 15. Scroll Reveal Animations (HackerRank SaaS style) === */
+.reveal-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+
+/* === 16. Comprehensive Mobile Viewport Optimizations === */
+@media (max-width: 768px) {
+    body {
+        padding-top: 230px !important;
+    }
+    
+    .sub-nav {
+        top: 170px !important;
+    }
+    
+    .sub-nav.header-hidden {
+        transform: translateY(-260px) !important;
+    }
+    
+    section {
+        padding: 4rem 1.25rem !important;
+    }
+    
+    .section-title {
+        font-size: 1.8rem !important;
+        margin-bottom: 2.5rem !important;
+    }
+    
+    .hero h2 {
+        font-size: 2.4rem !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.2 !important;
+    }
+    
+    .hero p {
+        font-size: 1rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .btn-primary {
+        padding: 0.7rem 1.8rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .header-container {
+        padding: 0.5rem 1.5rem !important;
+        gap: 0.75rem !important;
+        justify-content: center !important;
+    }
+    
+    .logo-section {
+        gap: 0.75rem !important;
+        justify-content: center !important;
+    }
+    
+    .college-title h1 {
+        font-size: 1.15rem !important;
+    }
+    
+    .college-subtitle {
+        font-size: 0.65rem !important;
+    }
+    
+    .college-details-line {
+        display: none !important;
+    }
+    
+    .vsb-logo {
+        height: 50px !important;
+    }
+    
+    .vsb-trust-logo {
+        height: 45px !important;
+    }
+    
+    .hod-list-container {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    
+    .hod-container {
+        flex-direction: column !important;
+        padding: 2.5rem 1.5rem !important;
+        text-align: center !important;
+        gap: 1.5rem !important;
+    }
+    
+    .hod-photo {
+        width: 150px !important;
+        height: 150px !important;
+    }
+    
+    .hod-details h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    
+    .download-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 240px !important;
+    }
+    
+    .sub-nav {
+        top: 185px !important;
+    }
+    
+    .hero h2 {
+        font-size: 2rem !important;
+    }
+    
+    .college-title h1 {
+        font-size: 0.95rem !important;
+    }
+    
+    .college-subtitle {
+        font-size: 0.55rem !important;
+    }
+    
+    .vsb-logo {
+        height: 40px !important;
+    }
+    
+    .vsb-trust-logo {
+        height: 35px !important;
+    }
+}
+
+
+

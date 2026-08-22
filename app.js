@@ -3514,3 +3514,27 @@ function closeClubActivityPortal() {
 }
 
 
+// === 14. Scroll Reveal Intersection Observer (SaaS style) ===
+document.addEventListener('DOMContentLoaded', () => {
+    const revealItems = document.querySelectorAll('.reveal-item');
+    
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+            }
+        });
+    };
+    
+    const revealObserver = new IntersectionObserver(revealCallback, {
+        root: null,
+        threshold: 0.15,
+        rootMargin: '0px 0px -40px 0px'
+    });
+    
+    revealItems.forEach(item => {
+        revealObserver.observe(item);
+    });
+});
+
+
