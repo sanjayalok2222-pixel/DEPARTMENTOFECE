@@ -763,6 +763,7 @@
                 <li class="sidebar-item" data-tab="downloads"><button onclick="switchCmsTab('downloads')">📂 Downloads Grid</button></li>
                 <li class="sidebar-item" data-tab="faculty"><button onclick="switchCmsTab('faculty')">🎓 HODs & Faculty</button></li>
                 <li class="sidebar-item" data-tab="quiz-results"><button onclick="switchCmsTab('quiz-results')">📝 Technical MCQ</button></li>
+                <li class="sidebar-item" data-tab="club-activity"><button onclick="switchCmsTab('club-activity')">🔌 Club Activity</button></li>
                 <li class="sidebar-item" data-tab="system"><button onclick="switchCmsTab('system')">⚙️ Database Setup</button></li>
             </ul>
 
@@ -1230,6 +1231,34 @@
                     <div style="display: flex; gap: 1rem;">
                         <button class="btn-clear-photo" style="width: auto;" onclick="resetLocalStorageConfig()">🗑️ Reset Database Config cache</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Tab PANEL 9: Club Activity -->
+            <div id="panel-club-activity" class="workspace-panel">
+                <!-- Activity Button ON/OFF Card -->
+                <div class="card" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; background: rgba(0, 210, 255, 0.02); border-color: rgba(0, 210, 255, 0.15);">
+                    <div>
+                        <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🔌 Club Activity Portal Access</h4>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Enable or disable the 'Activity' button on the student site.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                            <span style="font-size: 0.85rem; font-weight: bold; color: #fff;">Activity Portal:</span>
+                            <span id="label-lock-club-activity" style="font-size: 0.8rem; font-weight: bold; color: #4ade80;">ON</span>
+                            <button type="button" class="btn-preview" id="btn-toggle-lock-club-activity" style="margin: 0; padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="toggleClubActivityPortalAccess()">Disable</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rounds Management Card -->
+                <div class="card">
+                    <h3>🔌 Manage Club Activity Rounds</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage active rounds for student activities, links, and their locking doors. Click "Add Round Slot" to create more.</p>
+                    <div class="cms-list-grid" id="cms-activity-rounds-list">
+                        <!-- Dynamic round slots populated by JS -->
+                    </div>
+                    <button type="button" class="btn-add-list-item" onclick="cmsAddActivityRoundSlot()">➕ Add Round Slot</button>
                 </div>
             </div>
         </div>

@@ -138,6 +138,11 @@ function switchCmsTab(tabId) {
         fetchMcqLocksInDashboard();
     }
 
+    if (tabId === 'club-activity') {
+        populateActivityRoundsCmsList();
+        fetchClubActivityStatus();
+    }
+
     // Update main header title
     const titles = {
         'overview': 'Dashboard Overview',
@@ -147,6 +152,7 @@ function switchCmsTab(tabId) {
         'downloads': 'Downloads Directory Grid',
         'faculty': 'Faculty & Coordinator Profiles',
         'quiz-results': 'Round 1 Quiz Leaderboard',
+        'club-activity': 'Club Activity Management',
         'system': 'Database Configurations'
     };
     document.getElementById('cms-tab-title').textContent = titles[tabId] || 'CMS Admin Dashboard';
@@ -376,6 +382,10 @@ function populateCmsForms() {
 
     // Fetch Register Lock Status
     fetchRegisterLockInDashboard();
+    
+    // Fetch Club Activity status and load rounds list
+    fetchClubActivityStatus();
+    populateActivityRoundsCmsList();
 }
 
 // Helper to copy innerHTML of elements into form fields
@@ -1379,21 +1389,23 @@ function populateActivityRoundsCmsList() {
         const title = item.getAttribute('data-title') || 'Round';
         const type = item.getAttribute('data-type') || 'link';
         const url = item.getAttribute('data-url') || '';
+        const isLocked = item.getAttribute('data-locked') === 'true';
         const cTitle = item.querySelector('.challenge-title')?.innerText.trim() || '';
         const cDesc = item.querySelector('.challenge-desc')?.innerText.trim() || '';
         const cCode = item.querySelector('.challenge-code')?.innerText.trim() || '';
         
-        addActivityRoundSlotMarkup(index, title, type, url, cTitle, cDesc, cCode);
+        addActivityRoundSlotMarkup(index, title, type, url, cTitle, cDesc, cCode, isLocked);
     });
 }
 
-function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='') {
+function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='', isLocked=true) {
     const list = document.getElementById('cms-activity-rounds-list');
     const div = document.createElement('div');
     div.className = 'cms-list-item cms-activity-round-card';
+    div.setAttribute('data-locked', isLocked ? 'true' : 'false');
     div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; position: relative;';
     div.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
             <div class="form-group" style="margin-bottom:0;">
                 <label>Round Label / Title</label>
                 <input type="text" class="form-control cms-round-title" value="${title}" placeholder="e.g. Round 1 - Play">
@@ -1404,6 +1416,15 @@ function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle
                     <option value="link" ${type === 'link' ? 'selected' : ''}>Redirect External Link</option>
                     <option value="challenge" ${type === 'challenge' ? 'selected' : ''}>Interactive Code Challenge</option>
                 </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Door Lock Status</label>
+                <div style="display:flex; gap:0.5rem; align-items:center; height: 38px;">
+                    <span class="label-round-lock-status" style="font-weight:bold; font-size:0.85rem; color:${isLocked ? '#f87171' : '#4ade80'};">${isLocked ? 'LOCKED 🔒' : 'UNLOCKED 🔓'}</span>
+                    <button type="button" class="btn-preview" style="margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:${isLocked ? '#22c55e' : '#ef4444'}; color:#fff; border:none;" onclick="toggleCmsRoundLock(this)">
+                        ${isLocked ? 'Unlock' : 'Lock'}
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -1454,8 +1475,30 @@ function toggleCmsRoundFields(select) {
     }
 }
 
+function toggleCmsRoundLock(btn) {
+    const card = btn.closest('.cms-activity-round-card');
+    const label = card.querySelector('.label-round-lock-status');
+    const isCurrentlyLocked = card.getAttribute('data-locked') === 'true';
+    
+    const newLockedState = !isCurrentlyLocked;
+    card.setAttribute('data-locked', newLockedState ? 'true' : 'false');
+    
+    if (newLockedState) {
+        label.textContent = 'LOCKED 🔒';
+        label.style.color = '#f87171';
+        btn.textContent = 'Unlock';
+        btn.style.background = '#22c55e';
+    } else {
+        label.textContent = 'UNLOCKED 🔓';
+        label.style.color = '#4ade80';
+        btn.textContent = 'Lock';
+        btn.style.background = '#ef4444';
+    }
+    showNotification(`Round lock status toggled.`);
+}
+
 function cmsAddActivityRoundSlot() {
-    addActivityRoundSlotMarkup(Date.now());
+    addActivityRoundSlotMarkup(Date.now(), 'New Round', 'link', '#', '', '', '', true);
 }
 
 function reconstructActivityRoundsCmsDom() {
@@ -1467,6 +1510,7 @@ function reconstructActivityRoundsCmsDom() {
     cards.forEach(card => {
         const title = card.querySelector('.cms-round-title').value.trim();
         const type = card.querySelector('.cms-round-type').value.trim();
+        const isLocked = card.getAttribute('data-locked') === 'true';
         let url = '';
         if (type === 'link') {
             url = card.querySelector('.cms-round-url').value.trim();
@@ -1478,7 +1522,7 @@ function reconstructActivityRoundsCmsDom() {
         const cCode = card.querySelector('.cms-round-ccode').value.trim();
         
         const itemHtml = `
-            <div class="activity-round-item" data-title="${title}" data-type="${type}" data-url="${url}">
+            <div class="activity-round-item" data-title="${title}" data-type="${type}" data-url="${url}" data-locked="${isLocked ? 'true' : 'false'}">
                 <div class="challenge-title">${cTitle}</div>
                 <div class="challenge-desc">${cDesc}</div>
                 <pre class="challenge-code">${cCode}</pre>
@@ -2031,6 +2075,99 @@ function toggleRegisterLock() {
     .catch(err => {
         console.error("Error updating register lock:", err);
         alert("Failed to toggle register lock state.");
+    });
+}
+
+
+let currentClubActivityStatus = { enabled: true };
+
+function fetchClubActivityStatus() {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            try {
+                currentClubActivityStatus = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+            } catch (e) {
+                currentClubActivityStatus = data[0].value || currentClubActivityStatus;
+            }
+        }
+        updateClubActivityStatusLabels();
+    })
+    .catch(err => {
+        console.error("Error fetching club activity status:", err);
+    });
+}
+
+function updateClubActivityStatusLabels() {
+    const label = document.getElementById('label-lock-club-activity');
+    const btn = document.getElementById('btn-toggle-lock-club-activity');
+    
+    if (label && btn) {
+        if (currentClubActivityStatus.enabled) {
+            label.textContent = 'ON';
+            label.style.color = '#4ade80'; // green
+            btn.textContent = 'Disable';
+            btn.style.background = '#ef4444'; // red
+            btn.style.color = '#fff';
+        } else {
+            label.textContent = 'OFF';
+            label.style.color = '#f87171'; // red
+            btn.textContent = 'Enable';
+            btn.style.background = '#22c55e'; // green
+            btn.style.color = '#fff';
+        }
+    }
+}
+
+function toggleClubActivityPortalAccess() {
+    currentClubActivityStatus.enabled = !currentClubActivityStatus.enabled;
+    
+    // Save to Supabase
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const postUrl = `${url}/rest/v1/vsb_ece_state`;
+    
+    fetch(postUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'club_activity_status',
+            value: currentClubActivityStatus
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to toggle club activity status");
+        const action = currentClubActivityStatus.enabled ? 'ENABLED' : 'DISABLED';
+        alert(`Successfully ${action} the Club Activity portal!`);
+        updateClubActivityStatusLabels();
+    })
+    .catch(err => {
+        console.error("Error updating club activity status:", err);
+        alert("Failed to toggle club activity status.");
     });
 }
 

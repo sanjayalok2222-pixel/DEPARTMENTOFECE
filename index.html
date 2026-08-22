@@ -334,7 +334,8 @@
     <section id="events">
         <h2 class="section-title">Club Activities</h2>
         
-        <div class="events-container" style="grid-template-columns: 1fr; max-width: 500px; margin: 0 auto;">
+        <!-- Main Club Info View -->
+        <div class="events-container" id="club-main-view" style="grid-template-columns: 1fr; max-width: 500px; margin: 0 auto;">
             <!-- Club 1: Electronics Club Only -->
             <div class="event-card tilt-card" style="text-align: center; align-items: center;">
                 <div style="width: 100%;">
@@ -342,7 +343,20 @@
                     <h3 id="club-title-card">Electronics Club</h3>
                     <p id="club-desc-card" style="margin-bottom: 2rem;">Learn to design hardware circuits, test analog/digital components, and manufacture custom PCBs. Hosts technical project expos annually.</p>
                 </div>
-                <button class="btn-primary" style="width: 80%; cursor: default;">Activity</button>
+                <button id="btn-club-activity-portal" class="btn-primary" style="width: 80%; cursor: pointer;" onclick="openClubActivityPortal()">Activity</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Rounds List View (Inside same page, hidden by default) -->
+        <div id="club-rounds-view" style="display: none; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s ease;">
+            <div class="event-card tilt-card" style="text-align: center; align-items: center; min-height: auto;">
+                <button class="event-reg-link" onclick="closeClubActivityPortal()" style="margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important; font-family: 'Outfit'; font-weight: 700; cursor: pointer; border-radius: 30px;">
+                    ← Back to Club
+                </button>
+                <h3 style="color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.6rem; margin-bottom: 1.5rem;">🔌 Electronics Club Rounds</h3>
+                <div id="club-rounds-list-container" style="display: flex; flex-direction: column; gap: 1rem; width: 100%; text-align: left;">
+                    <!-- Dynamic rounds rendering -->
+                </div>
             </div>
         </div>
     </section>
