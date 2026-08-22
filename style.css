@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --bg-dark: #05070e;
-    --bg-card: rgba(10, 16, 30, 0.65);
-    --border-card: rgba(0, 194, 255, 0.12);
+    --bg-dark: #04060d;
+    --bg-card: rgba(8, 12, 24, 0.85);
+    --border-card: rgba(0, 210, 255, 0.08);
     --accent-blue: #0055ff;
     --accent-cyan: #00d2ff;
     --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-glow: 0 0 12px rgba(0, 210, 255, 0.35);
-    --card-glow: 0 10px 40px rgba(0, 0, 0, 0.55);
+    --text-secondary: #8a9fb4;
+    --text-glow: 0 0 10px rgba(0, 210, 255, 0.25);
+    --card-glow: 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -22,11 +22,12 @@
 body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
     padding-top: 215px;
+    letter-spacing: -0.01em;
 }
 
 @media (max-width: 1024px) {
@@ -68,10 +69,10 @@ body::before {
 
 /* Header & Navigation Styles */
 header {
-    background: rgba(5, 7, 14, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(5, 8, 17, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 210, 255, 0.08);
     position: fixed;
     top: 0;
     left: 0;
@@ -185,8 +186,10 @@ header.header-hidden {
 
 /* Sticky Secondary Sub-nav */
 .sub-nav {
-    background: rgba(8, 12, 23, 0.95);
-    border-bottom: 1px solid rgba(0, 210, 255, 0.1);
+    background: rgba(8, 12, 23, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 210, 255, 0.08);
     position: fixed;
     top: 155px;
     left: 0;
@@ -239,23 +242,23 @@ header.header-hidden {
 
 .nav-links li a {
     display: block;
-    padding: 1.2rem 1.5rem;
+    padding: 1rem 1.25rem;
     color: var(--text-secondary);
     text-decoration: none;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    transition: all 0.3s ease;
-    border-bottom: 3px solid transparent;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-bottom: 2px solid transparent;
     white-space: nowrap;
 }
 
 .nav-links li a:hover, 
 .nav-links li a.active {
     color: var(--accent-cyan);
-    border-bottom: 3px solid var(--accent-cyan);
+    border-bottom: 2px solid var(--accent-cyan);
     text-shadow: var(--text-glow);
 }
 
@@ -283,21 +286,23 @@ header.header-hidden {
 
 .hero h2 {
     font-family: 'Outfit', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 900;
-    line-height: 1.15;
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
     margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, #ffffff 30%, #82b1ff, var(--accent-cyan));
+    letter-spacing: -0.03em;
+    background: linear-gradient(to right, #ffffff, #d2f5ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 .hero p {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    max-width: 650px;
+    max-width: 700px;
     margin-bottom: 2.5rem;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
 }
 
 /* Page Sections */
@@ -310,11 +315,12 @@ section {
 .section-title {
     font-family: 'Outfit', sans-serif;
     font-size: 2.25rem;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 3.5rem;
     position: relative;
     padding-bottom: 1rem;
     color: var(--text-primary);
+    letter-spacing: -0.02em;
 }
 
 .section-title::after {
@@ -322,10 +328,9 @@ section {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(to right, var(--accent-blue), var(--accent-cyan));
-    border-radius: 2px;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent-cyan), transparent);
 }
 
 /* 3D Tilt Card Base with Easing curves for buttery smooth movements */
@@ -351,7 +356,7 @@ section {
 .about-card {
     background: var(--bg-card);
     border: 1px solid var(--border-card);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 2.5rem;
     box-shadow: var(--card-glow);
     backdrop-filter: blur(12px);
@@ -373,7 +378,7 @@ section {
 .vm-box {
     background: var(--bg-card);
     border: 1px solid var(--border-card);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 2rem;
     box-shadow: var(--card-glow);
     backdrop-filter: blur(12px);
@@ -553,7 +558,7 @@ tr:hover td {
 .event-card {
     background: var(--bg-card);
     border: 1px solid var(--border-card);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 2.5rem 2rem;
     box-shadow: var(--card-glow);
     backdrop-filter: blur(12px);
@@ -582,22 +587,26 @@ tr:hover td {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--accent-blue), #00d2ff);
-    color: #fff;
-    border: none;
-    padding: 0.8rem 1.8rem;
-    border-radius: 8px;
+    background: var(--accent-cyan);
+    color: #04060d;
+    border: 1px solid var(--accent-cyan);
+    padding: 0.8rem 2.2rem;
+    border-radius: 30px;
     cursor: pointer;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.15);
 }
 
 .btn-primary:hover {
-    box-shadow: 0 4px 20px rgba(0, 210, 255, 0.5);
+    background: transparent;
+    color: var(--accent-cyan);
+    box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
     transform: translateY(-2px);
 }
 
@@ -688,7 +697,7 @@ tr:hover td {
 .hod-container {
     background: var(--bg-card);
     border: 1px solid var(--border-card);
-    border-radius: 20px;
+    border-radius: 12px;
     padding: 3.5rem;
     box-shadow: var(--card-glow);
     backdrop-filter: blur(12px);
@@ -794,7 +803,7 @@ tr:hover td {
 .coord-card {
     background: var(--bg-card);
     border: 1px solid var(--border-card);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 2.5rem 1.5rem;
     text-align: center;
     box-shadow: var(--card-glow);
