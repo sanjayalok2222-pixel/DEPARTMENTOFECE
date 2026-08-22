@@ -794,9 +794,15 @@ tr:hover td {
     }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
     .coordinators-grid {
-        grid-template-columns: repeat(5, 1fr); /* Adaptive size for 5 coordinators */
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .coordinators-grid {
+        grid-template-columns: repeat(5, 1fr);
     }
 }
 
@@ -1868,7 +1874,26 @@ footer {
 .reveal-delay-4 { transition-delay: 0.8s; }
 
 
-/* === 16. Comprehensive Mobile Viewport Optimizations === */
+/* === 16. Laptop & Notebook Viewport Optimizations === */
+@media (min-width: 1024px) and (max-width: 1280px) {
+    body {
+        padding-top: 195px !important;
+    }
+    .sub-nav {
+        top: 135px !important;
+    }
+    .vsb-logo {
+        height: 100px !important;
+        max-height: 100px !important;
+    }
+    .vsb-trust-logo {
+        height: 90px !important;
+        max-height: 90px !important;
+    }
+}
+
+
+/* === 17. Comprehensive Mobile Viewport Optimizations === */
 @media (max-width: 768px) {
     body {
         padding-top: 230px !important;
