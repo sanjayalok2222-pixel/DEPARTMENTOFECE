@@ -374,9 +374,8 @@ function populateCmsForms() {
     populateMouTableCmsList();
     populateIsteTableCmsList();
 
-    // Updates Quick Stats overview counters
-    document.getElementById('stat-flyers-count').textContent = document.querySelectorAll('.cms-poster-item-card').length;
-    document.getElementById('stat-files-count').textContent = document.querySelectorAll('.cms-download-item-card').length;
+    // Fetch Register Lock Status
+    fetchRegisterLockInDashboard();
 }
 
 // Helper to copy innerHTML of elements into form fields
@@ -1939,6 +1938,99 @@ function toggleMcqLock(year) {
     .catch(err => {
         console.error("Error updating lock:", err);
         alert("Failed to toggle access lock state.");
+    });
+}
+
+
+let currentRegisterLock = { isLocked: false };
+
+function fetchRegisterLockInDashboard() {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
+    
+    fetch(getUrl, {
+        method: 'GET',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            try {
+                currentRegisterLock = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+            } catch (e) {
+                currentRegisterLock = data[0].value || currentRegisterLock;
+            }
+        }
+        updateRegisterLockLabels();
+    })
+    .catch(err => {
+        console.error("Error fetching register lock:", err);
+    });
+}
+
+function updateRegisterLockLabels() {
+    const label = document.getElementById('label-lock-register');
+    const btn = document.getElementById('btn-toggle-lock-register');
+    
+    if (label && btn) {
+        if (currentRegisterLock.isLocked) {
+            label.textContent = 'LOCKED';
+            label.style.color = '#f87171'; // red
+            btn.textContent = 'Unlock';
+            btn.style.background = '#22c55e'; // green
+            btn.style.color = '#fff';
+        } else {
+            label.textContent = 'UNLOCKED';
+            label.style.color = '#4ade80'; // green
+            btn.textContent = 'Lock';
+            btn.style.background = '#ef4444'; // red
+            btn.style.color = '#fff';
+        }
+    }
+}
+
+function toggleRegisterLock() {
+    currentRegisterLock.isLocked = !currentRegisterLock.isLocked;
+    
+    // Save to Supabase
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+    
+    const postUrl = `${url}/rest/v1/vsb_ece_state`;
+    
+    fetch(postUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+            key: 'register_lock',
+            value: currentRegisterLock
+        })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to toggle register lock");
+        const action = currentRegisterLock.isLocked ? 'LOCKED' : 'UNLOCKED';
+        alert(`Successfully ${action} the Event Registration portal!`);
+        updateRegisterLockLabels();
+    })
+    .catch(err => {
+        console.error("Error updating register lock:", err);
+        alert("Failed to toggle register lock state.");
     });
 }
 

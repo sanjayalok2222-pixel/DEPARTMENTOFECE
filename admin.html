@@ -979,6 +979,20 @@
 
             <!-- Tab PANEL 4: Event Flyers (Carousel slot editor) -->
             <div id="panel-flyers" class="workspace-panel">
+                <div class="card" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; background: rgba(0, 210, 255, 0.02); border-color: rgba(0, 210, 255, 0.15);">
+                    <div>
+                        <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🔒 Event Registration Access Control</h4>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Lock or unlock public event registrations for students.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.02); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                            <span style="font-size: 0.85rem; font-weight: bold; color: #fff;">Registration Status:</span>
+                            <span id="label-lock-register" style="font-size: 0.8rem; font-weight: bold; color: #4ade80;">UNLOCKED</span>
+                            <button type="button" class="btn-preview" id="btn-toggle-lock-register" style="margin: 0; padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="toggleRegisterLock()">Lock</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <h3>🎟️ Manage Carousel Event Flyers</h3>
                     <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">List of active slots in the 1:1 ratio carousel. You can add infinite slides, edit text values, upload local flyer image, or paste external URL links.</p>

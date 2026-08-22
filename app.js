@@ -3321,3 +3321,56 @@ function closeDownloadTopic() {
 }
 
 
+// === 13. Event Registration Lock Verification System ===
+document.addEventListener('click', (e) => {
+    const regLink = e.target.closest('.event-reg-link');
+    if (regLink) {
+        // Prevent default navigation initially to verify lock state
+        e.preventDefault();
+        
+        const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+        const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+        
+        const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+        const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+        
+        const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
+        
+        fetch(getUrl, {
+            method: 'GET',
+            headers: {
+                'apikey': key,
+                'Authorization': `Bearer ${key}`
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            let isLocked = false;
+            if (data && data.length > 0) {
+                const val = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+                isLocked = val.isLocked || false;
+            }
+            
+            if (isLocked) {
+                showNotification('Event Registration is currently locked by the Admin!', 'error');
+                alert('Event Registration is currently locked by the Admin!');
+            } else {
+                // Not locked: proceed with opening form
+                const href = regLink.getAttribute('href');
+                if (href && href !== '#') {
+                    window.open(href, '_blank');
+                }
+            }
+        })
+        .catch(err => {
+            console.error('Error verifying register lock:', err);
+            // Fallback: proceed anyway
+            const href = regLink.getAttribute('href');
+            if (href && href !== '#') {
+                window.open(href, '_blank');
+            }
+        });
+    }
+});
+
+
