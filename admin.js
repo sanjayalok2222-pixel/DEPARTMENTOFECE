@@ -846,8 +846,8 @@ function publishCmsChanges() {
     updateDocInner('about-card-text', 'field-about-text');
     updateDocInner('vision-text', 'field-vision-text');
     updateDocInner('mission-list', 'field-mission-list');
-    // Save dynamic Activity challenges rounds list
-    reconstructActivityRoundsCmsDom();
+    // Save dynamic Activity challenges rounds list (commented out as editor is removed)
+    // reconstructActivityRoundsCmsDom();
 
     // Save Certificate portal URL & card placeholder
     const certEl = indexDoc.getElementById('cert-portal-link');
