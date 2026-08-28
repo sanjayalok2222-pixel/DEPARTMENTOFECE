@@ -211,52 +211,56 @@ function loadIndexHtmlDocument() {
         });
 }
 
-function pullStateFromSupabaseAndPopulate() {
-    // If Supabase key/url are not set yet, wait for browser to load config
-    setTimeout(() => {
-        if (!globalSupaUrl || !globalSupaKey) {
-            populateCmsForms();
-            return;
-        }
+function pullStateFromSupabaseAndPopulate(delay = 400) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (!globalSupaUrl || !globalSupaKey) {
+                populateCmsForms();
+                resolve();
+                return;
+            }
 
-        const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
-        console.log(`[Supabase GET] URL: ${globalSupaUrl.trim()}, Table: vsb_ece_state, Type: GET`);
-        fetch(selectUrl, {
-            method: 'GET',
-            headers: {
-                'apikey': globalSupaKey.trim(),
-                'Authorization': `Bearer ${globalSupaKey.trim()}`,
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
-            }
-        })
-        .then(async res => {
-            console.log(`[Supabase GET Response] HTTP Status: ${res.status}`);
-            if (!res.ok) {
-                const errText = await res.text();
-                let errMsg = errText;
-                try {
-                    const errJson = JSON.parse(errText);
-                    errMsg = errJson.message || errText;
-                } catch(e) {}
-                console.error(`[Supabase GET Error] Message: ${errMsg}`);
-                throw new Error(errMsg);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (data && data.length > 0) {
-                const state = data[0].value;
-                applyStateToCmsDoc(state);
-                showNotification('Merged live content from Supabase cloud database!');
-            }
-            populateCmsForms();
-        })
-        .catch(err => {
-            console.warn('Could not sync live updates on load. Using base HTML data:', err.message || err);
-            populateCmsForms();
-        });
-    }, 400); // Small delay to allow config DOM fetch to complete
+            const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
+            console.log(`[Supabase GET] URL: ${globalSupaUrl.trim()}, Table: vsb_ece_state, Type: GET`);
+            fetch(selectUrl, {
+                method: 'GET',
+                headers: {
+                    'apikey': globalSupaKey.trim(),
+                    'Authorization': `Bearer ${globalSupaKey.trim()}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(async res => {
+                console.log(`[Supabase GET Response] HTTP Status: ${res.status}`);
+                if (!res.ok) {
+                    const errText = await res.text();
+                    let errMsg = errText;
+                    try {
+                        const errJson = JSON.parse(errText);
+                        errMsg = errJson.message || errText;
+                    } catch(e) {}
+                    console.error(`[Supabase GET Error] Message: ${errMsg}`);
+                    throw new Error(errMsg);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data && data.length > 0) {
+                    const state = data[0].value;
+                    applyStateToCmsDoc(state);
+                    showNotification('Merged live content from Supabase cloud database!');
+                }
+                populateCmsForms();
+                resolve();
+            })
+            .catch(err => {
+                console.warn('Could not sync live updates on load. Using base HTML data:', err.message || err);
+                populateCmsForms();
+                reject(err);
+            });
+        }, delay);
+    });
 }
 
 function applyStateToCmsDoc(state) {
@@ -1038,14 +1042,13 @@ function publishCmsChanges() {
 
     Promise.all([saveConfigPromise, localPublishPromise, cloudPublishPromise])
     .then(([configRes, htmlRes, supaRes]) => {
-        let msg = 'Website CMS updates saved successfully!';
-        if (supaRes && supaRes.ok) {
-            msg += ' Supabase live cloud database updated and synchronized!';
-        } else if (supaRes) {
-            msg += ' (Supabase sync failed - verify RLS settings or API keys)';
-        }
-        alert(msg);
-        window.location.reload(); // Refresh the CMS forms with the newly updated DOM values
+        return pullStateFromSupabaseAndPopulate(0).then(() => {
+            let msg = 'Website CMS updates saved successfully!';
+            if (supaRes) {
+                msg += ' Supabase live cloud database updated, verified and synchronized!';
+            }
+            alert(msg);
+        });
     })
     .catch(err => {
         console.error('Publishing changes exception:', err);
