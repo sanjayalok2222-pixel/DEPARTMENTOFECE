@@ -1045,7 +1045,7 @@ function deleteCustomDownloadCard(btn) {
 function loadFromSupabase() {
     // Restore Supabase credentials from local storage persistent cache
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-    const defaultKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
 
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
@@ -1240,7 +1240,7 @@ function applyFetchedState(state) {
 // === 13. Initializer Loader ===
 function loadAllWebData() {
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-    const defaultKey = 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
 
     // 1. Fetch Supabase configuration from local config.json securely if running locally
     fetch('/get-config')
