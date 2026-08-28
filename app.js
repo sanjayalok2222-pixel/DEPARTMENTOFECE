@@ -1178,12 +1178,23 @@ function loadFromSupabase() {
                 }
             }
         }
+        
+        if (sessionStorage.getItem('active_club_view') === 'rounds') {
+            setTimeout(() => {
+                openClubActivityPortal(true);
+            }, 100);
+        }
     })
     .catch(err => {
         console.warn('Could not pull updates from Supabase database. Clearing any stale localStorage credentials to self-heal:', err);
         if (localStorage.getItem('vsb_ece_supabase_url') || localStorage.getItem('vsb_ece_supabase_key')) {
             localStorage.removeItem('vsb_ece_supabase_url');
             localStorage.removeItem('vsb_ece_supabase_key');
+        }
+        if (sessionStorage.getItem('active_club_view') === 'rounds') {
+            setTimeout(() => {
+                openClubActivityPortal(true);
+            }, 100);
         }
     });
 }
@@ -3513,7 +3524,8 @@ document.addEventListener('click', (e) => {
 });
 
 
-function openClubActivityPortal() {
+function openClubActivityPortal(isAutoScroll = false) {
+    sessionStorage.setItem('active_club_view', 'rounds');
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
     
@@ -3601,7 +3613,7 @@ function openClubActivityPortal() {
             mainView.style.display = 'none';
             roundsView.style.display = 'block';
             
-            document.getElementById('events').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('events').scrollIntoView({ behavior: isAutoScroll ? 'auto' : 'smooth' });
         }
     })
     .catch(err => {
@@ -3665,12 +3677,13 @@ function openClubActivityPortal() {
 
             mainView.style.display = 'none';
             roundsView.style.display = 'block';
-            document.getElementById('events').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('events').scrollIntoView({ behavior: isAutoScroll ? 'auto' : 'smooth' });
         }
     });
 }
 
 function closeClubActivityPortal() {
+    sessionStorage.removeItem('active_club_view');
     const mainView = document.getElementById('club-main-view');
     const roundsView = document.getElementById('club-rounds-view');
     
