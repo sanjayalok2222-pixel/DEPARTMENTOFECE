@@ -1403,23 +1403,26 @@ function reconstructIsteTableCmsDom() {
 
 // D. Manage Club Activity Challenges & Rounds
 function populateActivityRoundsCmsList() {
-    const list = document.getElementById('cms-activity-rounds-list');
-    if (!list) return;
-    list.innerHTML = '';
     const container = indexDoc.getElementById('club-rounds-container');
     if (!container) return;
     const items = container.querySelectorAll('.activity-round-item');
-    items.forEach((item, index) => {
-        const title = item.getAttribute('data-title') || 'Round';
-        const type = item.getAttribute('data-type') || 'link';
-        const url = item.getAttribute('data-url') || '';
-        const isLocked = item.getAttribute('data-locked') === 'true';
-        const cTitle = item.querySelector('.challenge-title')?.innerText.trim() || '';
-        const cDesc = item.querySelector('.challenge-desc')?.innerText.trim() || '';
-        const cCode = item.querySelector('.challenge-code')?.innerText.trim() || '';
+    
+    const defaults = [
+        { title: 'Round 1 - Play', url: '#' },
+        { title: 'Round 2 - Challenge', url: '#' },
+        { title: 'Round 3 - Simulation', url: '#' }
+    ];
+    
+    for (let i = 1; i <= 3; i++) {
+        const item = items[i - 1];
+        const titleInput = document.getElementById(`round-${i}-title`);
+        const urlInput = document.getElementById(`round-${i}-url`);
         
-        addActivityRoundSlotMarkup(index, title, type, url, cTitle, cDesc, cCode, isLocked);
-    });
+        if (titleInput && urlInput) {
+            titleInput.value = item ? (item.getAttribute('data-title') || defaults[i-1].title) : defaults[i-1].title;
+            urlInput.value = item ? (item.getAttribute('data-url') || defaults[i-1].url) : defaults[i-1].url;
+        }
+    }
 }
 
 function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='', isLocked=false) {
@@ -1520,37 +1523,18 @@ function reconstructActivityRoundsCmsDom() {
     const container = indexDoc.getElementById('club-rounds-container');
     if (!container) return;
     
-    const cards = document.querySelectorAll('#cms-activity-rounds-list .cms-activity-round-card');
-    if (cards.length === 0) {
-        console.warn("No cards found in CMS rounds list. Skipping reconstruction to protect existing rounds.");
-        return;
-    }
+    const r1Title = document.getElementById('round-1-title').value.trim();
+    const r1Url = document.getElementById('round-1-url').value.trim();
+    const r2Title = document.getElementById('round-2-title').value.trim();
+    const r2Url = document.getElementById('round-2-url').value.trim();
+    const r3Title = document.getElementById('round-3-title').value.trim();
+    const r3Url = document.getElementById('round-3-url').value.trim();
     
-    container.innerHTML = '';
-    
-    cards.forEach(card => {
-        const title = card.querySelector('.cms-round-title').value.trim();
-        const type = card.querySelector('.cms-round-type').value.trim();
-        const isLocked = card.getAttribute('data-locked') === 'true';
-        let url = '';
-        if (type === 'link') {
-            url = card.querySelector('.cms-round-url').value.trim();
-        } else {
-            url = card.querySelector('.cms-round-url-challenge').value.trim();
-        }
-        const cTitle = card.querySelector('.cms-round-ctitle').value.trim();
-        const cDesc = card.querySelector('.cms-round-cdesc').value.trim();
-        const cCode = card.querySelector('.cms-round-ccode').value.trim();
-        
-        const itemHtml = `
-            <div class="activity-round-item" data-title="${title}" data-type="${type}" data-url="${url}" data-locked="${isLocked ? 'true' : 'false'}">
-                <div class="challenge-title">${cTitle}</div>
-                <div class="challenge-desc">${cDesc}</div>
-                <pre class="challenge-code">${cCode}</pre>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', itemHtml);
-    });
+    container.innerHTML = `
+        <div class="activity-round-item" data-title="${r1Title}" data-type="link" data-url="${r1Url}" data-locked="false"></div>
+        <div class="activity-round-item" data-title="${r2Title}" data-type="link" data-url="${r2Url}" data-locked="false"></div>
+        <div class="activity-round-item" data-title="${r3Title}" data-type="link" data-url="${r3Url}" data-locked="false"></div>
+    `;
 }
 
 // === 7. Round 1 Quiz Submissions & Leaderboard Systems ===

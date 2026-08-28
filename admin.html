@@ -1254,12 +1254,55 @@
 
                 <!-- Activity Rounds List -->
                 <div class="card" style="margin-top: 1.5rem;">
-                    <h3 style="margin-bottom: 0.5rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🎮 Configure Activity Rounds</h3>
-                    <p style="margin-bottom: 1.5rem; font-size: 0.8rem; color: var(--text-secondary);">Manage activity rounds for students portal. Redirection links and challenges will update live.</p>
-                    <div id="cms-activity-rounds-list" style="margin-bottom: 1.5rem;">
-                        <!-- Loaded dynamically from index.html DOM -->
+                    <h3 style="margin-bottom: 0.5rem; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🎮 Configure Activity Rounds Links</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.8rem; color: var(--text-secondary);">Configure redirection URLs for Round 1, Round 2, and Round 3 in the student portal.</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Round 1 -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px;">
+                            <h4 style="color: var(--accent-cyan); margin: 0 0 0.75rem 0; font-family: 'Outfit', sans-serif;">Round 1</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                                <div class="form-group" style="margin: 0;">
+                                    <label>Round Title</label>
+                                    <input type="text" id="round-1-title" class="form-control" value="Round 1 - Play">
+                                </div>
+                                <div class="form-group" style="margin: 0;">
+                                    <label>Redirection URL Link</label>
+                                    <input type="text" id="round-1-url" class="form-control" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Round 2 -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px;">
+                            <h4 style="color: var(--accent-cyan); margin: 0 0 0.75rem 0; font-family: 'Outfit', sans-serif;">Round 2</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                                <div class="form-group" style="margin: 0;">
+                                    <label>Round Title</label>
+                                    <input type="text" id="round-2-title" class="form-control" value="Round 2 - Challenge">
+                                </div>
+                                <div class="form-group" style="margin: 0;">
+                                    <label>Redirection URL Link</label>
+                                    <input type="text" id="round-2-url" class="form-control" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Round 3 -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px;">
+                            <h4 style="color: var(--accent-cyan); margin: 0 0 0.75rem 0; font-family: 'Outfit', sans-serif;">Round 3</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                                <div class="form-group" style="margin: 0;">
+                                    <label>Round Title</label>
+                                    <input type="text" id="round-3-title" class="form-control" value="Round 3 - Simulation">
+                                </div>
+                                <div class="form-group" style="margin: 0;">
+                                    <label>Redirection URL Link</label>
+                                    <input type="text" id="round-3-url" class="form-control" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn-add-list-item" onclick="cmsAddActivityRoundSlot()">➕ Add Additional Activity Round</button>
                 </div>
             </div>
         </div>

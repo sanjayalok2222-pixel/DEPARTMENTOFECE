@@ -158,15 +158,8 @@ function openClubInterface(clubType) {
         const clubTitle = document.getElementById('club-title-card')?.innerText.trim() || '🔌 Electronics Club';
 
         let roundsHtml = '';
-        activeClubRounds.forEach((round, idx) => {
-            const isRound1 = idx === 0 || round.title.toLowerCase().includes('round 1') || round.title.toLowerCase().includes('round one');
-            if (isRound1) {
-                roundsHtml += `<button onclick="startTechnicalMcqSelection()" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">TECHNICAL MCQ</button>`;
-            } else if (round.type === 'link') {
-                roundsHtml += `<a href="${round.url}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0;">${round.title}</a>`;
-            } else {
-                roundsHtml += `<button onclick="showRoundChallenge(${idx})" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; background: var(--accent-cyan); border: none; color: var(--bg-dark) !important;">${round.title}</button>`;
-            }
+        activeClubRounds.forEach((round) => {
+            roundsHtml += `<a href="${round.url}" target="_blank" class="event-reg-link" style="width: 100%; text-align: center; margin: 0; display: block; box-sizing: border-box; text-decoration: none;">${round.title}</a>`;
         });
 
         // Add public Leaderboard button below the rounds list
