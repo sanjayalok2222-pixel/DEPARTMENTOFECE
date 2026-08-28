@@ -3497,20 +3497,6 @@ document.addEventListener('click', (e) => {
                 // Not locked: proceed with opening form
                 const href = regLink.getAttribute('href');
                 if (href && href !== '#') {
-                    const btnText = (regLink.textContent || '').toLowerCase();
-                    const btnRoundTitle = (regLink.getAttribute('data-round-title') || '').toLowerCase();
-                    const isRound3 = btnText.includes('round 3') || 
-                                     btnText.includes('hardware hunt') || 
-                                     btnRoundTitle.includes('round 3') || 
-                                     btnRoundTitle.includes('hardware hunt');
-                    
-                    if (isRound3) {
-                        const pwd = prompt("Enter Password for Round 3 - Hardware Hunt:");
-                        if (pwd !== 'ECE2002') {
-                            alert("Incorrect Password!");
-                            return;
-                        }
-                    }
                     window.open(href, '_blank');
                 }
             }
@@ -3520,20 +3506,6 @@ document.addEventListener('click', (e) => {
             // Fallback: proceed anyway
             const href = regLink.getAttribute('href');
             if (href && href !== '#') {
-                const btnText = (regLink.textContent || '').toLowerCase();
-                const btnRoundTitle = (regLink.getAttribute('data-round-title') || '').toLowerCase();
-                const isRound3 = btnText.includes('round 3') || 
-                                 btnText.includes('hardware hunt') || 
-                                 btnRoundTitle.includes('round 3') || 
-                                 btnRoundTitle.includes('hardware hunt');
-                
-                if (isRound3) {
-                    const pwd = prompt("Enter Password for Round 3 - Hardware Hunt:");
-                    if (pwd !== 'ECE2002') {
-                        alert("Incorrect Password!");
-                        return;
-                    }
-                }
                 window.open(href, '_blank');
             }
         });
