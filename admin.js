@@ -1422,14 +1422,14 @@ function populateActivityRoundsCmsList() {
     });
 }
 
-function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='', isLocked=true) {
+function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='', isLocked=false) {
     const list = document.getElementById('cms-activity-rounds-list');
     const div = document.createElement('div');
     div.className = 'cms-list-item cms-activity-round-card';
-    div.setAttribute('data-locked', isLocked ? 'true' : 'false');
+    div.setAttribute('data-locked', 'false');
     div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; position: relative;';
     div.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
             <div class="form-group" style="margin-bottom:0;">
                 <label>Round Label / Title</label>
                 <input type="text" class="form-control cms-round-title" value="${title}" placeholder="e.g. Round 1 - Play">
@@ -1440,15 +1440,6 @@ function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle
                     <option value="link" ${type === 'link' ? 'selected' : ''}>Redirect External Link</option>
                     <option value="challenge" ${type === 'challenge' ? 'selected' : ''}>Interactive Code Challenge</option>
                 </select>
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-                <label>Door Lock Status</label>
-                <div style="display:flex; gap:0.5rem; align-items:center; height: 38px;">
-                    <span class="label-round-lock-status" style="font-weight:bold; font-size:0.85rem; color:${isLocked ? '#f87171' : '#4ade80'};">${isLocked ? 'LOCKED 🔒' : 'UNLOCKED 🔓'}</span>
-                    <button type="button" class="btn-preview" style="margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:${isLocked ? '#22c55e' : '#ef4444'}; color:#fff; border:none;" onclick="toggleCmsRoundLock(this)">
-                        ${isLocked ? 'Unlock' : 'Lock'}
-                    </button>
-                </div>
             </div>
         </div>
         
