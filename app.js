@@ -1057,7 +1057,7 @@ function loadFromSupabase() {
         return;
     }
 
-    const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
+    const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data&t=${Date.now()}`;
 
     fetch(selectUrl, {
         method: 'GET',
@@ -2595,7 +2595,7 @@ function checkMcqLockStatusAndProceed() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks&t=${Date.now()}`;
     
     const errorMsg = document.getElementById('pin-error-msg');
     if (errorMsg) {
@@ -3114,7 +3114,7 @@ function saveQuizResultToSupabase(submission) {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results&t=${Date.now()}`;
     
     fetch(getUrl, {
         method: 'GET',
@@ -3205,7 +3205,7 @@ function showPublicQuizResults(year) {
     
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results&t=${Date.now()}`;
     
     const tbody = document.getElementById('public-quiz-tbody');
     
@@ -3376,7 +3376,7 @@ document.addEventListener('click', (e) => {
         const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
         const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
         
-        const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
+        const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock&t=${Date.now()}`;
         
         fetch(getUrl, {
             method: 'GET',
@@ -3423,7 +3423,7 @@ function openClubActivityPortal() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status&t=${Date.now()}`;
     
     fetch(getUrl, {
         method: 'GET',
