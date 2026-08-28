@@ -952,11 +952,11 @@ function publishCmsChanges() {
     const cloudPublishPromise = saveCmsToSupabase(supaUrl, supaKey, stateObj);
 
     Promise.all([saveConfigPromise, localPublishPromise, cloudPublishPromise])
-    .then(([localRes, cloudRes]) => {
+    .then(([configRes, htmlRes, supaRes]) => {
         let msg = 'Website CMS updates saved successfully!';
-        if (cloudRes && cloudRes.ok) {
+        if (supaRes && supaRes.ok) {
             msg += ' Supabase live cloud database updated and synchronized!';
-        } else if (cloudRes) {
+        } else if (supaRes) {
             msg += ' (Supabase sync failed - verify RLS settings or API keys)';
         }
         alert(msg);
