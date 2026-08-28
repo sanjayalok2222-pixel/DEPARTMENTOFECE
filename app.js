@@ -1180,7 +1180,11 @@ function loadFromSupabase() {
         }
     })
     .catch(err => {
-        console.warn('Could not pull updates from Supabase database. Server RLS policy or setup error:', err);
+        console.warn('Could not pull updates from Supabase database. Clearing any stale localStorage credentials to self-heal:', err);
+        if (localStorage.getItem('vsb_ece_supabase_url') || localStorage.getItem('vsb_ece_supabase_key')) {
+            localStorage.removeItem('vsb_ece_supabase_url');
+            localStorage.removeItem('vsb_ece_supabase_key');
+        }
     });
 }
 
@@ -3629,8 +3633,68 @@ function openClubActivityPortal() {
         }
     })
     .catch(err => {
-        console.error('Error fetching club activity portal lock status:', err);
-        alert('Failed to contact database server. Please try again.');
+        console.warn('Error fetching club activity portal lock status. Clearing localStorage credentials and running in offline fallback:', err);
+        if (localStorage.getItem('vsb_ece_supabase_url') || localStorage.getItem('vsb_ece_supabase_key')) {
+            localStorage.removeItem('vsb_ece_supabase_url');
+            localStorage.removeItem('vsb_ece_supabase_key');
+        }
+        
+        // Proceed to render rounds anyway using fallback
+        const mainView = document.getElementById('club-main-view');
+        const roundsView = document.getElementById('club-rounds-view');
+        const container = document.getElementById('club-rounds-list-container');
+        
+        if (mainView && roundsView && container) {
+            container.innerHTML = '';
+            const hiddenRounds = document.querySelectorAll('#club-rounds-container .activity-round-item');
+            if (hiddenRounds.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No active rounds configured by Admin yet.</div>`;
+            } else {
+                hiddenRounds.forEach((round, index) => {
+                    const title = round.getAttribute('data-title') || `Round ${index + 1}`;
+                    const type = round.getAttribute('data-type') || 'link';
+                    const linkUrl = round.getAttribute('data-url') || '';
+                    const isLocked = round.getAttribute('data-locked') === 'true';
+                    
+                    const roundCard = document.createElement('div');
+                    roundCard.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box; transition: transform 0.2s ease, border-color 0.2s ease;';
+                    
+                    roundCard.onmouseover = () => {
+                        roundCard.style.borderColor = 'var(--accent-cyan)';
+                        roundCard.style.transform = 'translateY(-2px)';
+                    };
+                    roundCard.onmouseout = () => {
+                        roundCard.style.borderColor = 'rgba(255,255,255,0.06)';
+                        roundCard.style.transform = 'none';
+                    };
+
+                    let buttonHtml = '';
+                    if (isLocked) {
+                        buttonHtml = `<button class="event-reg-link" style="margin: 0; padding: 0.5rem 1.2rem; opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #ef4444 !important; font-size: 0.85rem;" disabled>Locked 🔒</button>`;
+                    } else {
+                        buttonHtml = `<a href="${linkUrl}" target="_blank" class="event-reg-link" data-round-title="${title}" style="margin: 0; padding: 0.5rem 1.2rem; font-size: 0.85rem; font-weight: bold; background: var(--accent-cyan); color: var(--bg-dark) !important; border: none; border-radius: 30px; text-decoration: none;">Start Round</a>`;
+                    }
+
+                    roundCard.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="font-size: 1.5rem;">🎮</div>
+                            <div>
+                                <h4 style="margin: 0; color: #fff; font-family: 'Outfit'; font-size: 1.05rem;">${title}</h4>
+                                <p style="margin: 0.2rem 0 0 0; color: var(--text-secondary); font-size: 0.75rem;">Status: ${isLocked ? 'Locked' : 'Available'}</p>
+                            </div>
+                        </div>
+                        <div>
+                            ${buttonHtml}
+                        </div>
+                    `;
+                    container.appendChild(roundCard);
+                });
+            }
+
+            mainView.style.display = 'none';
+            roundsView.style.display = 'block';
+            document.getElementById('events').scrollIntoView({ behavior: 'smooth' });
+        }
     });
 }
 
