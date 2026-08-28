@@ -1236,7 +1236,15 @@ function loadAllWebData() {
         const val = localStorage.getItem(k);
         if (val) {
             const clean = val.trim();
-            if (clean === '' || clean === 'null' || clean === 'undefined' || clean === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC') {
+            if (
+                clean === '' || 
+                clean === 'null' || 
+                clean === 'undefined' || 
+                clean === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC' ||
+                clean.includes('localhost') ||
+                clean.includes('127.0.0.1') ||
+                clean.startsWith('http://')
+            ) {
                 localStorage.removeItem(k);
             }
         }
