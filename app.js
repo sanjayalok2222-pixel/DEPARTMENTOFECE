@@ -675,7 +675,7 @@ function saveWebChanges() {
     })
     .catch(err => {
         console.error('Save changes exception:', err);
-        alert('Exception saving changes. Check config parameters.');
+        alert(`Error saving changes: ${err.message || err}`);
     });
 }
 
@@ -737,7 +737,50 @@ function triggerPosterUpload(btn) {
     card.querySelector('.admin-poster-upload-input').click();
 }
 
-function handlePosterUpload(event, input) {
+async function uploadFileToSupabaseStorage(file, folder = 'misc') {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = (localStorage.getItem('vsb_ece_supabase_url') || defaultUrl).trim();
+    const key = (localStorage.getItem('vsb_ece_supabase_key') || defaultKey).trim();
+    
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+    const filename = `${Date.now()}_${sanitizedName}`;
+    const uploadPath = `${folder}/${filename}`;
+    
+    const uploadUrl = `${url}/storage/v1/object/ece-assets/${uploadPath}`;
+    
+    console.log(`[Supabase Storage Upload] URL: ${url}, Bucket: ece-assets, Path: ${uploadPath}, Type: POST`);
+    
+    const response = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': file.type
+        },
+        body: file
+    });
+    
+    console.log(`[Supabase Storage Response] HTTP Status: ${response.status}`);
+    
+    if (!response.ok) {
+        const errText = await response.text();
+        let errMsg = errText;
+        try {
+            const errJson = JSON.parse(errText);
+            errMsg = errJson.message || errJson.error || errText;
+        } catch(e) {}
+        console.error(`[Supabase Storage Error] Message: ${errMsg}`);
+        throw new Error(errMsg);
+    }
+    
+    const publicUrl = `${url}/storage/v1/object/public/ece-assets/${uploadPath}`;
+    console.log(`[Supabase Storage Success] Upload Result: ${publicUrl}`);
+    return publicUrl;
+}
+
+async function handlePosterUpload(event, input) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -746,13 +789,17 @@ function handlePosterUpload(event, input) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
+    showNotification('Uploading poster to Supabase storage...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'posters');
         const card = input.closest('.poster-card');
-        card.querySelector('.poster-1to1').src = e.target.result;
-        card.querySelector('.admin-poster-image-url').value = '';
-    };
-    reader.readAsDataURL(file);
+        card.querySelector('.poster-1to1').src = publicUrl;
+        card.querySelector('.admin-poster-image-url').value = publicUrl;
+        showNotification('Poster uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload poster: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 // Update Active Poster Registration Link
@@ -840,7 +887,7 @@ function triggerHodUpload() {
     document.getElementById('admin-hod-upload').click();
 }
 
-function handleHodPhotoUpload(event) {
+async function handleHodPhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -849,11 +896,15 @@ function handleHodPhotoUpload(event) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        displayHodPhoto(e.target.result);
-    };
-    reader.readAsDataURL(file);
+    showNotification('Uploading HOD photo to Supabase storage...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
+        displayHodPhoto(publicUrl);
+        showNotification('HOD photo uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload HOD photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function displayHodPhoto(base64Data) {
@@ -874,7 +925,7 @@ function triggerHodUpload2() {
     document.getElementById('admin-hod-upload-2').click();
 }
 
-function handleHodPhotoUpload2(event) {
+async function handleHodPhotoUpload2(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -883,11 +934,15 @@ function handleHodPhotoUpload2(event) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        displayHodPhoto2(e.target.result);
-    };
-    reader.readAsDataURL(file);
+    showNotification('Uploading HOD photo to Supabase storage...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
+        displayHodPhoto2(publicUrl);
+        showNotification('HOD photo uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload HOD photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function displayHodPhoto2(base64Data) {
@@ -907,7 +962,7 @@ function triggerCoordUpload(id) {
     document.getElementById(`admin-coord-upload-${id}`).click();
 }
 
-function handleCoordPhotoUpload(event, id) {
+async function handleCoordPhotoUpload(event, id) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -916,11 +971,15 @@ function handleCoordPhotoUpload(event, id) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        displayCoordPhoto(id, e.target.result);
-    };
-    reader.readAsDataURL(file);
+    showNotification('Uploading coordinator photo...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
+        displayCoordPhoto(id, publicUrl);
+        showNotification('Coordinator photo uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload coordinator photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function displayCoordPhoto(id, base64Data) {
@@ -942,7 +1001,7 @@ function triggerAvatarUpload() {
     document.getElementById('admin-avatar-upload').click();
 }
 
-function handleAvatarUpload(event) {
+async function handleAvatarUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -951,16 +1010,20 @@ function handleAvatarUpload(event) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById('admin-profile-pic').src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    showNotification('Uploading admin avatar...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
+        document.getElementById('admin-profile-pic').src = publicUrl;
+        showNotification('Avatar uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload avatar: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 
 // === 11. Admin Dynamic Downloads System (Directly in DOM) ===
-function handleNewFileUpload(event) {
+async function handleNewFileUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -969,11 +1032,15 @@ function handleNewFileUpload(event) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        tempNewFileUrl = e.target.result; // Stores Base64 file contents
-    };
-    reader.readAsDataURL(file);
+    showNotification('Uploading new document...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'downloads');
+        tempNewFileUrl = publicUrl;
+        showNotification('Document uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload document: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function submitAddNewFile(event) {
@@ -1057,13 +1124,15 @@ function loadFromSupabase() {
         return;
     }
 
-    const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data&t=${Date.now()}`;
+    const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
 
     fetch(selectUrl, {
         method: 'GET',
         headers: {
             'apikey': key.trim(),
-            'Authorization': `Bearer ${key.trim()}`
+            'Authorization': `Bearer ${key.trim()}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => {
@@ -1082,7 +1151,9 @@ function loadFromSupabase() {
             method: 'GET',
             headers: {
                 'apikey': key.trim(),
-                'Authorization': `Bearer ${key.trim()}`
+                'Authorization': `Bearer ${key.trim()}`,
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             }
         });
     })
@@ -1123,6 +1194,7 @@ function saveToSupabase(state) {
     }
 
     const upsertUrl = `${url}/rest/v1/vsb_ece_state`;
+    console.log(`[Supabase POST] URL: ${url}, Table: vsb_ece_state, Type: POST (UPSERT)`);
 
     return fetch(upsertUrl, {
         method: 'POST',
@@ -1136,6 +1208,19 @@ function saveToSupabase(state) {
             key: 'site_data',
             value: state
         })
+    }).then(async res => {
+        console.log(`[Supabase POST Response] HTTP Status: ${res.status}`);
+        if (!res.ok) {
+            const errText = await res.text();
+            let errMsg = errText;
+            try {
+                const errJson = JSON.parse(errText);
+                errMsg = errJson.message || errText;
+            } catch(e) {}
+            console.error(`[Supabase POST Error] Message: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+        return res;
     });
 }
 
@@ -1253,7 +1338,7 @@ function loadAllWebData() {
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
 
     // 1. Fetch Supabase configuration from local config.json securely if running locally
-    fetch('/get-config')
+    fetch('config.json')
         .then(res => res.json())
         .then(config => {
             const url = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
@@ -2595,7 +2680,7 @@ function checkMcqLockStatusAndProceed() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
     
     const errorMsg = document.getElementById('pin-error-msg');
     if (errorMsg) {
@@ -2608,7 +2693,9 @@ function checkMcqLockStatusAndProceed() {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
@@ -3114,13 +3201,15 @@ function saveQuizResultToSupabase(submission) {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
     
     fetch(getUrl, {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
@@ -3205,7 +3294,7 @@ function showPublicQuizResults(year) {
     
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
     
     const tbody = document.getElementById('public-quiz-tbody');
     
@@ -3213,7 +3302,9 @@ function showPublicQuizResults(year) {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
@@ -3376,13 +3467,15 @@ document.addEventListener('click', (e) => {
         const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
         const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
         
-        const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock&t=${Date.now()}`;
+        const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
         
         fetch(getUrl, {
             method: 'GET',
             headers: {
                 'apikey': key,
-                'Authorization': `Bearer ${key}`
+                'Authorization': `Bearer ${key}`,
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             }
         })
         .then(res => res.json())
@@ -3423,13 +3516,15 @@ function openClubActivityPortal() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
     
     fetch(getUrl, {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())

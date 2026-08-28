@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
     // 1. Fetch Supabase configuration from local config.json securely
-    fetch('/get-config')
+    fetch('config.json')
         .then(res => res.json())
         .then(config => {
             globalSupaUrl = config.supabase_url || localStorage.getItem('vsb_ece_supabase_url') || 'https://jbzogspalrrahkrthvmh.supabase.co';
@@ -219,16 +219,29 @@ function pullStateFromSupabaseAndPopulate() {
             return;
         }
 
-        const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data&t=${Date.now()}`;
+        const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
+        console.log(`[Supabase GET] URL: ${globalSupaUrl.trim()}, Table: vsb_ece_state, Type: GET`);
         fetch(selectUrl, {
             method: 'GET',
             headers: {
                 'apikey': globalSupaKey.trim(),
-                'Authorization': `Bearer ${globalSupaKey.trim()}`
+                'Authorization': `Bearer ${globalSupaKey.trim()}`,
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             }
         })
-        .then(res => {
-            if (!res.ok) throw new Error('Could not query Supabase state');
+        .then(async res => {
+            console.log(`[Supabase GET Response] HTTP Status: ${res.status}`);
+            if (!res.ok) {
+                const errText = await res.text();
+                let errMsg = errText;
+                try {
+                    const errJson = JSON.parse(errText);
+                    errMsg = errJson.message || errText;
+                } catch(e) {}
+                console.error(`[Supabase GET Error] Message: ${errMsg}`);
+                throw new Error(errMsg);
+            }
             return res.json();
         })
         .then(data => {
@@ -240,7 +253,7 @@ function pullStateFromSupabaseAndPopulate() {
             populateCmsForms();
         })
         .catch(err => {
-            console.warn('Could not sync live updates on load. Using base HTML data:', err);
+            console.warn('Could not sync live updates on load. Using base HTML data:', err.message || err);
             populateCmsForms();
         });
     }, 400); // Small delay to allow config DOM fetch to complete
@@ -479,7 +492,7 @@ function populatePostersCarouselList() {
     });
 }
 
-function handleCmsPosterUploader(index, event) {
+async function handleCmsPosterUploader(index, event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -488,14 +501,19 @@ function handleCmsPosterUploader(index, event) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById(`poster-preview-img-${index}`).src = e.target.result;
-        // Clear manual URL text input
+    showNotification('Uploading poster to Supabase storage...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'posters');
+        document.getElementById(`poster-preview-img-${index}`).src = publicUrl;
+        
+        // Update URL input field in CMS editor
         const input = document.querySelectorAll('.cms-poster-item-card')[index].querySelector('.cms-poster-image-url');
-        if (input) input.value = '';
-    };
-    reader.readAsDataURL(file);
+        if (input) input.value = publicUrl;
+        showNotification('Poster uploaded successfully!');
+    } catch (err) {
+        alert(`Failed to upload poster: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function previewCmsPosterLinkUrl(index, input) {
@@ -649,7 +667,7 @@ function populateDownloadsCmsList() {
     });
 }
 
-function handleCmsDownloadFileUploader(uniqueId, event) {
+async function handleCmsDownloadFileUploader(uniqueId, event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -658,12 +676,15 @@ function handleCmsDownloadFileUploader(uniqueId, event) {
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById(`cms-dl-url-${uniqueId}`).value = e.target.result; // Stores file Base64 target
-        showNotification(`File attachment '${file.name}' converted successfully.`);
-    };
-    reader.readAsDataURL(file);
+    showNotification('Uploading attachment to Supabase storage...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'downloads');
+        document.getElementById(`cms-dl-url-${uniqueId}`).value = publicUrl;
+        showNotification(`File attachment '${file.name}' uploaded successfully.`);
+    } catch (err) {
+        alert(`Failed to upload attachment: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function cmsDeleteDownloadCardSlot(btn) {
@@ -802,7 +823,50 @@ function cmsAddCoordinatorSlot() {
 
 
 // === 5. Image & File Upload Helpers ===
-function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
+async function uploadFileToSupabaseStorage(file, folder = 'misc') {
+    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+    
+    const url = (localStorage.getItem('vsb_ece_supabase_url') || defaultUrl).trim();
+    const key = (localStorage.getItem('vsb_ece_supabase_key') || defaultKey).trim();
+    
+    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+    const filename = `${Date.now()}_${sanitizedName}`;
+    const uploadPath = `${folder}/${filename}`;
+    
+    const uploadUrl = `${url}/storage/v1/object/ece-assets/${uploadPath}`;
+    
+    console.log(`[Supabase Storage Upload] URL: ${url}, Bucket: ece-assets, Path: ${uploadPath}, Type: POST`);
+    
+    const response = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+            'apikey': key,
+            'Authorization': `Bearer ${key}`,
+            'Content-Type': file.type
+        },
+        body: file
+    });
+    
+    console.log(`[Supabase Storage Response] HTTP Status: ${response.status}`);
+    
+    if (!response.ok) {
+        const errText = await response.text();
+        let errMsg = errText;
+        try {
+            const errJson = JSON.parse(errText);
+            errMsg = errJson.message || errJson.error || errText;
+        } catch(e) {}
+        console.error(`[Supabase Storage Error] Message: ${errMsg}`);
+        throw new Error(errMsg);
+    }
+    
+    const publicUrl = `${url}/storage/v1/object/public/ece-assets/${uploadPath}`;
+    console.log(`[Supabase Storage Success] Upload Result: ${publicUrl}`);
+    return publicUrl;
+}
+
+async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -811,13 +875,15 @@ function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId,
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
+    showNotification('Uploading profile photo to Supabase storage...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
+        
         // Update dashboard preview
         const pImg = document.getElementById(previewImgId);
         const pInit = document.getElementById(previewInitialsId);
         if (pImg && pInit) {
-            pImg.src = e.target.result;
+            pImg.src = publicUrl;
             pImg.style.display = 'block';
             pInit.style.display = 'none';
         }
@@ -826,13 +892,15 @@ function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId,
         const docImg = indexDoc.getElementById(targetImgId);
         const docEmoji = indexDoc.getElementById(targetEmojiId);
         if (docImg && docEmoji) {
-            docImg.src = e.target.result;
+            docImg.src = publicUrl;
             docImg.style.display = 'block';
             docEmoji.style.display = 'none';
         }
-        showNotification('Profile photo processed and saved in DOM memory!');
-    };
-    reader.readAsDataURL(file);
+        showNotification('Profile photo uploaded and saved successfully!');
+    } catch (err) {
+        alert(`Failed to upload profile photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        showNotification('Upload failed.');
+    }
 }
 
 function clearCmsProfilePhoto(targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
@@ -981,7 +1049,7 @@ function publishCmsChanges() {
     })
     .catch(err => {
         console.error('Publishing changes exception:', err);
-        alert('Error publishing edits. Verify system configuration endpoints.');
+        alert(`Error publishing edits: ${err.message || err}`);
     });
 }
 
@@ -1178,6 +1246,7 @@ function saveCmsToSupabase(url, key, state) {
     if (!url || !key) return Promise.resolve(null);
     
     const upsertUrl = `${url.trim()}/rest/v1/vsb_ece_state`;
+    console.log(`[Supabase POST] URL: ${url.trim()}, Table: vsb_ece_state, Type: POST (UPSERT)`);
     return fetch(upsertUrl, {
         method: 'POST',
         headers: {
@@ -1190,6 +1259,19 @@ function saveCmsToSupabase(url, key, state) {
             key: 'site_data',
             value: state
         })
+    }).then(async res => {
+        console.log(`[Supabase POST Response] HTTP Status: ${res.status}`);
+        if (!res.ok) {
+            const errText = await res.text();
+            let errMsg = errText;
+            try {
+                const errJson = JSON.parse(errText);
+                errMsg = errJson.message || errText;
+            } catch(e) {}
+            console.error(`[Supabase POST Error] Message: ${errMsg}`);
+            throw new Error(errMsg);
+        }
+        return res;
     });
 }
 
@@ -1554,7 +1636,7 @@ function loadQuizResultsInDashboard() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.quiz_results`;
     
     const tbody = document.getElementById('quiz-results-tbody');
     if (tbody) {
@@ -1564,11 +1646,14 @@ function loadQuizResultsInDashboard() {
     const filterEl = document.getElementById('leaderboard-year-filter');
     const selectedFilterYear = filterEl ? filterEl.value : 'Second Year';
     
+    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (quiz_results), Type: GET`);
     fetch(getUrl, {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
@@ -1893,13 +1978,16 @@ function fetchMcqLocksInDashboard() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
     
+    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (mcq_locks), Type: GET`);
     fetch(getUrl, {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
@@ -2008,13 +2096,16 @@ function fetchRegisterLockInDashboard() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
     
+    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (register_lock), Type: GET`);
     fetch(getUrl, {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
@@ -2101,13 +2192,16 @@ function fetchClubActivityStatus() {
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
     
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status&t=${Date.now()}`;
+    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
     
+    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (club_activity_status), Type: GET`);
     fetch(getUrl, {
         method: 'GET',
         headers: {
             'apikey': key,
-            'Authorization': `Bearer ${key}`
+            'Authorization': `Bearer ${key}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
         }
     })
     .then(res => res.json())
