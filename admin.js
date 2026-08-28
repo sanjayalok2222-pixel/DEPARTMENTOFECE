@@ -9,6 +9,9 @@ let globalSupaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 // Check persistent admin session on load
 window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('vsb_ece_supabase_key') === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC') {
+        localStorage.removeItem('vsb_ece_supabase_key');
+    }
     // 1. Fetch Supabase configuration from local config.json securely
     fetch('/get-config')
         .then(res => res.json())
@@ -1418,30 +1421,60 @@ function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle
     const div = document.createElement('div');
     div.className = 'cms-list-item cms-activity-round-card';
     div.setAttribute('data-locked', isLocked ? 'true' : 'false');
-    div.style = 'background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;';
+    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; position: relative;';
     div.innerHTML = `
-        <!-- Hidden inputs to preserve metadata structure for reconstruction function -->
-        <input type="hidden" class="cms-round-title" value="${title}">
-        <input type="hidden" class="cms-round-type" value="${type}">
-        <input type="hidden" class="cms-round-url" value="${url}">
-        <input type="hidden" class="cms-round-url-challenge" value="${url}">
-        <input type="hidden" class="cms-round-ctitle" value="${cTitle}">
-        <input type="hidden" class="cms-round-cdesc" value="${cDesc}">
-        <input type="hidden" class="cms-round-ccode" value="${cCode}">
-        
-        <div>
-            <h4 style="margin: 0; color: #fff; font-family: 'Outfit', sans-serif; font-size: 1rem;">${title}</h4>
-            <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Type: ${type === 'challenge' ? 'Interactive Challenge' : 'External Redirect'}</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Round Label / Title</label>
+                <input type="text" class="form-control cms-round-title" value="${title}" placeholder="e.g. Round 1 - Play">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Round Type / Action</label>
+                <select class="form-control cms-round-type" onchange="toggleCmsRoundFields(this)">
+                    <option value="link" ${type === 'link' ? 'selected' : ''}>Redirect External Link</option>
+                    <option value="challenge" ${type === 'challenge' ? 'selected' : ''}>Interactive Code Challenge</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Door Lock Status</label>
+                <div style="display:flex; gap:0.5rem; align-items:center; height: 38px;">
+                    <span class="label-round-lock-status" style="font-weight:bold; font-size:0.85rem; color:${isLocked ? '#f87171' : '#4ade80'};">${isLocked ? 'LOCKED 🔒' : 'UNLOCKED 🔓'}</span>
+                    <button type="button" class="btn-preview" style="margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:${isLocked ? '#22c55e' : '#ef4444'}; color:#fff; border:none;" onclick="toggleCmsRoundLock(this)">
+                        ${isLocked ? 'Unlock' : 'Lock'}
+                    </button>
+                </div>
+            </div>
         </div>
         
-        <div style="display: flex; gap: 0.75rem; align-items: center;">
-            <span class="label-round-lock-status" style="font-weight: bold; font-size: 0.8rem; color: ${isLocked ? '#f87171' : '#4ade80'};">
-                ${isLocked ? 'LOCKED 🔒' : 'UNLOCKED 🔓'}
-            </span>
-            <button type="button" class="btn-preview" style="margin: 0; padding: 0.3rem 0.8rem; font-size: 0.75rem; background: ${isLocked ? '#22c55e' : '#ef4444'}; color: #fff; border: none; border-radius: 4px; cursor: pointer;" onclick="toggleCmsRoundLock(this)">
-                ${isLocked ? 'Unlock' : 'Lock'}
-            </button>
+        <!-- Redirect Link Fields -->
+        <div class="cms-round-fields-link" style="display: ${type === 'link' ? 'block' : 'none'};">
+            <div class="form-group">
+                <label>Redirection URL</label>
+                <input type="text" class="form-control cms-round-url" value="${url}" placeholder="e.g. https://...">
+            </div>
         </div>
+        
+        <!-- Code Challenge Fields -->
+        <div class="cms-round-fields-challenge" style="display: ${type === 'challenge' ? 'block' : 'none'};">
+            <div class="form-group">
+                <label>Challenge Card Header Title</label>
+                <input type="text" class="form-control cms-round-ctitle" value="${cTitle}" placeholder="e.g. 💻 Arduino Uno Code Challenge">
+            </div>
+            <div class="form-group">
+                <label>Challenge Card Instructions Text</label>
+                <textarea class="form-control cms-round-cdesc" placeholder="Enter instructions...">${cDesc}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Option D Correct Arduino Code Snippet</label>
+                <textarea class="form-control cms-round-ccode" style="font-family: monospace; min-height: 120px;" placeholder="Paste Arduino code...">${cCode}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Simulation Platform URL</label>
+                <input type="text" class="form-control cms-round-url-challenge" value="${url}" placeholder="e.g. Wokwi URL https://...">
+            </div>
+        </div>
+        
+        <button type="button" class="btn-delete-list-item" title="Delete Round" onclick="this.closest('.cms-list-item').remove()" style="position: absolute; top: 1.25rem; right: 1.25rem;">🗑️</button>
     `;
     list.appendChild(div);
 }
