@@ -1239,9 +1239,15 @@ function applyFetchedState(state) {
 
 // === 13. Initializer Loader ===
 function loadAllWebData() {
-    if (localStorage.getItem('vsb_ece_supabase_key') === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC') {
-        localStorage.removeItem('vsb_ece_supabase_key');
-    }
+    ['vsb_ece_supabase_url', 'vsb_ece_supabase_key'].forEach(k => {
+        const val = localStorage.getItem(k);
+        if (val) {
+            const clean = val.trim();
+            if (clean === '' || clean === 'null' || clean === 'undefined' || clean === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC') {
+                localStorage.removeItem(k);
+            }
+        }
+    });
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
 

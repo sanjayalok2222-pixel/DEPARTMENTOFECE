@@ -9,9 +9,15 @@ let globalSupaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 // Check persistent admin session on load
 window.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('vsb_ece_supabase_key') === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC') {
-        localStorage.removeItem('vsb_ece_supabase_key');
-    }
+    ['vsb_ece_supabase_url', 'vsb_ece_supabase_key'].forEach(k => {
+        const val = localStorage.getItem(k);
+        if (val) {
+            const clean = val.trim();
+            if (clean === '' || clean === 'null' || clean === 'undefined' || clean === 'sb_publishable_dPp5TN5uwSURctyos7Y0hQ__mUZJWDC') {
+                localStorage.removeItem(k);
+            }
+        }
+    });
     // 1. Fetch Supabase configuration from local config.json securely
     fetch('/get-config')
         .then(res => res.json())
