@@ -1501,9 +1501,9 @@ function populateActivityRoundsCmsList() {
     const items = container.querySelectorAll('.activity-round-item');
     
     const defaults = [
-        { title: 'Round 1 - Play', url: '#' },
-        { title: 'Round 2 - Challenge', url: '#' },
-        { title: 'Round 3 - Simulation', url: '#' }
+        { title: 'Round 1-Crossword puzzle', url: 'https://electroplay-quiz.vercel.app/' },
+        { title: 'Round 2-Instruction Following', url: 'https://clue-matrix.vercel.app/' },
+        { title: 'Round 3-Hardware Hunt', url: 'https://velxio.dev/editor' }
     ];
     
     for (let i = 1; i <= 3; i++) {

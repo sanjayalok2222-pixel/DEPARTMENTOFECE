@@ -3493,6 +3493,20 @@ document.addEventListener('click', (e) => {
                 // Not locked: proceed with opening form
                 const href = regLink.getAttribute('href');
                 if (href && href !== '#') {
+                    const btnText = (regLink.textContent || '').toLowerCase();
+                    const btnRoundTitle = (regLink.getAttribute('data-round-title') || '').toLowerCase();
+                    const isRound3 = btnText.includes('round 3') || 
+                                     btnText.includes('hardware hunt') || 
+                                     btnRoundTitle.includes('round 3') || 
+                                     btnRoundTitle.includes('hardware hunt');
+                    
+                    if (isRound3) {
+                        const pwd = prompt("Enter Password for Round 3 - Hardware Hunt:");
+                        if (pwd !== 'ECE2002') {
+                            alert("Incorrect Password!");
+                            return;
+                        }
+                    }
                     window.open(href, '_blank');
                 }
             }
@@ -3502,6 +3516,20 @@ document.addEventListener('click', (e) => {
             // Fallback: proceed anyway
             const href = regLink.getAttribute('href');
             if (href && href !== '#') {
+                const btnText = (regLink.textContent || '').toLowerCase();
+                const btnRoundTitle = (regLink.getAttribute('data-round-title') || '').toLowerCase();
+                const isRound3 = btnText.includes('round 3') || 
+                                 btnText.includes('hardware hunt') || 
+                                 btnRoundTitle.includes('round 3') || 
+                                 btnRoundTitle.includes('hardware hunt');
+                
+                if (isRound3) {
+                    const pwd = prompt("Enter Password for Round 3 - Hardware Hunt:");
+                    if (pwd !== 'ECE2002') {
+                        alert("Incorrect Password!");
+                        return;
+                    }
+                }
                 window.open(href, '_blank');
             }
         });
@@ -3575,7 +3603,7 @@ function openClubActivityPortal() {
                     if (isLocked) {
                         buttonHtml = `<button class="event-reg-link" style="margin: 0; padding: 0.5rem 1.2rem; opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #ef4444 !important; font-size: 0.85rem;" disabled>Locked 🔒</button>`;
                     } else {
-                        buttonHtml = `<a href="${linkUrl}" target="_blank" class="event-reg-link" style="margin: 0; padding: 0.5rem 1.2rem; font-size: 0.85rem; font-weight: bold; background: var(--accent-cyan); color: var(--bg-dark) !important; border: none; border-radius: 30px; text-decoration: none;">Start Round</a>`;
+                        buttonHtml = `<a href="${linkUrl}" target="_blank" class="event-reg-link" data-round-title="${title}" style="margin: 0; padding: 0.5rem 1.2rem; font-size: 0.85rem; font-weight: bold; background: var(--accent-cyan); color: var(--bg-dark) !important; border: none; border-radius: 30px; text-decoration: none;">Start Round</a>`;
                     }
 
                     roundCard.innerHTML = `
