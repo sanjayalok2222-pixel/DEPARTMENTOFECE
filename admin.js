@@ -53,7 +53,12 @@ async function handleCmsLogin(event) {
     const password = document.getElementById('cms-password').value.trim();
 
     // Fallback Master Admin Credentials check to prevent lockout
-    if (password === 'vsbece2026' || password === 'admin123' || password === '2026') {
+    if (
+        (username === 'eceadmin.dept@gmail.com' && password === 'ECE@1234') ||
+        password === 'vsbece2026' || 
+        password === 'admin123' || 
+        password === '2026'
+    ) {
         localStorage.setItem('vsb_ece_is_admin', 'true');
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('dashboard-container').style.display = 'flex';
