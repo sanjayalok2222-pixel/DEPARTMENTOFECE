@@ -1503,7 +1503,7 @@ function populateActivityRoundsCmsList() {
     const defaults = [
         { title: 'Round 1-Crossword puzzle', url: 'https://electroplay-quiz.vercel.app/' },
         { title: 'Round 2-Instruction Following', url: 'https://clue-matrix.vercel.app/' },
-        { title: 'Round 3-Hardware Hunt', url: 'https://velxio.dev/editor' }
+        { title: 'Round 3-Hardware Hunt', url: 'https://wokwi.com/projects/473662526707899393' }
     ];
     
     for (let i = 1; i <= 3; i++) {
