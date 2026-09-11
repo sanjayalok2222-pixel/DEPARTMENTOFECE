@@ -2047,6 +2047,7 @@ footer {
     height: auto;
     display: block;
     margin: 0 auto;
+    mix-blend-mode: screen;
     filter: drop-shadow(0 0 25px rgba(0, 210, 255, 0.8)) drop-shadow(0 0 50px rgba(0, 136, 255, 0.6));
     animation: lightningPulse 2.5s ease-in-out infinite alternate;
 }
@@ -2075,7 +2076,7 @@ footer {
 }
 
 .lightning-bolt {
-    fill: none;
+    fill: none !important;
     stroke: #00f0ff;
     stroke-width: 2.5;
     stroke-linecap: round;
