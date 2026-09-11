@@ -2140,6 +2140,20 @@ footer {
     margin-bottom: 1.5rem;
 }
 
+.club-official-logo {
+    height: 110px;
+    width: auto;
+    margin: 0 auto 1.25rem;
+    filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.45));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.event-card:hover .club-official-logo {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 30px rgba(0, 210, 255, 0.7));
+}
+
+
 
 
 
