@@ -2023,7 +2023,116 @@ footer {
     .vsb-trust-logo {
         height: 35px !important;
     }
+/* Clean Component & Utility Classes */
+.saas-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 210, 255, 0.06);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    padding: 0.4rem 1.2rem;
+    border-radius: 30px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 1s ease;
 }
+
+.coord-avatar-wrapper {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coord-img-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.hod-avatar-large {
+    width: 180px;
+    height: 180px;
+    font-size: 1.8rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.hod-img-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.admin-only-btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+    margin-left: 1rem;
+}
+
+.hidden-element {
+    display: none;
+}
+
+.hidden-block-center {
+    display: none;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.download-topic-card {
+    cursor: pointer;
+    position: relative;
+}
+
+.download-arrow-icon {
+    font-size: 1.25rem;
+    color: var(--accent-cyan);
+    font-weight: bold;
+    margin-left: auto;
+    padding-right: 0.5rem;
+}
+
+.animated-fade-in {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.download-back-btn {
+    margin-bottom: 2rem;
+    width: auto;
+    padding: 0.6rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 210, 255, 0.1);
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan) !important;
+    font-family: 'Outfit';
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+.download-topic-heading {
+    color: var(--accent-cyan);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
 
 
 
