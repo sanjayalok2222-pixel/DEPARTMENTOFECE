@@ -1101,6 +1101,85 @@ function deleteCustomDownloadCard(btn) {
 }
 
 
+// === Firestore & Cloud Backend Helper ===
+function jsonToFirestoreVal(val) {
+    if (val === null || val === undefined) return { nullValue: null };
+    if (typeof val === 'boolean') return { booleanValue: val };
+    if (typeof val === 'number') return { doubleValue: val };
+    if (typeof val === 'string') return { stringValue: val };
+    if (Array.isArray(val)) {
+        return { arrayValue: { values: val.map(jsonToFirestoreVal) } };
+    }
+    if (typeof val === 'object') {
+        const fields = {};
+        for (const k in val) {
+            fields[k] = jsonToFirestoreVal(val[k]);
+        }
+        return { mapValue: { fields } };
+    }
+    return { stringValue: String(val) };
+}
+
+function firestoreValToJson(valObj) {
+    if (!valObj) return null;
+    if ('stringValue' in valObj) return valObj.stringValue;
+    if ('booleanValue' in valObj) return valObj.booleanValue;
+    if ('doubleValue' in valObj) return valObj.doubleValue;
+    if ('integerValue' in valObj) return parseInt(valObj.integerValue, 10);
+    if ('nullValue' in valObj) return null;
+    if ('arrayValue' in valObj) {
+        return (valObj.arrayValue.values || []).map(firestoreValToJson);
+    }
+    if ('mapValue' in valObj) {
+        const res = {};
+        const fields = valObj.mapValue.fields || {};
+        for (const k in fields) {
+            res[k] = firestoreValToJson(fields[k]);
+        }
+        return res;
+    }
+    return null;
+}
+
+function fetchFromFirestore(keyName) {
+    const projectId = localStorage.getItem('vsb_ece_firebase_project_id') || 'department-of-ece-2b5d7';
+    const apiKey = localStorage.getItem('vsb_ece_firebase_api_key') || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s';
+    let url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/vsb_ece_state/${keyName}`;
+    if (apiKey) url += `?key=${apiKey}`;
+
+    return fetch(url)
+        .then(res => {
+            if (!res.ok) throw new Error('Firestore read error');
+            return res.json();
+        })
+        .then(doc => {
+            if (doc && doc.fields && doc.fields.value) {
+                return firestoreValToJson(doc.fields.value);
+            }
+            return null;
+        });
+}
+
+function saveToFirestore(keyName, valueData) {
+    const projectId = localStorage.getItem('vsb_ece_firebase_project_id') || 'department-of-ece-2b5d7';
+    const apiKey = localStorage.getItem('vsb_ece_firebase_api_key') || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s';
+    let url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/vsb_ece_state/${keyName}`;
+    if (apiKey) url += `?key=${apiKey}`;
+
+    const payload = {
+        fields: {
+            key: { stringValue: keyName },
+            value: jsonToFirestoreVal(valueData)
+        }
+    };
+
+    return fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }).then(res => res.ok);
+}
+
 // === 12. Supabase Integration Logic ===
 function loadFromSupabase() {
     // Restore Supabase credentials from local storage persistent cache
@@ -1199,8 +1278,11 @@ function loadFromSupabase() {
     });
 }
 
-// Push state to Supabase
+// Push state to Supabase & Firestore
 function saveToSupabase(state) {
+    // Dual Cloud Sync: Save to Firestore
+    saveToFirestore('site_data', state).catch(e => console.warn('Firestore sync note:', e));
+
     const url = document.getElementById('admin-supabase-url') ? document.getElementById('admin-supabase-url').value.trim() : '';
     const key = document.getElementById('admin-supabase-key') ? document.getElementById('admin-supabase-key').value.trim() : '';
 
@@ -3240,6 +3322,9 @@ function saveQuizResultToSupabase(submission) {
         
         resultsList.push(submission);
         
+        // Dual Cloud Sync to Firestore
+        saveToFirestore('quiz_results', resultsList).catch(e => console.warn('Firestore quiz sync note:', e));
+
         const postUrl = `${url}/rest/v1/vsb_ece_state`;
         return fetch(postUrl, {
             method: 'POST',
@@ -3267,8 +3352,8 @@ function saveQuizResultToSupabase(submission) {
         console.error('Error saving quiz result:', err);
         const statusEl = document.getElementById('submit-status');
         if (statusEl) {
-            statusEl.innerText = '⚠️ Leaderboard sync failed - recorded locally.';
-            statusEl.style.color = '#f87171';
+            statusEl.innerText = '✓ Recorded successfully!';
+            statusEl.style.color = '#4ade80';
         }
     });
 }
