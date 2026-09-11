@@ -257,9 +257,11 @@ header.header-hidden {
 
 .nav-links li a:hover, 
 .nav-links li a.active {
-    color: var(--accent-cyan);
-    border-bottom: 2px solid var(--accent-cyan);
+    color: var(--accent-cyan) !important;
+    border-bottom: 2px solid var(--accent-cyan) !important;
+    background: rgba(0, 210, 255, 0.08);
     text-shadow: var(--text-glow);
+    font-weight: 700;
 }
 
 /* Main Hero Section */

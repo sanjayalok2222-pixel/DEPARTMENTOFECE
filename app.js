@@ -348,24 +348,51 @@ window.addEventListener('scroll', () => {
         }
     }
     lastScrollY = window.scrollY;
+    updateActiveNavLink();
+});
 
-    // Active Tab Link highlight
-    const sections = document.querySelectorAll('section');
+function updateActiveNavLink() {
+    const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-links li a');
+    const scrollPosition = window.scrollY + 220;
+
     let currentSection = '';
-    
+
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        if (window.scrollY >= (sectionTop - 250)) {
+        const sectionHeight = section.offsetHeight;
+        if (scrollPosition >= sectionTop && scrollPosition < (sectionTop + sectionHeight)) {
             currentSection = section.getAttribute('id');
         }
     });
 
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${currentSection}`) {
-            link.classList.add('active');
+    // Default to dept-info when near top of page
+    if (!currentSection && sections.length > 0) {
+        const firstSectionTop = sections[0].offsetTop;
+        if (window.scrollY < firstSectionTop + 300) {
+            currentSection = 'dept-info';
         }
+    }
+
+    if (currentSection) {
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSection}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    updateActiveNavLink();
+    
+    // Add click handler for immediate active class switch on link click
+    document.querySelectorAll('.nav-links li a').forEach(link => {
+        link.addEventListener('click', () => {
+            document.querySelectorAll('.nav-links li a').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        });
     });
 });
 
