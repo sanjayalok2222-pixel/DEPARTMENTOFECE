@@ -294,11 +294,9 @@ header.header-hidden {
     line-height: 1.12;
     margin-bottom: 1.5rem;
     letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #ffffff 0%, #d2f5ff 40%, #c084fc 75%, #ffffff 100%);
-    background-size: 200% auto;
+    background: linear-gradient(135deg, #ffffff 30%, #d2f5ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: textShine 6s ease-in-out infinite;
 }
 
 .hero p {
@@ -2041,8 +2039,8 @@ footer {
     align-items: center;
     gap: 0.75rem;
     position: relative;
-    background: linear-gradient(135deg, rgba(0, 210, 255, 0.12), rgba(168, 85, 247, 0.14), rgba(0, 85, 255, 0.1));
-    border: 1px solid rgba(0, 210, 255, 0.45);
+    background: rgba(0, 210, 255, 0.08);
+    border: 1px solid var(--accent-cyan);
     padding: 0.65rem 1.8rem;
     /* Angle-notched sci-fi chamfered corners */
     clip-path: polygon(
@@ -2054,26 +2052,14 @@ footer {
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     margin-bottom: 1.75rem;
-    box-shadow: 0 0 30px rgba(0, 210, 255, 0.25), inset 0 0 15px rgba(168, 85, 247, 0.2);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    animation: fadeIn 1s ease, cyberGlowPulse 4s infinite alternate;
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.25), inset 0 0 10px rgba(0, 210, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
 .saas-badge-pill:hover,
 .cyber-badge-container:hover {
-    transform: translateY(-3px) scale(1.02);
-    border-color: rgba(168, 85, 247, 0.8);
-    box-shadow: 0 0 45px rgba(0, 210, 255, 0.4), 0 0 25px rgba(168, 85, 247, 0.4), inset 0 0 20px rgba(0, 210, 255, 0.3);
-}
-
-.cyber-node-pulse {
-    width: 9px;
-    height: 9px;
-    background: #00d2ff;
-    border-radius: 50%;
-    box-shadow: 0 0 12px #00d2ff, 0 0 20px #a855f7;
-    animation: pulseNode 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
-    flex-shrink: 0;
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(0, 210, 255, 0.4), inset 0 0 15px rgba(0, 210, 255, 0.2);
 }
 
 .cyber-badge-text {
@@ -2082,51 +2068,8 @@ footer {
     font-weight: 800;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    background: linear-gradient(90deg, #ffffff 0%, #00d2ff 45%, #c084fc 80%, #ffffff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: textShine 4s linear infinite;
-}
-
-.cyber-tech-accent {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #c084fc;
-    background: rgba(168, 85, 247, 0.18);
-    border: 1px solid rgba(168, 85, 247, 0.4);
-    padding: 0.15rem 0.6rem;
-    border-radius: 4px;
-    margin-left: 0.4rem;
-}
-
-@keyframes pulseNode {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-        box-shadow: 0 0 12px #00d2ff, 0 0 20px #a855f7;
-    }
-    50% {
-        transform: scale(1.4);
-        opacity: 0.6;
-        box-shadow: 0 0 20px #00d2ff, 0 0 35px #a855f7;
-    }
-}
-
-@keyframes textShine {
-    to {
-        background-position: 200% center;
-    }
-}
-
-@keyframes cyberGlowPulse {
-    0% {
-        box-shadow: 0 0 25px rgba(0, 210, 255, 0.25), inset 0 0 15px rgba(168, 85, 247, 0.15);
-    }
-    100% {
-        box-shadow: 0 0 35px rgba(168, 85, 247, 0.35), inset 0 0 20px rgba(0, 210, 255, 0.25);
-    }
+    color: var(--accent-cyan);
+    text-shadow: 0 0 12px rgba(0, 210, 255, 0.5);
 }
 
 .coord-avatar-wrapper {
