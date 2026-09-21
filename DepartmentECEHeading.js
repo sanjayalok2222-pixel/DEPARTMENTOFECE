@@ -3,9 +3,12 @@
  * Premium Reusable Heading Component with Real HTML/CSS Typography and
  * Real-Time Procedural Canvas Electric Lightning Arcs.
  * 
- * Accurately tracks text boundaries so lightning hugs the top and bottom
- * letter contours simultaneously, shoots electrical forks, and creates
- * the iconic high-voltage electric aura.
+ * Features:
+ * - 3D metallic extrusion layers with data-text synchronization
+ * - Dynamic lightning-text interaction (proximity electrification)
+ * - Continuous dual-contour lightning arcs (top crown + bottom base)
+ * - Specialized ECE electric spark emissions
+ * - Periodic high-voltage surge strikes with ambient bloom
  */
 
 (function (global) {
@@ -42,6 +45,8 @@
 
             // Cached text bounds relative to canvas
             this.bounds = { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0, centerY: 0 };
+            this.eceBounds = { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 };
+            this.deptBounds = { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 };
 
             this._initDOM();
             this._initCanvas();
@@ -71,10 +76,12 @@
             this.wordDept = document.createElement('span');
             this.wordDept.className = 'dept-ece-word-dept';
             this.wordDept.textContent = this.options.textDept;
+            this.wordDept.setAttribute('data-text', this.options.textDept);
 
             this.wordEce = document.createElement('span');
             this.wordEce.className = 'dept-ece-word-ece';
             this.wordEce.textContent = this.options.textEce;
+            this.wordEce.setAttribute('data-text', this.options.textEce);
 
             this.title.appendChild(this.wordDept);
             this.title.appendChild(document.createTextNode(' '));
@@ -113,11 +120,10 @@
 
         _updateTextBounds() {
             if (!this.title || !this.canvas) return;
-            const titleRect = this.title.getBoundingClientRect();
             const canvasRect = this.canvas.getBoundingClientRect();
-
             if (canvasRect.width === 0 || canvasRect.height === 0) return;
 
+            const titleRect = this.title.getBoundingClientRect();
             const left = ((titleRect.left - canvasRect.left) / canvasRect.width) * this.width;
             const right = ((titleRect.right - canvasRect.left) / canvasRect.width) * this.width;
             const top = ((titleRect.top - canvasRect.top) / canvasRect.height) * this.height;
@@ -132,6 +138,27 @@
                 height: bottom - top,
                 centerY: (top + bottom) * 0.5
             };
+
+            // Individual word bounds for precise lightning interaction
+            if (this.wordDept) {
+                const dRect = this.wordDept.getBoundingClientRect();
+                this.deptBounds = {
+                    left: ((dRect.left - canvasRect.left) / canvasRect.width) * this.width,
+                    right: ((dRect.right - canvasRect.left) / canvasRect.width) * this.width,
+                    top: ((dRect.top - canvasRect.top) / canvasRect.height) * this.height,
+                    bottom: ((dRect.bottom - canvasRect.top) / canvasRect.height) * this.height
+                };
+            }
+
+            if (this.wordEce) {
+                const eRect = this.wordEce.getBoundingClientRect();
+                this.eceBounds = {
+                    left: ((eRect.left - canvasRect.left) / canvasRect.width) * this.width,
+                    right: ((eRect.right - canvasRect.left) / canvasRect.width) * this.width,
+                    top: ((eRect.top - canvasRect.top) / canvasRect.height) * this.height,
+                    bottom: ((eRect.bottom - canvasRect.top) / canvasRect.height) * this.height
+                };
+            }
         }
 
         _checkReducedMotion() {
@@ -205,6 +232,9 @@
 
             subdivide(x1, y1, x2, y2, displace, 0);
 
+            // Proximity lightning interaction: trigger letter electrification
+            this._checkProximityInteraction(x1, x2, isSurge);
+
             return {
                 segments,
                 isSurge,
@@ -213,6 +243,31 @@
                 maxLife: isSurge ? 9 : (5 + Math.floor(Math.random() * 5)),
                 life: 0
             };
+        }
+
+        _checkProximityInteraction(x1, x2, isSurge) {
+            if (this.isDestroyed || this.reducedMotion) return;
+            const midX = (x1 + x2) * 0.5;
+
+            // Interaction with ECE
+            if (this.eceBounds.width > 0 && midX >= this.eceBounds.left - 20) {
+                if (Math.random() < (isSurge ? 0.9 : 0.45)) {
+                    this.wordEce.classList.add('electrified');
+                    setTimeout(() => {
+                        if (!this.isDestroyed) this.wordEce.classList.remove('electrified');
+                    }, isSurge ? 220 : 130);
+                }
+            }
+
+            // Interaction with DEPARTMENT OF
+            if (this.deptBounds.width > 0 && midX <= this.deptBounds.right + 20) {
+                if (Math.random() < (isSurge ? 0.8 : 0.35)) {
+                    this.wordDept.classList.add('electrified');
+                    setTimeout(() => {
+                        if (!this.isDestroyed) this.wordDept.classList.remove('electrified');
+                    }, isSurge ? 200 : 110);
+                }
+            }
         }
 
         _spawnTopArc() {
@@ -270,6 +325,17 @@
         }
 
         /**
+         * Specialized electric sparks dancing around ECE to make it feel powered
+         */
+        _spawnECESparks() {
+            if (this.eceBounds.width <= 0) return;
+            const eb = this.eceBounds;
+            const sX = eb.left + Math.random() * (eb.right - eb.left);
+            const sY = eb.top + Math.random() * (eb.bottom - eb.top);
+            this._spawnSparks(sX, sY, 1, '#00e5ff');
+        }
+
+        /**
          * Trigger periodic high-energy electrical surge strike
          */
         _triggerSurgeStrike() {
@@ -288,7 +354,7 @@
                 if (!this.isDestroyed) {
                     this.container.classList.remove('surge-active');
                 }
-            }, 260);
+            }, 270);
 
             // Bold horizontal strike hugging top edge end-to-end
             this.bolts.push(this._createBolt(bLeft - 40, capTop, bRight + 40, capTop, 30, 0.6, true, 7, -1, 'surge'));
@@ -310,9 +376,10 @@
             this._spawnSparks((bLeft + bRight) * 0.5, (capTop + baseBottom) * 0.5, 12);
             this._spawnSparks(bLeft, capTop, 6);
             this._spawnSparks(bRight, baseBottom, 6);
+            this._spawnSparks(this.eceBounds.left || bRight - 50, (capTop + baseBottom) * 0.5, 8, '#00e5ff');
         }
 
-        _spawnSparks(x, y, count = 3) {
+        _spawnSparks(x, y, count = 3, color = '#ffffff') {
             for (let i = 0; i < count; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const speed = 1.4 + Math.random() * 4.2;
@@ -323,7 +390,8 @@
                     vy: Math.sin(angle) * speed,
                     life: 0,
                     maxLife: 10 + Math.floor(Math.random() * 15),
-                    size: 1.2 + Math.random() * 2.2
+                    size: 1.2 + Math.random() * 2.2,
+                    color
                 });
             }
         }
@@ -366,6 +434,11 @@
                 this._updateTextBounds();
             }
 
+            // Continuous ECE sparks (makes ECE feel actively powered)
+            if (Math.random() < 0.3) {
+                this._spawnECESparks();
+            }
+
             // Count bolts per type
             let topCount = 0;
             let bottomCount = 0;
@@ -405,8 +478,8 @@
                     (b.left + b.right) * 0.5, b.centerY, 10,
                     (b.left + b.right) * 0.5, b.centerY, b.width * 0.55
                 );
-                glowGrad.addColorStop(0, 'rgba(0, 150, 255, 0.14)');
-                glowGrad.addColorStop(0.5, 'rgba(0, 80, 255, 0.07)');
+                glowGrad.addColorStop(0, 'rgba(0, 160, 255, 0.16)');
+                glowGrad.addColorStop(0.5, 'rgba(0, 80, 255, 0.08)');
                 glowGrad.addColorStop(1, 'transparent');
                 ctx.fillStyle = glowGrad;
                 ctx.fillRect(b.left - 60, b.top - 30, b.width + 120, b.height + 60);
@@ -426,10 +499,10 @@
                 }
 
                 // Pass A: Deep Electric Blue Broad Glow
-                ctx.strokeStyle = `rgba(0, 75, 255, ${alpha * 0.45})`;
+                ctx.strokeStyle = `rgba(0, 75, 255, ${alpha * 0.48})`;
                 ctx.shadowColor = '#0055ff';
-                ctx.shadowBlur = bolt.isSurge ? 32 : 20;
-                ctx.lineWidth = bolt.isSurge ? 12 : 7;
+                ctx.shadowBlur = bolt.isSurge ? 34 : 22;
+                ctx.lineWidth = bolt.isSurge ? 12 : 7.5;
                 ctx.beginPath();
                 for (const seg of bolt.segments) {
                     const jx = (Math.random() - 0.5) * 1.5;
@@ -440,10 +513,10 @@
                 ctx.stroke();
 
                 // Pass B: Intense Cyan Glowing Sheath
-                ctx.strokeStyle = `rgba(0, 230, 255, ${alpha * 0.9})`;
+                ctx.strokeStyle = `rgba(0, 235, 255, ${alpha * 0.92})`;
                 ctx.shadowColor = '#00e5ff';
-                ctx.shadowBlur = bolt.isSurge ? 14 : 9;
-                ctx.lineWidth = bolt.isSurge ? 4.5 : 2.8;
+                ctx.shadowBlur = bolt.isSurge ? 15 : 10;
+                ctx.lineWidth = bolt.isSurge ? 4.8 : 3.0;
                 ctx.beginPath();
                 for (const seg of bolt.segments) {
                     ctx.moveTo(seg.x1, seg.y1);
@@ -483,7 +556,7 @@
 
                 ctx.shadowColor = '#00e5ff';
                 ctx.shadowBlur = 8;
-                ctx.fillStyle = `rgba(225, 250, 255, ${alpha})`;
+                ctx.fillStyle = sp.color === '#00e5ff' ? `rgba(0, 229, 255, ${alpha})` : `rgba(235, 250, 255, ${alpha})`;
                 ctx.beginPath();
                 ctx.arc(sp.x, sp.y, sp.size * (1 - progress * 0.4), 0, Math.PI * 2);
                 ctx.fill();

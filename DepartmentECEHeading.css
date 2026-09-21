@@ -3,7 +3,7 @@
    ========================================================================== */
 
 :root {
-    --ece-lightning-cyan: #00d2ff;
+    --ece-lightning-cyan: #00e5ff;
     --ece-lightning-blue: #0066ff;
     --ece-lightning-core: #ffffff;
     --ece-glow-intensity: 1;
@@ -15,9 +15,9 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 1100px;
-    margin: 0.75rem auto 1.75rem;
-    padding: 2.2rem 1.25rem;
+    max-width: 1150px;
+    margin: 0.75rem auto 1.5rem;
+    padding: 2.2rem 1rem;
     text-align: center;
     user-select: none;
     box-sizing: border-box;
@@ -36,25 +36,25 @@
     mix-blend-mode: screen;
 }
 
-/* Ambient Radial Glow Backdrop */
+/* Layer 1: Soft Large Blue Ambient Glow */
 .dept-ece-heading-ambient {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
-    height: 80%;
-    background: radial-gradient(ellipse at center, rgba(0, 170, 255, 0.22) 0%, rgba(0, 90, 255, 0.12) 40%, transparent 75%);
+    height: 85%;
+    background: radial-gradient(ellipse at center, rgba(0, 150, 255, 0.22) 0%, rgba(0, 70, 220, 0.1) 45%, transparent 75%);
     pointer-events: none;
     z-index: 0;
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    transition: opacity 0.22s ease-out, transform 0.22s ease-out;
     opacity: 0.85;
 }
 
 .dept-ece-heading-container.surge-active .dept-ece-heading-ambient {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.15);
-    background: radial-gradient(ellipse at center, rgba(0, 235, 255, 0.45) 0%, rgba(0, 120, 255, 0.25) 50%, transparent 80%);
+    transform: translate(-50%, -50%) scale(1.18);
+    background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.45) 0%, rgba(0, 110, 255, 0.26) 50%, transparent 80%);
 }
 
 /* Heading Typography */
@@ -63,105 +63,239 @@
     z-index: 2;
     margin: 0;
     padding: 0;
-    font-family: 'Orbitron', 'Chakra Petch', 'Space Grotesk', -apple-system, sans-serif;
+    font-family: 'Chakra Petch', 'Orbitron', 'Space Grotesk', -apple-system, sans-serif;
     font-style: italic;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.02em;
     display: inline-flex;
     flex-wrap: nowrap;
     align-items: baseline;
     justify-content: center;
-    gap: 0.45em;
+    gap: 0.42em;
     white-space: nowrap;
     line-height: 1;
-    transform: skewX(-7deg); /* Gives the sleek forward techno lean seen in the reference */
+    transform: skewX(-6deg);
     
-    /* Fluid, responsive clamp: 26px on tiny mobile, up to 72px on wide desktop */
-    font-size: clamp(1.65rem, 5.4vw, 4.5rem);
-    
-    /* Subtle breathing neon glow */
-    transition: filter 0.15s ease-out;
+    /* Responsive Fluid Clamp */
+    font-size: clamp(1.75rem, 5.6vw, 4.6rem);
 }
 
-/* "DEPARTMENT OF" - Metallic Silver Chrome with Specular Highlight and Cyan Bevel */
+/* "DEPARTMENT OF" - Metallic Silver 3D Chrome with Extrusion */
 .dept-ece-word-dept {
     display: inline-block;
     position: relative;
     color: #ffffff;
+    
+    /* Solid, luminous metallic gradient: White → Silver → Light Blue → Silver → White */
     background: linear-gradient(
         180deg,
         #ffffff 0%,
-        #ffffff 18%,
-        #c6e4fd 38%,
-        #214363 46%,
-        #0d2338 52%,
-        #4f7b9f 66%,
-        #9ed0f7 86%,
+        #ffffff 26%,
+        #eaf4fc 46%,
+        #82aed4 50%,
+        #5280a8 54%,
+        #a6d0f2 74%,
+        #e4f3fc 90%,
         #ffffff 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1.25px rgba(0, 215, 255, 0.75);
+    -webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.85);
+    
+    /* 3D Extrusion depth + Sharp Cyan Rim + Multi-layer Neon Glow */
     filter: 
-        drop-shadow(0 0 3px rgba(0, 240, 255, 0.95))
-        drop-shadow(0 0 12px rgba(0, 180, 255, 0.8))
-        drop-shadow(0 0 28px rgba(0, 100, 255, 0.6))
-        drop-shadow(0 3px 6px rgba(0, 0, 0, 0.95));
-    transition: filter 0.15s ease-out;
+        drop-shadow(1px 2px 0px #011426)
+        drop-shadow(2px 3px 0px #000c18)
+        drop-shadow(0 0 3px #00e5ff)
+        drop-shadow(0 0 12px rgba(0, 229, 255, 0.85))
+        drop-shadow(0 0 28px rgba(0, 157, 255, 0.65))
+        drop-shadow(0 0 50px rgba(0, 80, 255, 0.45));
+    transition: filter 0.12s ease-out;
 }
 
-/* "ECE" - Vivid Electric Cyan-Blue with High-Voltage Luminescence */
+/* Occasional Slow Metallic Shine Passing Across "DEPARTMENT OF" */
+.dept-ece-word-dept::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        transparent 30%,
+        rgba(255, 255, 255, 0.95) 48%,
+        rgba(220, 245, 255, 0.9) 52%,
+        transparent 70%,
+        transparent 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: metallicShineSweep 7.5s ease-in-out infinite;
+}
+
+@keyframes metallicShineSweep {
+    0%, 70% {
+        background-position: -160% 0;
+        opacity: 0;
+    }
+    75% {
+        opacity: 1;
+    }
+    85% {
+        background-position: 160% 0;
+        opacity: 1;
+    }
+    86%, 100% {
+        background-position: 160% 0;
+        opacity: 0;
+    }
+}
+
+/* "ECE" - Vivid Electric Cyan/Blue (#EFFFFF → #00E5FF → #009DFF → #00D9FF) */
 .dept-ece-word-ece {
     display: inline-block;
     position: relative;
-    color: #00f0ff;
+    color: #00E5FF;
+    
+    /* Solid, vibrant electric cyan-blue body */
     background: linear-gradient(
         180deg,
-        #ffffff 0%,
-        #b8f8ff 16%,
-        #00f0ff 38%,
-        #0055cc 46%,
-        #00247a 52%,
-        #0066ee 68%,
-        #00e5ff 88%,
-        #ffffff 100%
+        #EFFFFF 0%,
+        #9ff4ff 20%,
+        #00E5FF 44%,
+        #009DFF 70%,
+        #007fe6 82%,
+        #00D9FF 92%,
+        #EFFFFF 100%
     );
+    background-size: 100% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1.5px rgba(0, 245, 255, 1);
+    -webkit-text-stroke: 0.6px rgba(225, 255, 255, 0.95);
+    
+    /* Internal energy pulse */
+    animation: eceEnergyPulse 3.5s ease-in-out infinite alternate;
+    
+    /* 3D Dark Blue Extrusion + Blinding Electric Cyan/Blue Glow */
     filter: 
-        drop-shadow(0 0 4px rgba(0, 255, 255, 1))
-        drop-shadow(0 0 16px rgba(0, 220, 255, 0.95))
-        drop-shadow(0 0 36px rgba(0, 130, 255, 0.8))
-        drop-shadow(0 0 60px rgba(0, 70, 255, 0.65))
-        drop-shadow(0 3px 6px rgba(0, 0, 0, 0.95));
-    transition: filter 0.15s ease-out;
+        drop-shadow(1px 2px 0px #001228)
+        drop-shadow(2px 3px 0px #000a16)
+        drop-shadow(0 0 4px #00ffff)
+        drop-shadow(0 0 16px rgba(0, 229, 255, 1))
+        drop-shadow(0 0 35px rgba(0, 157, 255, 0.9))
+        drop-shadow(0 0 65px rgba(0, 100, 255, 0.75));
+    transition: filter 0.12s ease-out;
 }
 
-/* Transient Flash during Electrical Surge Strike */
+@keyframes eceEnergyPulse {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 0% 100%;
+    }
+}
+
+/* Electric Shimmer Across "ECE" */
+.dept-ece-word-ece::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        transparent 25%,
+        rgba(255, 255, 255, 1) 45%,
+        rgba(0, 229, 255, 0.95) 55%,
+        transparent 75%,
+        transparent 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: eceElectricShimmer 4.8s ease-in-out infinite;
+}
+
+@keyframes eceElectricShimmer {
+    0%, 65% {
+        background-position: -160% 0;
+        opacity: 0;
+    }
+    70% {
+        opacity: 1;
+    }
+    82% {
+        background-position: 160% 0;
+        opacity: 1;
+    }
+    83%, 100% {
+        background-position: 160% 0;
+        opacity: 0;
+    }
+}
+
+/* Lightning Interaction: Brief highlights when lightning gets close or crosses */
+.dept-ece-word-dept.electrified {
+    filter: 
+        drop-shadow(1px 2px 0px #011426)
+        drop-shadow(2px 3px 0px #000c18)
+        drop-shadow(0 0 6px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 18px rgba(0, 229, 255, 1))
+        drop-shadow(0 0 35px rgba(0, 140, 255, 0.9))
+        brightness(1.22);
+}
+
+.dept-ece-word-ece.electrified {
+    filter: 
+        drop-shadow(1px 2px 0px #001228)
+        drop-shadow(2px 3px 0px #000a16)
+        drop-shadow(0 0 8px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 25px rgba(0, 240, 255, 1))
+        drop-shadow(0 0 50px rgba(0, 180, 255, 1))
+        drop-shadow(0 0 80px rgba(0, 100, 255, 0.9))
+        brightness(1.32);
+}
+
+/* High-Voltage Surge Strike */
 .dept-ece-heading-container.surge-active .dept-ece-word-dept {
     filter: 
-        drop-shadow(0 0 8px rgba(0, 255, 255, 1))
-        drop-shadow(0 0 25px rgba(0, 200, 255, 0.95))
-        drop-shadow(0 0 45px rgba(0, 140, 255, 0.8))
-        drop-shadow(0 0 75px rgba(0, 80, 255, 0.6))
-        brightness(1.25);
+        drop-shadow(1px 2px 0px #011426)
+        drop-shadow(2px 3px 0px #000c18)
+        drop-shadow(0 0 10px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 28px rgba(0, 229, 255, 1))
+        drop-shadow(0 0 50px rgba(0, 140, 255, 0.85))
+        brightness(1.26);
 }
 
 .dept-ece-heading-container.surge-active .dept-ece-word-ece {
     filter: 
-        drop-shadow(0 0 12px rgba(255, 255, 255, 1))
-        drop-shadow(0 0 30px rgba(0, 255, 255, 1))
-        drop-shadow(0 0 55px rgba(0, 180, 255, 0.95))
-        drop-shadow(0 0 90px rgba(0, 100, 255, 0.85))
-        brightness(1.35);
+        drop-shadow(1px 2px 0px #001228)
+        drop-shadow(2px 3px 0px #000a16)
+        drop-shadow(0 0 16px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 36px rgba(0, 245, 255, 1))
+        drop-shadow(0 0 70px rgba(0, 190, 255, 1))
+        drop-shadow(0 0 110px rgba(0, 110, 255, 0.95))
+        brightness(1.42);
 }
 
 /* Accessibility: Respect Reduced Motion Preferences */
 @media (prefers-reduced-motion: reduce) {
     .dept-ece-lightning-canvas {
         display: none !important;
+    }
+    .dept-ece-word-dept::after,
+    .dept-ece-word-ece::after {
+        display: none !important;
+    }
+    .dept-ece-word-ece {
+        animation: none !important;
     }
     .dept-ece-heading-container.surge-active .dept-ece-heading-ambient,
     .dept-ece-heading-container.surge-active .dept-ece-word-dept,
@@ -183,13 +317,13 @@
         margin: 0.25rem auto 1rem;
     }
     .dept-ece-heading-title {
-        font-size: clamp(1.35rem, 6.2vw, 2.75rem);
+        font-size: clamp(1.4rem, 6.2vw, 2.75rem);
         gap: 0.35em;
         transform: skewX(-5deg);
     }
     .dept-ece-word-dept,
     .dept-ece-word-ece {
-        -webkit-text-stroke-width: 0.9px;
+        -webkit-text-stroke-width: 0.4px;
     }
 }
 
