@@ -20,6 +20,10 @@
     scroll-behavior: smooth;
 }
 
+a {
+    text-decoration: none;
+}
+
 body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
@@ -590,6 +594,8 @@ tr:hover td {
 }
 
 .btn-primary {
+    display: inline-block;
+    text-decoration: none !important;
     background: var(--accent-cyan);
     color: #04060d;
     border: 1px solid var(--accent-cyan);
@@ -606,7 +612,10 @@ tr:hover td {
     box-shadow: 0 4px 15px rgba(0, 210, 255, 0.15);
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    text-decoration: none !important;
     background: transparent;
     color: var(--accent-cyan);
     box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
