@@ -1,0 +1,202 @@
+/* ==========================================================================
+   DepartmentECEHeading - Premium Animated Lightning Heading Component
+   ========================================================================== */
+
+:root {
+    --ece-lightning-cyan: #00d2ff;
+    --ece-lightning-blue: #0066ff;
+    --ece-lightning-core: #ffffff;
+    --ece-glow-intensity: 1;
+}
+
+.dept-ece-heading-container {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0.75rem auto 1.75rem;
+    padding: 2.2rem 1.25rem;
+    text-align: center;
+    user-select: none;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+/* Procedural Canvas Layer */
+.dept-ece-lightning-canvas {
+    position: absolute;
+    top: -65%;
+    left: -20%;
+    width: 140%;
+    height: 230%;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: screen;
+}
+
+/* Ambient Radial Glow Backdrop */
+.dept-ece-heading-ambient {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 80%;
+    background: radial-gradient(ellipse at center, rgba(0, 170, 255, 0.22) 0%, rgba(0, 90, 255, 0.12) 40%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    opacity: 0.85;
+}
+
+.dept-ece-heading-container.surge-active .dept-ece-heading-ambient {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+    background: radial-gradient(ellipse at center, rgba(0, 235, 255, 0.45) 0%, rgba(0, 120, 255, 0.25) 50%, transparent 80%);
+}
+
+/* Heading Typography */
+.dept-ece-heading-title {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', 'Chakra Petch', 'Space Grotesk', -apple-system, sans-serif;
+    font-style: italic;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.45em;
+    white-space: nowrap;
+    line-height: 1;
+    transform: skewX(-7deg); /* Gives the sleek forward techno lean seen in the reference */
+    
+    /* Fluid, responsive clamp: 26px on tiny mobile, up to 72px on wide desktop */
+    font-size: clamp(1.65rem, 5.4vw, 4.5rem);
+    
+    /* Subtle breathing neon glow */
+    transition: filter 0.15s ease-out;
+}
+
+/* "DEPARTMENT OF" - Metallic Silver Chrome with Specular Highlight and Cyan Bevel */
+.dept-ece-word-dept {
+    display: inline-block;
+    position: relative;
+    color: #ffffff;
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #ffffff 18%,
+        #c6e4fd 38%,
+        #214363 46%,
+        #0d2338 52%,
+        #4f7b9f 66%,
+        #9ed0f7 86%,
+        #ffffff 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.25px rgba(0, 215, 255, 0.75);
+    filter: 
+        drop-shadow(0 0 3px rgba(0, 240, 255, 0.95))
+        drop-shadow(0 0 12px rgba(0, 180, 255, 0.8))
+        drop-shadow(0 0 28px rgba(0, 100, 255, 0.6))
+        drop-shadow(0 3px 6px rgba(0, 0, 0, 0.95));
+    transition: filter 0.15s ease-out;
+}
+
+/* "ECE" - Vivid Electric Cyan-Blue with High-Voltage Luminescence */
+.dept-ece-word-ece {
+    display: inline-block;
+    position: relative;
+    color: #00f0ff;
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #b8f8ff 16%,
+        #00f0ff 38%,
+        #0055cc 46%,
+        #00247a 52%,
+        #0066ee 68%,
+        #00e5ff 88%,
+        #ffffff 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.5px rgba(0, 245, 255, 1);
+    filter: 
+        drop-shadow(0 0 4px rgba(0, 255, 255, 1))
+        drop-shadow(0 0 16px rgba(0, 220, 255, 0.95))
+        drop-shadow(0 0 36px rgba(0, 130, 255, 0.8))
+        drop-shadow(0 0 60px rgba(0, 70, 255, 0.65))
+        drop-shadow(0 3px 6px rgba(0, 0, 0, 0.95));
+    transition: filter 0.15s ease-out;
+}
+
+/* Transient Flash during Electrical Surge Strike */
+.dept-ece-heading-container.surge-active .dept-ece-word-dept {
+    filter: 
+        drop-shadow(0 0 8px rgba(0, 255, 255, 1))
+        drop-shadow(0 0 25px rgba(0, 200, 255, 0.95))
+        drop-shadow(0 0 45px rgba(0, 140, 255, 0.8))
+        drop-shadow(0 0 75px rgba(0, 80, 255, 0.6))
+        brightness(1.25);
+}
+
+.dept-ece-heading-container.surge-active .dept-ece-word-ece {
+    filter: 
+        drop-shadow(0 0 12px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 30px rgba(0, 255, 255, 1))
+        drop-shadow(0 0 55px rgba(0, 180, 255, 0.95))
+        drop-shadow(0 0 90px rgba(0, 100, 255, 0.85))
+        brightness(1.35);
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+    .dept-ece-lightning-canvas {
+        display: none !important;
+    }
+    .dept-ece-heading-container.surge-active .dept-ece-heading-ambient,
+    .dept-ece-heading-container.surge-active .dept-ece-word-dept,
+    .dept-ece-heading-container.surge-active .dept-ece-word-ece {
+        transition: none !important;
+        transform: none !important;
+        filter: none !important;
+    }
+    .dept-ece-heading-ambient {
+        opacity: 0.7;
+        background: radial-gradient(ellipse at center, rgba(0, 160, 255, 0.15) 0%, transparent 70%);
+    }
+}
+
+/* Mobile & Tablet Fine-tuning */
+@media (max-width: 768px) {
+    .dept-ece-heading-container {
+        padding: 1.25rem 0.5rem;
+        margin: 0.25rem auto 1rem;
+    }
+    .dept-ece-heading-title {
+        font-size: clamp(1.35rem, 6.2vw, 2.75rem);
+        gap: 0.35em;
+        transform: skewX(-5deg);
+    }
+    .dept-ece-word-dept,
+    .dept-ece-word-ece {
+        -webkit-text-stroke-width: 0.9px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dept-ece-heading-title {
+        font-size: clamp(1.15rem, 6.8vw, 1.95rem);
+        letter-spacing: 0.01em;
+        transform: skewX(-4deg);
+    }
+}
