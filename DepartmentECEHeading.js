@@ -1,14 +1,27 @@
 /**
  * DepartmentECEHeading.js
- * Premium Reusable Heading Component with Real HTML/CSS Typography and
- * Real-Time Procedural Canvas Electric Lightning Arcs.
+ * Premium Animated Heading Component with Procedural Real-Time Electrical Discharge Lightning.
  * 
- * Features:
- * - 3D metallic extrusion layers with data-text synchronization
- * - Dynamic lightning-text interaction (proximity electrification)
- * - Continuous dual-contour lightning arcs (top crown + bottom base)
- * - Specialized ECE electric spark emissions
- * - Periodic high-voltage surge strikes with ambient bloom
+ * Animation Architecture:
+ * - Natural High-Voltage Strike Lifecycle:
+ *   IDLE (clean dark state, 1.6s - 3.8s, canvas 100% blank)
+ *   -> STRIKE PROPAGATION (fast jagged path drawing 100ms - 180ms)
+ *   -> INTENSE WHITE-BLUE PEAK FLASH (70ms - 120ms, text edge highlight & ambient bloom)
+ *   -> RAPID FADE & DISINTEGRATION (140ms - 220ms)
+ *   -> COMPLETE DISAPPEARANCE (canvas 100% cleared, zero residual lines)
+ * - 3-Layer Electric Rendering:
+ *   Layer 1: Sharp white-hot core (1.8px, #ffffff)
+ *   Layer 2: Vivid electric blue body (4.0px, #00e5ff)
+ *   Layer 3: Soft cyan-blue glow (10px, #0055ff, blur 28px)
+ * - 5 Distinct Strike Patterns:
+ *   Pattern A: Horizontal arc behind text
+ *   Pattern B: Top-Left to Center
+ *   Pattern C: Center to Bottom-Right
+ *   Pattern D: High-voltage strike near ECE
+ *   Pattern E: Massive full-span branching strike
+ * - Click-to-strike interactive support
+ * - Occasional realistic double-strike
+ * - Clean lifecycle management & accessibility (prefers-reduced-motion)
  */
 
 (function (global) {
@@ -25,35 +38,34 @@
             this.options = Object.assign({
                 textDept: 'DEPARTMENT OF',
                 textEce: 'ECE',
-                strikeIntervalMin: 3200,
-                strikeIntervalMax: 5000,
-                minTopBolts: 2,
-                minBottomBolts: 2,
-                minBridgeBolts: 1
+                idleMin: 1600, // ms between strikes
+                idleMax: 3800
             }, options);
 
-            this.bolts = [];
-            this.sparks = [];
+            this.currentStrike = null;
             this.animId = null;
-            this.strikeTimeout = null;
+            this.nextStrikeTimer = null;
             this.isDestroyed = false;
             this.isVisible = true;
             this.reducedMotion = false;
-            this.width = 0;
-            this.height = 0;
+            this.width = 600;
+            this.height = 180;
             this.dpr = 1;
 
-            // Cached text bounds relative to canvas
-            this.bounds = { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0, centerY: 0 };
-            this.eceBounds = { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 };
-            this.deptBounds = { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 };
+            // Bounding boxes
+            this.bounds = { left: 50, right: 550, top: 40, bottom: 140, width: 500, height: 100, centerY: 90 };
+            this.eceBounds = { left: 400, right: 550, top: 40, bottom: 140, width: 150, height: 100 };
+            this.deptBounds = { left: 50, right: 380, top: 40, bottom: 140, width: 330, height: 100 };
 
             this._initDOM();
             this._initCanvas();
             this._checkReducedMotion();
             this._initIntersectionObserver();
-            this._startAnimation();
-            this._scheduleNextSurge();
+            this._initInteractiveClick();
+
+            if (!this.reducedMotion) {
+                this._scheduleNextStrike(600); // Initial strike shortly after load
+            }
         }
 
         _initDOM() {
@@ -63,7 +75,7 @@
             this.ambient = document.createElement('div');
             this.ambient.className = 'dept-ece-heading-ambient';
 
-            // Canvas for procedural lightning
+            // Canvas for procedural dynamic lightning
             this.canvas = document.createElement('canvas');
             this.canvas.className = 'dept-ece-lightning-canvas';
             this.ctx = this.canvas.getContext('2d');
@@ -101,11 +113,19 @@
             this._resizeCanvas();
         }
 
+        _initInteractiveClick() {
+            // Clicking the heading immediately triggers a high-voltage strike
+            this._clickHandler = () => {
+                this.triggerStrike();
+            };
+            this.container.addEventListener('click', this._clickHandler);
+        }
+
         _resizeCanvas() {
             if (!this.canvas || !this.container) return;
             const rect = this.canvas.getBoundingClientRect();
-            const width = Math.max(rect.width, 320);
-            const height = Math.max(rect.height, 120);
+            const width = Math.max(rect.width, 360);
+            const height = Math.max(rect.height, 140);
 
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
             this.canvas.width = Math.floor(width * dpr);
@@ -134,12 +154,11 @@
                 right,
                 top,
                 bottom,
-                width: right - left,
-                height: bottom - top,
+                width: Math.max(100, right - left),
+                height: Math.max(40, bottom - top),
                 centerY: (top + bottom) * 0.5
             };
 
-            // Individual word bounds for precise lightning interaction
             if (this.wordDept) {
                 const dRect = this.wordDept.getBoundingClientRect();
                 this.deptBounds = {
@@ -167,7 +186,10 @@
             this._motionListener = (e) => {
                 this.reducedMotion = e.matches;
                 if (this.reducedMotion) {
+                    this._cancelCurrentStrike();
                     this._clearCanvas();
+                } else {
+                    this._scheduleNextStrike(800);
                 }
             };
             if (mediaQuery.addEventListener) {
@@ -179,8 +201,11 @@
             this.intersectionObserver = new IntersectionObserver((entries) => {
                 for (const entry of entries) {
                     this.isVisible = entry.isIntersecting;
-                    if (this.isVisible && !this.animId && !this.reducedMotion) {
-                        this._startAnimation();
+                    if (!this.isVisible) {
+                        this._cancelCurrentStrike();
+                        this._clearCanvas();
+                    } else if (!this.currentStrike && !this.nextStrikeTimer && !this.reducedMotion) {
+                        this._scheduleNextStrike(400);
                     }
                 }
             }, { threshold: 0.05 });
@@ -189,222 +214,206 @@
         }
 
         /**
-         * Generate realistic jagged branching lightning path using recursive midpoint displacement
+         * Generate a chaotic, jagged electrical path with sharp irregular angles
          */
-        _createBolt(x1, y1, x2, y2, displace, roughness, isSurge = false, maxDepth = 6, branchDirection = 0, boltType = 'ambient') {
-            const segments = [];
-            const minLen = isSurge ? 5 : 7;
+        _generateJaggedPath(x1, y1, x2, y2, segmentsCount, roughness) {
+            const points = [{ x: x1, y: y1 }];
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 5) return points;
 
-            function subdivide(ax, ay, bx, by, disp, depth) {
-                const dx = bx - ax;
-                const dy = by - ay;
-                const len = Math.hypot(dx, dy);
+            const nx = -dy / dist;
+            const ny = dx / dist;
 
-                if (len < minLen || depth >= maxDepth) {
-                    segments.push({ x1: ax, y1: ay, x2: bx, y2: by });
-                    return;
-                }
+            for (let i = 1; i < segmentsCount; i++) {
+                const t = i / segmentsCount;
+                const bx = x1 + dx * t;
+                const by = y1 + dy * t;
+                const envelope = Math.sin(t * Math.PI);
+                const disp = (Math.random() - 0.5) * (dist * roughness) * envelope;
+                const jitterX = (Math.random() - 0.5) * 5;
+                const jitterY = (Math.random() - 0.5) * 5;
 
-                // Normal vector perpendicular to current line
-                const nx = -dy / len;
-                const ny = dx / len;
-                const midX = (ax + bx) * 0.5 + nx * (Math.random() - 0.5) * disp;
-                const midY = (ay + by) * 0.5 + ny * (Math.random() - 0.5) * disp;
+                points.push({
+                    x: bx + nx * disp + jitterX,
+                    y: by + ny * disp + jitterY
+                });
+            }
+            points.push({ x: x2, y: y2 });
+            return points;
+        }
 
-                subdivide(ax, ay, midX, midY, disp * roughness, depth + 1);
-                subdivide(midX, midY, bx, by, disp * roughness, depth + 1);
+        /**
+         * Builds a complete electrical strike with main trunk and 2-6 jagged branching forks
+         */
+        _createStrikeData() {
+            const w = Math.max(this.width, 360);
+            const h = Math.max(this.height, 140);
+            this._updateTextBounds();
 
-                // Natural branching forks shooting outward
-                const branchProb = isSurge ? 0.44 : 0.34;
-                if (Math.random() < branchProb && depth <= 3 && len > 18) {
-                    let branchAngle = (Math.random() - 0.5) * 1.2;
-                    if (branchDirection !== 0) {
-                        branchAngle = (branchDirection * 0.65) + (Math.random() - 0.5) * 0.65;
-                    }
-                    const cos = Math.cos(branchAngle);
-                    const sin = Math.sin(branchAngle);
-                    const branchLenFactor = 0.35 + Math.random() * 0.35;
-                    const bdx = (dx * cos - dy * sin) * branchLenFactor;
-                    const bdy = (dx * sin + dy * cos) * branchLenFactor;
-                    subdivide(midX, midY, midX + bdx, midY + bdy, disp * roughness * 0.6, depth + 1);
-                }
+            const b = this.bounds;
+            const bLeft = b.width > 0 ? b.left : w * 0.15;
+            const bRight = b.width > 0 ? b.right : w * 0.85;
+            const bTop = b.height > 0 ? b.top : h * 0.35;
+            const bBottom = b.height > 0 ? b.bottom : h * 0.65;
+            const bCenterY = (bTop + bBottom) * 0.5;
+
+            // 5 distinct strike patterns
+            const patterns = ['A', 'B', 'C', 'D', 'E'];
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+
+            let startX, startY, endX, endY, segmentsCount, roughness;
+            let targetArea = 'general';
+
+            switch (pattern) {
+                case 'A': // Horizontal arc behind text
+                    startX = bLeft - 25 - Math.random() * 35;
+                    endX = bRight + 25 + Math.random() * 35;
+                    startY = bCenterY + (Math.random() - 0.5) * 25;
+                    endY = bCenterY + (Math.random() - 0.5) * 25;
+                    segmentsCount = 18 + Math.floor(Math.random() * 8);
+                    roughness = 0.44;
+                    break;
+
+                case 'B': // Top-left to center
+                    startX = bLeft + Math.random() * (b.width * 0.3);
+                    startY = Math.max(10, bTop - 50 - Math.random() * 35);
+                    endX = bLeft + b.width * (0.35 + Math.random() * 0.25);
+                    endY = bCenterY + (Math.random() - 0.5) * 20;
+                    segmentsCount = 14 + Math.floor(Math.random() * 6);
+                    roughness = 0.48;
+                    targetArea = 'dept';
+                    break;
+
+                case 'C': // Center to bottom-right
+                    startX = bLeft + b.width * (0.35 + Math.random() * 0.25);
+                    startY = bCenterY + (Math.random() - 0.5) * 20;
+                    endX = bRight + 20 + Math.random() * 35;
+                    endY = Math.min(h - 10, bBottom + 35 + Math.random() * 35);
+                    segmentsCount = 15 + Math.floor(Math.random() * 6);
+                    roughness = 0.46;
+                    targetArea = 'ece';
+                    break;
+
+                case 'D': // High-voltage short strike directly striking near ECE
+                    const eb = this.eceBounds.width > 0 ? this.eceBounds : { left: bRight - 160, right: bRight, top: bTop, bottom: bBottom, width: 160 };
+                    startX = eb.left + Math.random() * eb.width;
+                    startY = Math.max(10, eb.top - 45 - Math.random() * 35);
+                    endX = eb.left + Math.random() * eb.width;
+                    endY = Math.min(h - 10, eb.bottom + 30 + Math.random() * 30);
+                    segmentsCount = 12 + Math.floor(Math.random() * 6);
+                    roughness = 0.54;
+                    targetArea = 'ece';
+                    break;
+
+                case 'E': // Large dramatic branching strike crossing behind entire heading
+                default:
+                    startX = bLeft - 45 + Math.random() * 40;
+                    startY = Math.max(10, bTop - 40 - Math.random() * 30);
+                    endX = bRight + 35 + Math.random() * 45;
+                    endY = Math.min(h - 10, bBottom + 30 + Math.random() * 40);
+                    segmentsCount = 22 + Math.floor(Math.random() * 8);
+                    roughness = 0.50;
+                    targetArea = 'full';
+                    break;
             }
 
-            subdivide(x1, y1, x2, y2, displace, 0);
+            // 1. Generate Main Jagged Trunk
+            const mainPoints = this._generateJaggedPath(startX, startY, endX, endY, segmentsCount, roughness);
 
-            // Proximity lightning interaction: trigger letter electrification
-            this._checkProximityInteraction(x1, x2, isSurge);
+            // 2. Generate 3 to 7 natural branching paths
+            const branches = [];
+            const branchCount = 3 + Math.floor(Math.random() * 5);
+            const totalMain = mainPoints.length;
+
+            for (let bIdx = 0; bIdx < branchCount; bIdx++) {
+                const originIdx = 1 + Math.floor(Math.random() * (totalMain - 2));
+                const origin = mainPoints[originIdx];
+                const nextPt = mainPoints[originIdx + 1] || mainPoints[originIdx];
+
+                const mainDx = nextPt.x - origin.x;
+                const mainDy = nextPt.y - origin.y;
+                const mainAngle = Math.atan2(mainDy, mainDx);
+
+                const forkSide = Math.random() > 0.5 ? 1 : -1;
+                const forkAngle = mainAngle + forkSide * (0.45 + Math.random() * 0.6);
+                const forkLen = 30 + Math.random() * 75;
+
+                const branchEndX = origin.x + Math.cos(forkAngle) * forkLen;
+                const branchEndY = origin.y + Math.sin(forkAngle) * forkLen;
+
+                const branchPts = this._generateJaggedPath(
+                    origin.x, origin.y,
+                    branchEndX, branchEndY,
+                    6 + Math.floor(Math.random() * 5),
+                    0.54
+                );
+
+                branches.push({
+                    originIndex: originIdx,
+                    points: branchPts
+                });
+            }
+
+            // Timing characteristics for this strike
+            const growDuration = 100 + Math.random() * 60; // 100ms - 160ms (propagation)
+            const flashDuration = 60 + Math.random() * 45; // 60ms - 105ms (peak flash hold)
+            const fadeDuration = 140 + Math.random() * 90; // 140ms - 230ms (rapid fade)
 
             return {
-                segments,
-                isSurge,
-                boltType,
-                alpha: 1.0,
-                maxLife: isSurge ? 9 : (5 + Math.floor(Math.random() * 5)),
-                life: 0
+                pattern,
+                targetArea,
+                mainPoints,
+                branches,
+                growDuration,
+                flashDuration,
+                fadeDuration,
+                totalDuration: growDuration + flashDuration + fadeDuration,
+                startTime: performance.now(),
+                hasFlashed: false
             };
         }
 
-        _checkProximityInteraction(x1, x2, isSurge) {
+        _startStrike() {
             if (this.isDestroyed || this.reducedMotion) return;
-            const midX = (x1 + x2) * 0.5;
-
-            // Interaction with ECE
-            if (this.eceBounds.width > 0 && midX >= this.eceBounds.left - 20) {
-                if (Math.random() < (isSurge ? 0.9 : 0.45)) {
-                    this.wordEce.classList.add('electrified');
-                    setTimeout(() => {
-                        if (!this.isDestroyed) this.wordEce.classList.remove('electrified');
-                    }, isSurge ? 220 : 130);
-                }
+            if (!this.isVisible) {
+                this._scheduleNextStrike(600);
+                return;
             }
 
-            // Interaction with DEPARTMENT OF
-            if (this.deptBounds.width > 0 && midX <= this.deptBounds.right + 20) {
-                if (Math.random() < (isSurge ? 0.8 : 0.35)) {
-                    this.wordDept.classList.add('electrified');
-                    setTimeout(() => {
-                        if (!this.isDestroyed) this.wordDept.classList.remove('electrified');
-                    }, isSurge ? 200 : 110);
-                }
+            this.currentStrike = this._createStrikeData();
+            if (!this.currentStrike) {
+                this._scheduleNextStrike(600);
+                return;
+            }
+
+            if (!this.animId) {
+                this.animId = requestAnimationFrame((ts) => this._render(ts));
             }
         }
 
-        _spawnTopArc() {
-            if (!this.width || !this.height) return;
-            const b = this.bounds;
-            const bLeft = b.width > 0 ? b.left : this.width * 0.15;
-            const bRight = b.width > 0 ? b.right : this.width * 0.85;
-            const capTop = b.height > 0 ? (b.top + b.height * 0.14) : this.height * 0.35;
-
-            const startX = bLeft + Math.random() * (bRight - bLeft) * 0.65;
-            const arcWidth = (bRight - bLeft) * (0.2 + Math.random() * 0.4);
-            const endX = Math.min(bRight + 25, startX + arcWidth);
-            const startY = capTop + (Math.random() - 0.5) * 6;
-            const endY = capTop + (Math.random() - 0.5) * 6;
-            const displace = 15 + Math.random() * 15;
-
-            this.bolts.push(this._createBolt(startX, startY, endX, endY, displace, 0.58, false, 6, -1, 'top'));
-        }
-
-        _spawnBottomArc() {
-            if (!this.width || !this.height) return;
-            const b = this.bounds;
-            const bLeft = b.width > 0 ? b.left : this.width * 0.15;
-            const bRight = b.width > 0 ? b.right : this.width * 0.85;
-            const baseBottom = b.height > 0 ? (b.bottom - b.height * 0.12) : this.height * 0.65;
-
-            const startX = bLeft + Math.random() * (bRight - bLeft) * 0.65;
-            const arcWidth = (bRight - bLeft) * (0.2 + Math.random() * 0.4);
-            const endX = Math.min(bRight + 25, startX + arcWidth);
-            const startY = baseBottom + (Math.random() - 0.5) * 6;
-            const endY = baseBottom + (Math.random() - 0.5) * 6;
-            const displace = 15 + Math.random() * 15;
-
-            this.bolts.push(this._createBolt(startX, startY, endX, endY, displace, 0.58, false, 6, 1, 'bottom'));
-        }
-
-        _spawnBridgeArc() {
-            if (!this.width || !this.height) return;
-            const b = this.bounds;
-            const bLeft = b.width > 0 ? b.left : this.width * 0.15;
-            const bRight = b.width > 0 ? b.right : this.width * 0.85;
-            const bCenterY = (b.top + b.bottom) * 0.5;
-
-            const startX = bLeft + Math.random() * (bRight - bLeft);
-            const endX = startX + (Math.random() - 0.5) * 140;
-            const startY = bCenterY + (Math.random() - 0.5) * (b.height * 0.5);
-            const endY = bCenterY + (Math.random() - 0.5) * (b.height * 0.5);
-            const displace = 18 + Math.random() * 16;
-
-            this.bolts.push(this._createBolt(startX, startY, endX, endY, displace, 0.58, false, 6, 0, 'bridge'));
-
-            if (Math.random() < 0.4) {
-                this._spawnSparks(startX, startY, 2);
-            }
-        }
-
-        /**
-         * Specialized electric sparks dancing around ECE to make it feel powered
-         */
-        _spawnECESparks() {
-            if (this.eceBounds.width <= 0) return;
-            const eb = this.eceBounds;
-            const sX = eb.left + Math.random() * (eb.right - eb.left);
-            const sY = eb.top + Math.random() * (eb.bottom - eb.top);
-            this._spawnSparks(sX, sY, 1, '#00e5ff');
-        }
-
-        /**
-         * Trigger periodic high-energy electrical surge strike
-         */
-        _triggerSurgeStrike() {
-            if (this.isDestroyed || this.reducedMotion || !this.isVisible) return;
-            if (!this.width || !this.height) return;
-
-            const b = this.bounds;
-            const bLeft = b.width > 0 ? b.left : this.width * 0.15;
-            const bRight = b.width > 0 ? b.right : this.width * 0.85;
-            const capTop = b.height > 0 ? (b.top + b.height * 0.14) : this.height * 0.35;
-            const baseBottom = b.height > 0 ? (b.bottom - b.height * 0.12) : this.height * 0.65;
-
-            // Trigger visual surge highlight on DOM container
-            this.container.classList.add('surge-active');
+        _triggerPeakFlash(targetArea) {
+            // Brief ambient pulse
+            this.container.classList.add('strike-active');
             setTimeout(() => {
-                if (!this.isDestroyed) {
-                    this.container.classList.remove('surge-active');
-                }
-            }, 270);
+                if (!this.isDestroyed) this.container.classList.remove('strike-active');
+            }, 120);
 
-            // Bold horizontal strike hugging top edge end-to-end
-            this.bolts.push(this._createBolt(bLeft - 40, capTop, bRight + 40, capTop, 30, 0.6, true, 7, -1, 'surge'));
-
-            // Bold horizontal strike hugging bottom edge end-to-end
-            this.bolts.push(this._createBolt(bLeft - 40, baseBottom, bRight + 40, baseBottom, 30, 0.6, true, 7, 1, 'surge'));
-
-            // 2-3 diagonal crossing electrical arcs
-            const crossingCount = 2 + Math.floor(Math.random() * 2);
-            for (let i = 0; i < crossingCount; i++) {
-                const sX = bLeft + Math.random() * (bRight - bLeft) * 0.4;
-                const eX = bRight - Math.random() * (bRight - bLeft) * 0.4;
-                const sY = i % 2 === 0 ? capTop : baseBottom;
-                const eY = i % 2 === 0 ? baseBottom : capTop;
-                this.bolts.push(this._createBolt(sX, sY, eX, eY, 34, 0.62, true, 7, 0, 'surge'));
+            // Text interactions
+            if (targetArea === 'ece' || targetArea === 'full') {
+                this.wordEce.classList.add('electrified');
+                setTimeout(() => {
+                    if (!this.isDestroyed) this.wordEce.classList.remove('electrified');
+                }, 160);
             }
 
-            // Burst of vibrant sparks around the center and edges
-            this._spawnSparks((bLeft + bRight) * 0.5, (capTop + baseBottom) * 0.5, 12);
-            this._spawnSparks(bLeft, capTop, 6);
-            this._spawnSparks(bRight, baseBottom, 6);
-            this._spawnSparks(this.eceBounds.left || bRight - 50, (capTop + baseBottom) * 0.5, 8, '#00e5ff');
-        }
-
-        _spawnSparks(x, y, count = 3, color = '#ffffff') {
-            for (let i = 0; i < count; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 1.4 + Math.random() * 4.2;
-                this.sparks.push({
-                    x,
-                    y,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed,
-                    life: 0,
-                    maxLife: 10 + Math.floor(Math.random() * 15),
-                    size: 1.2 + Math.random() * 2.2,
-                    color
-                });
+            if (targetArea === 'dept' || targetArea === 'full') {
+                this.wordDept.classList.add('electrified');
+                setTimeout(() => {
+                    if (!this.isDestroyed) this.wordDept.classList.remove('electrified');
+                }, 130);
             }
-        }
-
-        _scheduleNextSurge() {
-            if (this.isDestroyed) return;
-            const delay = this.options.strikeIntervalMin +
-                Math.random() * (this.options.strikeIntervalMax - this.options.strikeIntervalMin);
-
-            this.strikeTimeout = setTimeout(() => {
-                this._triggerSurgeStrike();
-                this._scheduleNextSurge();
-            }, delay);
         }
 
         _clearCanvas() {
@@ -415,170 +424,171 @@
             this.ctx.restore();
         }
 
-        _render() {
+        _render(now) {
             if (this.isDestroyed) return;
 
             if (!this.isVisible || this.reducedMotion) {
-                this.animId = requestAnimationFrame(() => this._render());
+                this._clearCanvas();
+                this.animId = null;
+                return;
+            }
+
+            const strike = this.currentStrike;
+            if (!strike) {
+                this._clearCanvas();
+                this.animId = null;
+                return;
+            }
+
+            const elapsed = now - strike.startTime;
+
+            // STRIKE FINISHED: Completely clear canvas and return to clean dark state!
+            if (elapsed >= strike.totalDuration) {
+                this._clearCanvas();
+                this.currentStrike = null;
+                this.animId = null;
+
+                // Occasional quick secondary double-strike (30% chance after 140ms)
+                if (Math.random() < 0.3) {
+                    this._scheduleNextStrike(140 + Math.random() * 90);
+                } else {
+                    this._scheduleNextStrike();
+                }
                 return;
             }
 
             const ctx = this.ctx;
-            if (!ctx || !this.width || !this.height) {
-                this.animId = requestAnimationFrame(() => this._render());
-                return;
-            }
-
-            // Periodically refresh text bounds in case of layout shift
-            if (Math.random() < 0.02) {
-                this._updateTextBounds();
-            }
-
-            // Continuous ECE sparks (makes ECE feel actively powered)
-            if (Math.random() < 0.3) {
-                this._spawnECESparks();
-            }
-
-            // Count bolts per type
-            let topCount = 0;
-            let bottomCount = 0;
-            let bridgeCount = 0;
-            for (const b of this.bolts) {
-                if (b.boltType === 'top') topCount++;
-                else if (b.boltType === 'bottom') bottomCount++;
-                else if (b.boltType === 'bridge') bridgeCount++;
-            }
-
-            // Maintain continuous crackle on top, bottom, and bridge
-            while (topCount < this.options.minTopBolts) {
-                this._spawnTopArc();
-                topCount++;
-            }
-            while (bottomCount < this.options.minBottomBolts) {
-                this._spawnBottomArc();
-                bottomCount++;
-            }
-            while (bridgeCount < this.options.minBridgeBolts) {
-                this._spawnBridgeArc();
-                bridgeCount++;
-            }
-
             this._clearCanvas();
 
             ctx.save();
             ctx.scale(this.dpr, this.dpr);
-            ctx.globalCompositeOperation = 'lighter'; // Additive blending for electric plasma glow
+            ctx.globalCompositeOperation = 'lighter';
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
-            // Soft electric blue aura band behind text letters
-            const b = this.bounds;
-            if (b.width > 0) {
-                const glowGrad = ctx.createRadialGradient(
-                    (b.left + b.right) * 0.5, b.centerY, 10,
-                    (b.left + b.right) * 0.5, b.centerY, b.width * 0.55
-                );
-                glowGrad.addColorStop(0, 'rgba(0, 160, 255, 0.16)');
-                glowGrad.addColorStop(0.5, 'rgba(0, 80, 255, 0.08)');
-                glowGrad.addColorStop(1, 'transparent');
-                ctx.fillStyle = glowGrad;
-                ctx.fillRect(b.left - 60, b.top - 30, b.width + 120, b.height + 60);
+            let alpha = 1.0;
+            let progressFraction = 1.0;
+
+            if (elapsed < strike.growDuration) {
+                // Phase 1: Rapid Jagged Stepped Propagation
+                progressFraction = Math.max(0.1, elapsed / strike.growDuration);
+                alpha = 0.9 + Math.random() * 0.1;
+            } else if (elapsed < strike.growDuration + strike.flashDuration) {
+                // Phase 2: Intense Peak Flash
+                progressFraction = 1.0;
+                alpha = 0.95 + Math.random() * 0.05;
+
+                if (!strike.hasFlashed) {
+                    strike.hasFlashed = true;
+                    this._triggerPeakFlash(strike.targetArea);
+                }
+            } else {
+                // Phase 3: Rapid Fade & Disappearance
+                const fadeElapsed = elapsed - (strike.growDuration + strike.flashDuration);
+                const fadeProgress = fadeElapsed / strike.fadeDuration;
+                alpha = Math.max(0, (1.0 - fadeProgress) * (0.8 + Math.random() * 0.2));
+                progressFraction = 1.0;
             }
 
-            // 1. Draw lightning bolts with 3 distinct glow passes
-            for (let i = this.bolts.length - 1; i >= 0; i--) {
-                const bolt = this.bolts[i];
-                bolt.life++;
-                const progress = bolt.life / bolt.maxLife;
-                const flicker = 0.76 + Math.random() * 0.24;
-                const alpha = Math.max(0, (1.0 - progress) * flicker);
+            if (alpha > 0.02) {
+                const totalMainPts = strike.mainPoints.length;
+                const visibleMainCount = Math.max(2, Math.floor(totalMainPts * progressFraction));
 
-                if (bolt.life >= bolt.maxLife || alpha <= 0.01) {
-                    this.bolts.splice(i, 1);
-                    continue;
-                }
+                // Micro-jitter to simulate live electrical vibration
+                const jx = (Math.random() - 0.5) * 1.8;
+                const jy = (Math.random() - 0.5) * 1.8;
 
-                // Pass A: Deep Electric Blue Broad Glow
-                ctx.strokeStyle = `rgba(0, 75, 255, ${alpha * 0.48})`;
+                const tracePath = (pts, count) => {
+                    ctx.beginPath();
+                    ctx.moveTo(pts[0].x + jx, pts[0].y + jy);
+                    for (let i = 1; i < count; i++) {
+                        ctx.lineTo(pts[i].x + jx, pts[i].y + jy);
+                    }
+                };
+
+                const traceAll = () => {
+                    tracePath(strike.mainPoints, visibleMainCount);
+                    ctx.stroke();
+
+                    for (const br of strike.branches) {
+                        if (visibleMainCount >= br.originIndex) {
+                            const brVisible = Math.max(2, Math.floor(br.points.length * progressFraction));
+                            tracePath(br.points, brVisible);
+                            ctx.stroke();
+                        }
+                    }
+                };
+
+                // LAYER 3 — SOFT CYAN-BLUE OUTER GLOW
+                ctx.strokeStyle = `rgba(0, 102, 255, ${alpha * 0.45})`;
+                ctx.lineWidth = 10;
                 ctx.shadowColor = '#0055ff';
-                ctx.shadowBlur = bolt.isSurge ? 34 : 22;
-                ctx.lineWidth = bolt.isSurge ? 12 : 7.5;
-                ctx.beginPath();
-                for (const seg of bolt.segments) {
-                    const jx = (Math.random() - 0.5) * 1.5;
-                    const jy = (Math.random() - 0.5) * 1.5;
-                    ctx.moveTo(seg.x1 + jx, seg.y1 + jy);
-                    ctx.lineTo(seg.x2 + jx, seg.y2 + jy);
-                }
-                ctx.stroke();
+                ctx.shadowBlur = 28;
+                traceAll();
 
-                // Pass B: Intense Cyan Glowing Sheath
-                ctx.strokeStyle = `rgba(0, 235, 255, ${alpha * 0.92})`;
+                // LAYER 2 — VIVID ELECTRIC BLUE BODY
+                ctx.strokeStyle = `rgba(0, 235, 255, ${alpha * 0.95})`;
+                ctx.lineWidth = 4.0;
                 ctx.shadowColor = '#00e5ff';
-                ctx.shadowBlur = bolt.isSurge ? 15 : 10;
-                ctx.lineWidth = bolt.isSurge ? 4.8 : 3.0;
-                ctx.beginPath();
-                for (const seg of bolt.segments) {
-                    ctx.moveTo(seg.x1, seg.y1);
-                    ctx.lineTo(seg.x2, seg.y2);
-                }
-                ctx.stroke();
+                ctx.shadowBlur = 12;
+                traceAll();
 
-                // Pass C: White-Hot Plasma Core
+                // LAYER 1 — SHARP WHITE-HOT PLASMA CORE
                 ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.98})`;
+                ctx.lineWidth = 1.8;
                 ctx.shadowColor = '#ffffff';
                 ctx.shadowBlur = 4;
-                ctx.lineWidth = bolt.isSurge ? 1.8 : 1.1;
-                ctx.beginPath();
-                for (const seg of bolt.segments) {
-                    ctx.moveTo(seg.x1, seg.y1);
-                    ctx.lineTo(seg.x2, seg.y2);
-                }
-                ctx.stroke();
-            }
-
-            // 2. Draw Sparks
-            for (let s = this.sparks.length - 1; s >= 0; s--) {
-                const sp = this.sparks[s];
-                sp.life++;
-                sp.x += sp.vx;
-                sp.y += sp.vy;
-                sp.vy += 0.05; // gravity
-                sp.vx *= 0.96; // air drag
-
-                const progress = sp.life / sp.maxLife;
-                const alpha = Math.max(0, 1.0 - progress);
-
-                if (sp.life >= sp.maxLife) {
-                    this.sparks.splice(s, 1);
-                    continue;
-                }
-
-                ctx.shadowColor = '#00e5ff';
-                ctx.shadowBlur = 8;
-                ctx.fillStyle = sp.color === '#00e5ff' ? `rgba(0, 229, 255, ${alpha})` : `rgba(235, 250, 255, ${alpha})`;
-                ctx.beginPath();
-                ctx.arc(sp.x, sp.y, sp.size * (1 - progress * 0.4), 0, Math.PI * 2);
-                ctx.fill();
+                traceAll();
             }
 
             ctx.restore();
 
-            this.animId = requestAnimationFrame(() => this._render());
+            this.animId = requestAnimationFrame((ts) => this._render(ts));
         }
 
-        _startAnimation() {
-            if (this.animId) cancelAnimationFrame(this.animId);
-            this.animId = requestAnimationFrame(() => this._render());
+        _scheduleNextStrike(customDelay) {
+            if (this.isDestroyed || this.reducedMotion) return;
+            if (this.nextStrikeTimer) clearTimeout(this.nextStrikeTimer);
+
+            const delay = typeof customDelay === 'number'
+                ? customDelay
+                : this.options.idleMin + Math.random() * (this.options.idleMax - this.options.idleMin);
+
+            this.nextStrikeTimer = setTimeout(() => {
+                this.nextStrikeTimer = null;
+                this._startStrike();
+            }, delay);
+        }
+
+        _cancelCurrentStrike() {
+            if (this.nextStrikeTimer) {
+                clearTimeout(this.nextStrikeTimer);
+                this.nextStrikeTimer = null;
+            }
+            if (this.animId) {
+                cancelAnimationFrame(this.animId);
+                this.animId = null;
+            }
+            this.currentStrike = null;
+            this.container.classList.remove('strike-active');
+            if (this.wordDept) this.wordDept.classList.remove('electrified');
+            if (this.wordEce) this.wordEce.classList.remove('electrified');
         }
 
         /**
-         * Clean up all event listeners, observers, timers and animation loops
+         * Manually trigger a strike immediately (e.g. on click or external event)
          */
+        triggerStrike() {
+            this._cancelCurrentStrike();
+            this._startStrike();
+        }
+
         destroy() {
             this.isDestroyed = true;
-            if (this.animId) cancelAnimationFrame(this.animId);
-            if (this.strikeTimeout) clearTimeout(this.strikeTimeout);
+            this._cancelCurrentStrike();
+            if (this._clickHandler) {
+                this.container.removeEventListener('click', this._clickHandler);
+            }
             if (this.resizeObserver) this.resizeObserver.disconnect();
             if (this.intersectionObserver) this.intersectionObserver.disconnect();
 
@@ -587,15 +597,10 @@
                 mediaQuery.removeEventListener('change', this._motionListener);
             }
 
-            this.bolts = [];
-            this.sparks = [];
             this._clearCanvas();
             this.container.innerHTML = '';
         }
 
-        /**
-         * Auto-initialize on any matching DOM elements
-         */
         static initAll(selector = '#DepartmentECEHeading, [data-department-ece-heading]') {
             const elements = document.querySelectorAll(selector);
             const instances = [];
@@ -606,11 +611,13 @@
                     instances.push(inst);
                 }
             });
+            if (instances.length > 0 && typeof window !== 'undefined') {
+                window.deptEceHeading = instances[0];
+            }
             return instances;
         }
     }
 
-    // Auto-init on DOMContentLoaded if element exists
     if (typeof document !== 'undefined') {
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
