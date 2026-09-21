@@ -2034,122 +2034,51 @@ footer {
     
 .lightning-header-wrapper {
     position: relative;
-    display: inline-block;
-    max-width: 850px;
-    width: 100%;
-    margin: 0 auto 1.5rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 680px;
+    width: 90%;
+    margin: 0.5rem auto 1.5rem;
     text-align: center;
+    z-index: 5;
 }
 
 .lightning-header-img {
     width: 100%;
-    max-width: 800px;
     height: auto;
     display: block;
-    margin: 0 auto;
     mix-blend-mode: screen;
-    filter: drop-shadow(0 0 25px rgba(0, 210, 255, 0.8)) drop-shadow(0 0 50px rgba(0, 136, 255, 0.6));
-    animation: lightningPulse 2.5s ease-in-out infinite alternate;
-}
-
-.lightning-flash-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.8)) drop-shadow(0 0 35px rgba(0, 136, 255, 0.5));
+    animation: lightningFlicker 4s ease-in-out infinite alternate;
     pointer-events: none;
-    background: radial-gradient(circle at 50% 50%, rgba(0, 210, 255, 0.25) 0%, transparent 70%);
-    opacity: 0.6;
-    animation: flashGlow 1.8s infinite alternate;
+    user-select: none;
 }
 
-.lightning-svg-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 2;
-    overflow: visible;
-}
-
-.lightning-bolt {
-    fill: none !important;
-    stroke: #00f0ff;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 10px #00f0ff) drop-shadow(0 0 20px #0088ff);
-    stroke-dasharray: 400;
-    stroke-dashoffset: 400;
-    opacity: 0;
-}
-
-.bolt-1 {
-    animation: strikeLightning 3s infinite steps(1);
-    animation-delay: 0.2s;
-}
-
-.bolt-2 {
-    stroke: #80d0ff;
-    stroke-width: 2;
-    animation: strikeLightning 2.4s infinite steps(1);
-    animation-delay: 1.1s;
-}
-
-.bolt-3 {
-    stroke: #00ffff;
-    stroke-width: 3;
-    animation: strikeLightning 1.9s infinite steps(1);
-    animation-delay: 0.7s;
-}
-
-@keyframes lightningPulse {
-    0% {
-        filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.7)) drop-shadow(0 0 40px rgba(0, 136, 255, 0.4));
+@keyframes lightningFlicker {
+    0%, 100% {
+        filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.8)) drop-shadow(0 0 35px rgba(0, 136, 255, 0.5));
         transform: scale(1);
     }
-    50% {
-        filter: drop-shadow(0 0 35px rgba(0, 240, 255, 0.95)) drop-shadow(0 0 70px rgba(0, 136, 255, 0.8)) brightness(1.15);
+    30% {
+        filter: drop-shadow(0 0 25px rgba(0, 240, 255, 1)) drop-shadow(0 0 50px rgba(0, 180, 255, 0.8)) brightness(1.25);
+        transform: scale(1.02);
+    }
+    32% {
+        filter: drop-shadow(0 0 10px rgba(0, 180, 255, 0.6)) brightness(0.95);
+        transform: scale(0.995);
+    }
+    34% {
+        filter: drop-shadow(0 0 30px rgba(0, 255, 255, 1)) drop-shadow(0 0 65px rgba(0, 150, 255, 0.9)) brightness(1.35);
+        transform: scale(1.025);
+    }
+    70% {
+        filter: drop-shadow(0 0 18px rgba(0, 210, 255, 0.85)) drop-shadow(0 0 40px rgba(0, 136, 255, 0.6));
+        transform: scale(1.005);
+    }
+    72% {
+        filter: drop-shadow(0 0 28px rgba(0, 255, 255, 1)) drop-shadow(0 0 55px rgba(0, 170, 255, 0.85)) brightness(1.2);
         transform: scale(1.015);
-    }
-    100% {
-        filter: drop-shadow(0 0 25px rgba(0, 210, 255, 0.75)) drop-shadow(0 0 50px rgba(0, 136, 255, 0.5));
-        transform: scale(1);
-    }
-}
-
-@keyframes flashGlow {
-    0%, 100% { opacity: 0.4; }
-    30% { opacity: 0.85; }
-    32% { opacity: 0.3; }
-    35% { opacity: 0.95; }
-    70% { opacity: 0.5; }
-}
-
-@keyframes strikeLightning {
-    0% {
-        stroke-dashoffset: 400;
-        opacity: 0;
-    }
-    5% {
-        stroke-dashoffset: 0;
-        opacity: 1;
-    }
-    10% {
-        opacity: 0.3;
-    }
-    12% {
-        opacity: 1;
-    }
-    20% {
-        stroke-dashoffset: -400;
-        opacity: 0;
-    }
-    100% {
-        stroke-dashoffset: -400;
-        opacity: 0;
     }
 }
 
