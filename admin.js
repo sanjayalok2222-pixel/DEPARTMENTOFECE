@@ -74,17 +74,23 @@ async function handleCmsLogin(event) {
     const username = document.getElementById('cms-username').value.trim();
     const password = document.getElementById('cms-password').value.trim();
 
-    // Fallback Master Admin Credentials check to prevent lockout
+    // Master Admin Credentials check to prevent lockout
+    const userClean = username.toLowerCase();
+    const passClean = password;
+
     if (
-        (username === 'eceadmin.dept@gmail.com' && password === 'ECE@1234') ||
-        password === 'vsbece2026' || 
-        password === 'admin123' || 
-        password === '2026'
+        (userClean === 'vsbece' && (passClean === 'VSBECE123' || passClean === 'vsbece123')) ||
+        (userClean === 'eceadmin.dept@gmail.com' && password === 'ECE@1234') ||
+        passClean === 'VSBECE123' ||
+        passClean === 'vsbece123' ||
+        passClean === 'vsbece2026' || 
+        passClean === 'admin123' || 
+        passClean === '2026'
     ) {
         localStorage.setItem('vsb_ece_is_admin', 'true');
         document.getElementById('login-overlay').style.display = 'none';
         document.getElementById('dashboard-container').style.display = 'flex';
-        showNotification('Authenticated via Fallback Master Credentials!');
+        showNotification('Authenticated via Master Admin Credentials!');
         loadIndexHtmlDocument();
         return;
     }
