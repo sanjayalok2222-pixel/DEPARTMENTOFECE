@@ -764,6 +764,42 @@ function triggerPosterUpload(btn) {
     card.querySelector('.admin-poster-upload-input').click();
 }
 
+function compressImageToDataUrl(file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth || height > maxHeight) {
+                    if (width / height > maxWidth / maxHeight) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    } else {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
+            };
+            img.onerror = () => reject(new Error('Failed to load image for compression'));
+            img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+    });
+}
+
 async function uploadFileToSupabaseStorage(file, folder = 'misc') {
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
@@ -777,34 +813,43 @@ async function uploadFileToSupabaseStorage(file, folder = 'misc') {
     
     const uploadUrl = `${url}/storage/v1/object/ece-assets/${uploadPath}`;
     
-    console.log(`[Supabase Storage Upload] URL: ${url}, Bucket: ece-assets, Path: ${uploadPath}, Type: POST`);
-    
-    const response = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Content-Type': file.type
-        },
-        body: file
-    });
-    
-    console.log(`[Supabase Storage Response] HTTP Status: ${response.status}`);
-    
-    if (!response.ok) {
-        const errText = await response.text();
-        let errMsg = errText;
-        try {
-            const errJson = JSON.parse(errText);
-            errMsg = errJson.message || errJson.error || errText;
-        } catch(e) {}
-        console.error(`[Supabase Storage Error] Message: ${errMsg}`);
-        throw new Error(errMsg);
+    // 1. Try Supabase storage bucket first
+    try {
+        const response = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                'apikey': key,
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': file.type
+            },
+            body: file
+        });
+        
+        if (response.ok) {
+            const publicUrl = `${url}/storage/v1/object/public/ece-assets/${uploadPath}`;
+            console.log(`[Supabase Storage Success] Upload Result: ${publicUrl}`);
+            return publicUrl;
+        }
+    } catch (e) {
+        console.warn('Direct bucket upload failed:', e);
     }
     
-    const publicUrl = `${url}/storage/v1/object/public/ece-assets/${uploadPath}`;
-    console.log(`[Supabase Storage Success] Upload Result: ${publicUrl}`);
-    return publicUrl;
+    // 2. Fallback: If image, compress into optimized Base64 data URL
+    if (file.type && file.type.startsWith('image/')) {
+        console.log('Bucket unavailable: compressing image locally into optimized Data URL...');
+        return await compressImageToDataUrl(file);
+    }
+    
+    // 3. Fallback for documents under 3MB
+    return new Promise((resolve, reject) => {
+        if (file.size > 3 * 1024 * 1024) {
+            return reject(new Error('File exceeds 3MB limit for offline storage. Please provide an external link.'));
+        }
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Failed to read file into data URL'));
+        reader.readAsDataURL(file);
+    });
 }
 
 async function handlePosterUpload(event, input) {
@@ -816,15 +861,16 @@ async function handlePosterUpload(event, input) {
         return;
     }
 
-    showNotification('Uploading poster to Supabase storage...');
+    showNotification('Processing poster image...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'posters');
         const card = input.closest('.poster-card');
         card.querySelector('.poster-1to1').src = publicUrl;
         card.querySelector('.admin-poster-image-url').value = publicUrl;
-        showNotification('Poster uploaded successfully!');
+        showNotification('Poster loaded and optimized successfully!');
     } catch (err) {
-        alert(`Failed to upload poster: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        console.error('Poster upload error:', err);
+        alert(`Failed to load poster: ${err.message || err}`);
         showNotification('Upload failed.');
     }
 }
@@ -1172,9 +1218,12 @@ function fetchFromFirestore(keyName) {
     const projectId = localStorage.getItem('vsb_ece_firebase_project_id') || 'department-of-ece-2b5d7';
     const apiKey = localStorage.getItem('vsb_ece_firebase_api_key') || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s';
     let url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/vsb_ece_state/${keyName}`;
-    if (apiKey) url += `?key=${apiKey}`;
+    const params = [];
+    if (apiKey) params.push(`key=${apiKey}`);
+    params.push(`_t=${Date.now()}`);
+    url += '?' + params.join('&');
 
-    return fetch(url)
+    return fetch(url, { cache: 'no-store' })
         .then(res => {
             if (!res.ok) throw new Error('Firestore read error');
             return res.json();
@@ -3668,9 +3717,8 @@ document.addEventListener('click', (e) => {
 
 
 function openClubActivityPortal(isAutoScroll = false) {
-    sessionStorage.setItem('active_club_view', 'rounds');
-
     const renderRoundsUI = () => {
+        sessionStorage.setItem('active_club_view', 'rounds');
         const mainView = document.getElementById('club-main-view');
         const roundsView = document.getElementById('club-rounds-view');
         const container = document.getElementById('club-rounds-list-container');
@@ -3680,42 +3728,48 @@ function openClubActivityPortal(isAutoScroll = false) {
             
             const hiddenRounds = document.querySelectorAll('#club-rounds-container .activity-round-item');
             if (hiddenRounds.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No active rounds configured by Admin yet.</div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem; grid-column: 1 / -1;">No active rounds configured by Admin yet.</div>`;
             } else {
+                const roundIcons = ['🧩', '⚡', '💻', '🎮'];
+
                 hiddenRounds.forEach((round, index) => {
                     const title = round.getAttribute('data-title') || `Round ${index + 1}`;
-                    const type = round.getAttribute('data-type') || 'link';
                     const linkUrl = round.getAttribute('data-url') || '';
                     const isLocked = round.getAttribute('data-locked') === 'true';
+                    const icon = roundIcons[index % roundIcons.length];
                     
                     const roundCard = document.createElement('div');
-                    roundCard.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box; transition: transform 0.2s ease, border-color 0.2s ease;';
+                    roundCard.style = 'background: rgba(255,255,255,0.03); border: 1px solid rgba(0, 210, 255, 0.2); padding: 1.75rem 1.25rem; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 1.25rem; width: 100%; box-sizing: border-box; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; text-align: center;';
                     
                     roundCard.onmouseover = () => {
                         roundCard.style.borderColor = 'var(--accent-cyan)';
-                        roundCard.style.transform = 'translateY(-2px)';
+                        roundCard.style.transform = 'translateY(-4px)';
+                        roundCard.style.boxShadow = '0 10px 25px rgba(0, 210, 255, 0.2)';
                     };
                     roundCard.onmouseout = () => {
-                        roundCard.style.borderColor = 'rgba(255,255,255,0.06)';
+                        roundCard.style.borderColor = 'rgba(0, 210, 255, 0.2)';
                         roundCard.style.transform = 'none';
+                        roundCard.style.boxShadow = 'none';
                     };
 
                     let buttonHtml = '';
                     if (isLocked) {
-                        buttonHtml = `<button class="event-reg-link" style="margin: 0; padding: 0.5rem 1.2rem; opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #ef4444 !important; font-size: 0.85rem;" disabled>Locked 🔒</button>`;
+                        buttonHtml = `<button class="event-reg-link" style="margin: 0; width: 100%; padding: 0.8rem 1.2rem; opacity: 0.6; cursor: not-allowed; border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; font-size: 0.9rem; font-weight: 700; border-radius: 30px; box-sizing: border-box;" disabled>Locked 🔒</button>`;
                     } else {
-                        buttonHtml = `<a href="${linkUrl}" target="_blank" class="event-reg-link" data-round-title="${title}" style="margin: 0; padding: 0.5rem 1.2rem; font-size: 0.85rem; font-weight: bold; background: var(--accent-cyan); color: var(--bg-dark) !important; border: none; border-radius: 30px; text-decoration: none;">Start Round</a>`;
+                        buttonHtml = `<a href="${linkUrl}" target="_blank" class="event-reg-link" data-round-title="${title}" style="margin: 0; width: 100%; padding: 0.8rem 1.2rem; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; background: linear-gradient(135deg, var(--accent-cyan), #0099ff); color: var(--bg-dark) !important; border: none; border-radius: 30px; text-decoration: none; display: block; box-sizing: border-box; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3); transition: all 0.2s ease;">Start Round</a>`;
                     }
 
                     roundCard.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="font-size: 1.5rem;">🎮</div>
+                        <div style="font-size: 2.4rem; line-height: 1;">${icon}</div>
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; width: 100%;">
+                            <h4 style="margin: 0; color: #fff; font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; line-height: 1.3;">${title}</h4>
                             <div>
-                                <h4 style="margin: 0; color: #fff; font-family: 'Outfit'; font-size: 1.05rem;">${title}</h4>
-                                <p style="margin: 0.2rem 0 0 0; color: var(--text-secondary); font-size: 0.75rem;">Status: ${isLocked ? 'Locked' : 'Available'}</p>
+                                <span style="display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.7rem; border-radius: 20px; background: ${isLocked ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)'}; color: ${isLocked ? '#f87171' : '#4ade80'}; border: 1px solid ${isLocked ? '#ef4444' : '#10b981'};">
+                                    ${isLocked ? 'Locked 🔒' : '● Available'}
+                                </span>
                             </div>
                         </div>
-                        <div>
+                        <div style="width: 100%; margin-top: 0.5rem;">
                             ${buttonHtml}
                         </div>
                     `;
@@ -3735,6 +3789,7 @@ function openClubActivityPortal(isAutoScroll = false) {
         .then(val => {
             const isEnabled = val && typeof val === 'object' ? val.enabled !== false : true;
             if (!isEnabled) {
+                sessionStorage.removeItem('active_club_view');
                 showNotification('Admin locked the activities', 'error');
                 alert('Admin locked the activities');
                 return;
@@ -3747,7 +3802,7 @@ function openClubActivityPortal(isAutoScroll = false) {
             const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
             const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
             const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-            const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
+            const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status&_t=${Date.now()}`;
 
             fetch(getUrl, {
                 method: 'GET',
@@ -3766,6 +3821,7 @@ function openClubActivityPortal(isAutoScroll = false) {
                     isEnabled = val.enabled !== false;
                 }
                 if (!isEnabled) {
+                    sessionStorage.removeItem('active_club_view');
                     showNotification('Admin locked the activities', 'error');
                     alert('Admin locked the activities');
                     return;

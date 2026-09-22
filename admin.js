@@ -209,6 +209,8 @@ function loadIndexHtmlDocument() {
             
             // Check if Supabase is connected and pull live cloud updates to merge
             pullStateFromSupabaseAndPopulate();
+            fetchClubActivityStatus();
+            fetchRegisterLockInDashboard();
         })
         .catch(err => {
             console.error(err);
@@ -511,7 +513,7 @@ async function handleCmsPosterUploader(index, event) {
         return;
     }
 
-    showNotification('Uploading poster to Supabase storage...');
+    showNotification('Processing poster image...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'posters');
         document.getElementById(`poster-preview-img-${index}`).src = publicUrl;
@@ -519,9 +521,10 @@ async function handleCmsPosterUploader(index, event) {
         // Update URL input field in CMS editor
         const input = document.querySelectorAll('.cms-poster-item-card')[index].querySelector('.cms-poster-image-url');
         if (input) input.value = publicUrl;
-        showNotification('Poster uploaded successfully!');
+        showNotification('Poster loaded and optimized successfully!');
     } catch (err) {
-        alert(`Failed to upload poster: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        console.error('Poster upload error:', err);
+        alert(`Failed to load poster: ${err.message || err}`);
         showNotification('Upload failed.');
     }
 }
@@ -686,13 +689,14 @@ async function handleCmsDownloadFileUploader(uniqueId, event) {
         return;
     }
 
-    showNotification('Uploading attachment to Supabase storage...');
+    showNotification('Processing attachment file...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'downloads');
         document.getElementById(`cms-dl-url-${uniqueId}`).value = publicUrl;
-        showNotification(`File attachment '${file.name}' uploaded successfully.`);
+        showNotification(`File attachment '${file.name}' loaded successfully.`);
     } catch (err) {
-        alert(`Failed to upload attachment: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        console.error('Attachment upload error:', err);
+        alert(`Failed to load attachment: ${err.message || err}`);
         showNotification('Upload failed.');
     }
 }
@@ -833,6 +837,42 @@ function cmsAddCoordinatorSlot() {
 
 
 // === 5. Image & File Upload Helpers ===
+function compressImageToDataUrl(file, maxWidth = 1200, maxHeight = 1200, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth || height > maxHeight) {
+                    if (width / height > maxWidth / maxHeight) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    } else {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
+            };
+            img.onerror = () => reject(new Error('Failed to load image for compression'));
+            img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+    });
+}
+
 async function uploadFileToSupabaseStorage(file, folder = 'misc') {
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
@@ -846,34 +886,43 @@ async function uploadFileToSupabaseStorage(file, folder = 'misc') {
     
     const uploadUrl = `${url}/storage/v1/object/ece-assets/${uploadPath}`;
     
-    console.log(`[Supabase Storage Upload] URL: ${url}, Bucket: ece-assets, Path: ${uploadPath}, Type: POST`);
-    
-    const response = await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Content-Type': file.type
-        },
-        body: file
-    });
-    
-    console.log(`[Supabase Storage Response] HTTP Status: ${response.status}`);
-    
-    if (!response.ok) {
-        const errText = await response.text();
-        let errMsg = errText;
-        try {
-            const errJson = JSON.parse(errText);
-            errMsg = errJson.message || errJson.error || errText;
-        } catch(e) {}
-        console.error(`[Supabase Storage Error] Message: ${errMsg}`);
-        throw new Error(errMsg);
+    // 1. Try Supabase storage bucket first
+    try {
+        const response = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                'apikey': key,
+                'Authorization': `Bearer ${key}`,
+                'Content-Type': file.type
+            },
+            body: file
+        });
+        
+        if (response.ok) {
+            const publicUrl = `${url}/storage/v1/object/public/ece-assets/${uploadPath}`;
+            console.log(`[Supabase Storage Success] Upload Result: ${publicUrl}`);
+            return publicUrl;
+        }
+    } catch (e) {
+        console.warn('Direct bucket upload failed:', e);
     }
     
-    const publicUrl = `${url}/storage/v1/object/public/ece-assets/${uploadPath}`;
-    console.log(`[Supabase Storage Success] Upload Result: ${publicUrl}`);
-    return publicUrl;
+    // 2. Fallback: If image, compress into optimized Base64 data URL
+    if (file.type && file.type.startsWith('image/')) {
+        console.log('Bucket unavailable: compressing image locally into optimized Data URL...');
+        return await compressImageToDataUrl(file);
+    }
+    
+    // 3. Fallback for documents under 3MB
+    return new Promise((resolve, reject) => {
+        if (file.size > 3 * 1024 * 1024) {
+            return reject(new Error('File exceeds 3MB limit for offline storage. Please provide an external link.'));
+        }
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Failed to read file into data URL'));
+        reader.readAsDataURL(file);
+    });
 }
 
 async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, previewImgId, previewInitialsId) {
@@ -885,7 +934,7 @@ async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, preview
         return;
     }
 
-    showNotification('Uploading profile photo to Supabase storage...');
+    showNotification('Processing profile photo...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
         
@@ -906,9 +955,10 @@ async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, preview
             docImg.style.display = 'block';
             docEmoji.style.display = 'none';
         }
-        showNotification('Profile photo uploaded and saved successfully!');
+        showNotification('Profile photo loaded and saved successfully!');
     } catch (err) {
-        alert(`Failed to upload profile photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
+        console.error('Photo upload error:', err);
+        alert(`Failed to load photo: ${err.message || err}`);
         showNotification('Upload failed.');
     }
 }
@@ -1004,6 +1054,9 @@ function publishCmsChanges() {
 
     // 4. Reconstruct Student Coordinator details
     reconstructCoordinatorsCmsDom();
+
+    // 4b. Reconstruct Club Activity Rounds details
+    reconstructActivityRoundsCmsDom();
 
     // 5. Update Supabase variables in memory and localStorage
     const supaUrl = document.getElementById('field-supabase-url').value.trim();
@@ -1308,9 +1361,12 @@ function fetchFromFirestore(keyName) {
     const projectId = localStorage.getItem('vsb_ece_firebase_project_id') || 'department-of-ece-2b5d7';
     const apiKey = localStorage.getItem('vsb_ece_firebase_api_key') || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s';
     let url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/vsb_ece_state/${keyName}`;
-    if (apiKey) url += `?key=${apiKey}`;
+    const params = [];
+    if (apiKey) params.push(`key=${apiKey}`);
+    params.push(`_t=${Date.now()}`);
+    url += '?' + params.join('&');
 
-    return fetch(url)
+    return fetch(url, { cache: 'no-store' })
         .then(res => {
             if (!res.ok) throw new Error('Firestore read error');
             return res.json();
@@ -1784,17 +1840,37 @@ function reconstructActivityRoundsCmsDom() {
     const container = indexDoc.getElementById('club-rounds-container');
     if (!container) return;
     
-    const r1Title = document.getElementById('round-1-title').value.trim();
-    const r1Url = document.getElementById('round-1-url').value.trim();
-    const r2Title = document.getElementById('round-2-title').value.trim();
-    const r2Url = document.getElementById('round-2-url').value.trim();
-    const r3Title = document.getElementById('round-3-title').value.trim();
-    const r3Url = document.getElementById('round-3-url').value.trim();
+    const r1El = document.getElementById('round-1-title');
+    const u1El = document.getElementById('round-1-url');
+    const r2El = document.getElementById('round-2-title');
+    const u2El = document.getElementById('round-2-url');
+    const r3El = document.getElementById('round-3-title');
+    const u3El = document.getElementById('round-3-url');
+
+    const items = container.querySelectorAll('.activity-round-item');
+    const r1Title = (r1El && r1El.value.trim()) || (items[0] ? items[0].getAttribute('data-title') : '') || 'Round 1-Crossword puzzle';
+    const r1Url = (u1El && u1El.value.trim()) || (items[0] ? items[0].getAttribute('data-url') : '') || 'https://electroplay-quiz.vercel.app/';
+    const r2Title = (r2El && r2El.value.trim()) || (items[1] ? items[1].getAttribute('data-title') : '') || 'Round 2-Instruction Following';
+    const r2Url = (u2El && u2El.value.trim()) || (items[1] ? items[1].getAttribute('data-url') : '') || 'https://clue-matrix.vercel.app/';
+    const r3Title = (r3El && r3El.value.trim()) || (items[2] ? items[2].getAttribute('data-title') : '') || 'Round 3-Hardware Hunt';
+    const r3Url = (u3El && u3El.value.trim()) || (items[2] ? items[2].getAttribute('data-url') : '') || 'https://wokwi.com/projects/473662526707899393';
     
     container.innerHTML = `
-        <div class="activity-round-item" data-title="${r1Title}" data-type="link" data-url="${r1Url}" data-locked="false"></div>
-        <div class="activity-round-item" data-title="${r2Title}" data-type="link" data-url="${r2Url}" data-locked="false"></div>
-        <div class="activity-round-item" data-title="${r3Title}" data-type="link" data-url="${r3Url}" data-locked="false"></div>
+        <div class="activity-round-item" data-title="${r1Title}" data-type="link" data-url="${r1Url}" data-locked="false">
+            <div class="challenge-title"></div>
+            <div class="challenge-desc"></div>
+            <pre class="challenge-code"></pre>
+        </div>
+        <div class="activity-round-item" data-title="${r2Title}" data-type="link" data-url="${r2Url}" data-locked="false">
+            <div class="challenge-title"></div>
+            <div class="challenge-desc"></div>
+            <pre class="challenge-code"></pre>
+        </div>
+        <div class="activity-round-item" data-title="${r3Title}" data-type="link" data-url="${r3Url}" data-locked="false">
+            <div class="challenge-title"></div>
+            <div class="challenge-desc"></div>
+            <pre class="challenge-code"></pre>
+        </div>
     `;
 }
 
