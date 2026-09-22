@@ -1207,8 +1207,8 @@ function saveToFirestore(keyName, valueData) {
     }).then(res => res.ok);
 }
 
-// === 12. Supabase Integration Logic ===
-function loadFromSupabase() {
+// === 12. Dual Cloud Integration Logic (Firebase Firestore & Supabase) ===
+function loadFromCloud() {
     // Restore Supabase credentials from local storage persistent cache
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
@@ -1225,84 +1225,115 @@ function loadFromSupabase() {
         document.getElementById('admin-supabase-key').setAttribute('value', key);
     }
 
-    if (!url || !key) {
-        console.info('Supabase cloud parameters are not configured yet. Running in offline/file sync mode.');
-        return;
-    }
-
-    const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
-
-    fetch(selectUrl, {
-        method: 'GET',
-        headers: {
-            'apikey': key.trim(),
-            'Authorization': `Bearer ${key.trim()}`,
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-        }
-    })
-    .then(res => {
-        if (!res.ok) throw new Error('Network error loading data');
-        return res.json();
-    })
-    .then(data => {
-        if (data && data.length > 0) {
-            applyFetchedState(data[0].value);
-            console.log('Successfully synced live web changes from Supabase Cloud!');
-        }
-        
-        // Also fetch club activity portal status to disable button locally if disabled
-        const clubStatusUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
-        return fetch(clubStatusUrl, {
-            method: 'GET',
-            headers: {
-                'apikey': key.trim(),
-                'Authorization': `Bearer ${key.trim()}`,
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
+    const handleClubStatus = (isEnabled) => {
+        const btn = document.getElementById('btn-club-activity-portal');
+        if (btn) {
+            if (!isEnabled) {
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.innerText = 'Activities Locked';
+            } else {
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.innerText = 'Activity';
             }
-        });
-    })
-    .then(res => {
-        if (res && res.ok) return res.json();
-        return null;
-    })
-    .then(data => {
-        if (data && data.length > 0) {
-            const val = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
-            const isEnabled = val.enabled !== false;
-            const btn = document.getElementById('btn-club-activity-portal');
-            if (btn) {
-                if (!isEnabled) {
-                    btn.style.opacity = '0.5';
-                    btn.style.cursor = 'not-allowed';
-                    btn.innerText = 'Activities Locked';
-                } else {
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                    btn.innerText = 'Activity';
+        }
+    };
+
+    const handleRoundsAutoScroll = () => {
+        if (sessionStorage.getItem('active_club_view') === 'rounds') {
+            setTimeout(() => {
+                if (typeof openClubActivityPortal === 'function') {
+                    openClubActivityPortal(true);
                 }
+            }, 100);
+        }
+    };
+
+    // 1. Primary: Fetch live state from Firebase Firestore
+    fetchFromFirestore('site_data')
+        .then(state => {
+            if (state && (state.edits || state.postersHtml || state.downloadsHtml)) {
+                applyFetchedState(state);
+                console.log('✅ Successfully synced live web changes from Firebase Firestore Cloud!');
+                
+                // Fetch club activity status from Firestore
+                fetchFromFirestore('club_activity_status')
+                    .then(val => {
+                        const isEnabled = val && typeof val === 'object' ? val.enabled !== false : true;
+                        handleClubStatus(isEnabled);
+                    })
+                    .catch(() => {});
+
+                handleRoundsAutoScroll();
+                return;
             }
-        }
-        
-        if (sessionStorage.getItem('active_club_view') === 'rounds') {
-            setTimeout(() => {
-                openClubActivityPortal(true);
-            }, 100);
-        }
-    })
-    .catch(err => {
-        console.warn('Could not pull updates from Supabase database. Clearing any stale localStorage credentials to self-heal:', err);
-        if (localStorage.getItem('vsb_ece_supabase_url') || localStorage.getItem('vsb_ece_supabase_key')) {
-            localStorage.removeItem('vsb_ece_supabase_url');
-            localStorage.removeItem('vsb_ece_supabase_key');
-        }
-        if (sessionStorage.getItem('active_club_view') === 'rounds') {
-            setTimeout(() => {
-                openClubActivityPortal(true);
-            }, 100);
-        }
-    });
+            throw new Error('Firestore state is empty or incomplete, trying Supabase fallback');
+        })
+        .catch(fsErr => {
+            console.warn('Firestore load attempt note/fallback:', fsErr.message || fsErr);
+
+            // 2. Fallback: Query Supabase REST endpoint
+            if (!url || !key) {
+                console.info('Cloud parameters not configured. Running in offline/file mode.');
+                handleRoundsAutoScroll();
+                return;
+            }
+
+            const selectUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
+
+            fetch(selectUrl, {
+                method: 'GET',
+                headers: {
+                    'apikey': key.trim(),
+                    'Authorization': `Bearer ${key.trim()}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Network error loading data from Supabase');
+                return res.json();
+            })
+            .then(data => {
+                if (data && data.length > 0 && data[0].value) {
+                    applyFetchedState(data[0].value);
+                    console.log('✅ Successfully synced live web changes from Supabase Cloud fallback!');
+                }
+                
+                // Fetch club status from Supabase
+                const clubStatusUrl = `${url.trim()}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
+                return fetch(clubStatusUrl, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': key.trim(),
+                        'Authorization': `Bearer ${key.trim()}`,
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+            })
+            .then(res => res && res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.length > 0) {
+                    const val = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+                    handleClubStatus(val.enabled !== false);
+                }
+                handleRoundsAutoScroll();
+            })
+            .catch(err => {
+                console.warn('Could not pull updates from cloud database. Self-healing credentials:', err);
+                if (localStorage.getItem('vsb_ece_supabase_url') || localStorage.getItem('vsb_ece_supabase_key')) {
+                    localStorage.removeItem('vsb_ece_supabase_url');
+                    localStorage.removeItem('vsb_ece_supabase_key');
+                }
+                handleRoundsAutoScroll();
+            });
+        });
+}
+
+function loadFromSupabase() {
+    loadFromCloud();
 }
 
 // Push state to Supabase & Firestore
@@ -3638,38 +3669,8 @@ document.addEventListener('click', (e) => {
 
 function openClubActivityPortal(isAutoScroll = false) {
     sessionStorage.setItem('active_club_view', 'rounds');
-    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
-    
-    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
-    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
-    
-    fetch(getUrl, {
-        method: 'GET',
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        let isEnabled = true;
-        if (data && data.length > 0) {
-            const val = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
-            isEnabled = val.enabled !== false;
-        }
-        
-        if (!isEnabled) {
-            showNotification('Admin locked the activities', 'error');
-            alert('Admin locked the activities');
-            return;
-        }
-        
-        // Proceed to render rounds
+
+    const renderRoundsUI = () => {
         const mainView = document.getElementById('club-main-view');
         const roundsView = document.getElementById('club-rounds-view');
         const container = document.getElementById('club-rounds-list-container');
@@ -3727,71 +3728,55 @@ function openClubActivityPortal(isAutoScroll = false) {
             
             document.getElementById('events').scrollIntoView({ behavior: isAutoScroll ? 'auto' : 'smooth' });
         }
-    })
-    .catch(err => {
-        console.warn('Error fetching club activity portal lock status. Clearing localStorage credentials and running in offline fallback:', err);
-        if (localStorage.getItem('vsb_ece_supabase_url') || localStorage.getItem('vsb_ece_supabase_key')) {
-            localStorage.removeItem('vsb_ece_supabase_url');
-            localStorage.removeItem('vsb_ece_supabase_key');
-        }
-        
-        // Proceed to render rounds anyway using fallback
-        const mainView = document.getElementById('club-main-view');
-        const roundsView = document.getElementById('club-rounds-view');
-        const container = document.getElementById('club-rounds-list-container');
-        
-        if (mainView && roundsView && container) {
-            container.innerHTML = '';
-            const hiddenRounds = document.querySelectorAll('#club-rounds-container .activity-round-item');
-            if (hiddenRounds.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No active rounds configured by Admin yet.</div>`;
-            } else {
-                hiddenRounds.forEach((round, index) => {
-                    const title = round.getAttribute('data-title') || `Round ${index + 1}`;
-                    const type = round.getAttribute('data-type') || 'link';
-                    const linkUrl = round.getAttribute('data-url') || '';
-                    const isLocked = round.getAttribute('data-locked') === 'true';
-                    
-                    const roundCard = document.createElement('div');
-                    roundCard.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; box-sizing: border-box; transition: transform 0.2s ease, border-color 0.2s ease;';
-                    
-                    roundCard.onmouseover = () => {
-                        roundCard.style.borderColor = 'var(--accent-cyan)';
-                        roundCard.style.transform = 'translateY(-2px)';
-                    };
-                    roundCard.onmouseout = () => {
-                        roundCard.style.borderColor = 'rgba(255,255,255,0.06)';
-                        roundCard.style.transform = 'none';
-                    };
+    };
 
-                    let buttonHtml = '';
-                    if (isLocked) {
-                        buttonHtml = `<button class="event-reg-link" style="margin: 0; padding: 0.5rem 1.2rem; opacity: 0.5; cursor: not-allowed; border-color: #ef4444; color: #ef4444 !important; font-size: 0.85rem;" disabled>Locked 🔒</button>`;
-                    } else {
-                        buttonHtml = `<a href="${linkUrl}" target="_blank" class="event-reg-link" data-round-title="${title}" style="margin: 0; padding: 0.5rem 1.2rem; font-size: 0.85rem; font-weight: bold; background: var(--accent-cyan); color: var(--bg-dark) !important; border: none; border-radius: 30px; text-decoration: none;">Start Round</a>`;
-                    }
-
-                    roundCard.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="font-size: 1.5rem;">🎮</div>
-                            <div>
-                                <h4 style="margin: 0; color: #fff; font-family: 'Outfit'; font-size: 1.05rem;">${title}</h4>
-                                <p style="margin: 0.2rem 0 0 0; color: var(--text-secondary); font-size: 0.75rem;">Status: ${isLocked ? 'Locked' : 'Available'}</p>
-                            </div>
-                        </div>
-                        <div>
-                            ${buttonHtml}
-                        </div>
-                    `;
-                    container.appendChild(roundCard);
-                });
+    // 1. Try Firestore first
+    fetchFromFirestore('club_activity_status')
+        .then(val => {
+            const isEnabled = val && typeof val === 'object' ? val.enabled !== false : true;
+            if (!isEnabled) {
+                showNotification('Admin locked the activities', 'error');
+                alert('Admin locked the activities');
+                return;
             }
+            renderRoundsUI();
+        })
+        .catch(() => {
+            // 2. Fallback to Supabase
+            const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+            const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+            const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+            const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+            const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
 
-            mainView.style.display = 'none';
-            roundsView.style.display = 'block';
-            document.getElementById('events').scrollIntoView({ behavior: isAutoScroll ? 'auto' : 'smooth' });
-        }
-    });
+            fetch(getUrl, {
+                method: 'GET',
+                headers: {
+                    'apikey': key,
+                    'Authorization': `Bearer ${key}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                let isEnabled = true;
+                if (data && data.length > 0) {
+                    const val = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+                    isEnabled = val.enabled !== false;
+                }
+                if (!isEnabled) {
+                    showNotification('Admin locked the activities', 'error');
+                    alert('Admin locked the activities');
+                    return;
+                }
+                renderRoundsUI();
+            })
+            .catch(() => {
+                // Offline fallback
+                renderRoundsUI();
+            });
+        });
 }
 
 function closeClubActivityPortal() {

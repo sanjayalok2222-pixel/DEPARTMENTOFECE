@@ -1213,9 +1213,28 @@
 
             <!-- Tab PANEL 8: Database & System Configurations -->
             <div id="panel-system" class="workspace-panel">
-                <div class="card">
-                    <h3>⚡ Supabase Live Database Configuration</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure live REST endpoints for Supabase. Once configured, edits published will update both index.html locally AND sync database rows globally for online user reloads.</p>
+                <div class="card" style="border-left: 4px solid #f59e0b;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h3 style="margin: 0;">🔥 Firebase Firestore Cloud Configuration (Active)</h3>
+                        <span id="badge-firebase-status" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 20px;">Connected</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure live Google Cloud Firestore REST endpoints. Dynamic items (coordinators, event flyers, download documents, and rounds) synchronize globally across student browsers in real time.</p>
+                    <div class="form-group">
+                        <label for="field-firebase-project-id">Firebase Project ID</label>
+                        <input type="text" id="field-firebase-project-id" class="form-control" value="department-of-ece-2b5d7">
+                    </div>
+                    <div class="form-group">
+                        <label for="field-firebase-api-key">Firebase Web API Key</label>
+                        <input type="password" id="field-firebase-api-key" class="form-control" value="AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s">
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h3 style="margin: 0;">⚡ Supabase Cloud Database Configuration (Mirror)</h3>
+                        <span id="badge-supabase-status" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 20px;">Connected</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure live REST endpoints for Supabase. Edits published will synchronize to Supabase as an active dual-cloud backup mirror.</p>
                     <div class="form-group">
                         <label for="field-supabase-url">Supabase Rest URL API Endpoint</label>
                         <input type="text" id="field-supabase-url" class="form-control" placeholder="e.g. https://xyz.supabase.co">
@@ -1228,8 +1247,10 @@
 
                 <div class="card">
                     <h3>⚙️ System Operations</h3>
-                    <div style="display: flex; gap: 1rem;">
-                        <button class="btn-clear-photo" style="width: auto;" onclick="resetLocalStorageConfig()">🗑️ Reset Database Config cache</button>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                        <button type="button" class="btn-preview" onclick="testCloudConnections()">⚡ Test Both Cloud Connections</button>
+                        <button type="button" class="btn-clear-photo" style="width: auto;" onclick="resetLocalStorageConfig()">🗑️ Reset Database Config cache</button>
+                        <span id="cloud-test-status" style="font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan);"></span>
                     </div>
                 </div>
             </div>

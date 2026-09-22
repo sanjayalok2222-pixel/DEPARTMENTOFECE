@@ -60,6 +60,11 @@ function populateSupaFields() {
     
     if (fieldUrl) fieldUrl.value = globalSupaUrl;
     if (fieldKey) fieldKey.value = globalSupaKey;
+
+    const fbProj = document.getElementById('field-firebase-project-id');
+    const fbKey = document.getElementById('field-firebase-api-key');
+    if (fbProj) fbProj.value = localStorage.getItem('vsb_ece_firebase_project_id') || 'department-of-ece-2b5d7';
+    if (fbKey) fbKey.value = localStorage.getItem('vsb_ece_firebase_api_key') || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s';
 }
 
 
@@ -212,53 +217,54 @@ function loadIndexHtmlDocument() {
 }
 
 function pullStateFromSupabaseAndPopulate(delay = 400) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (!globalSupaUrl || !globalSupaKey) {
-                populateCmsForms();
-                resolve();
-                return;
+    return new Promise((resolve) => {
+        setTimeout(async () => {
+            let loaded = false;
+
+            // 1. Try Firebase Firestore Cloud first
+            try {
+                const fsState = await fetchFromFirestore('site_data');
+                if (fsState && (fsState.edits || fsState.postersHtml || fsState.downloadsHtml)) {
+                    applyStateToCmsDoc(fsState);
+                    showNotification('Merged live content from Firebase Firestore cloud!');
+                    console.log('✅ Successfully pulled CMS state from Firebase Firestore Cloud!');
+                    loaded = true;
+                }
+            } catch (fsErr) {
+                console.warn('Firestore CMS pull note/fallback:', fsErr.message || fsErr);
             }
 
-            const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
-            console.log(`[Supabase GET] URL: ${globalSupaUrl.trim()}, Table: vsb_ece_state, Type: GET`);
-            fetch(selectUrl, {
-                method: 'GET',
-                headers: {
-                    'apikey': globalSupaKey.trim(),
-                    'Authorization': `Bearer ${globalSupaKey.trim()}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
+            // 2. Fallback to Supabase Cloud if Firestore was empty or failed
+            if (!loaded && globalSupaUrl && globalSupaKey) {
+                try {
+                    const selectUrl = `${globalSupaUrl.trim()}/rest/v1/vsb_ece_state?key=eq.site_data`;
+                    console.log(`[Supabase GET] URL: ${globalSupaUrl.trim()}, Table: vsb_ece_state, Type: GET`);
+                    const res = await fetch(selectUrl, {
+                        method: 'GET',
+                        headers: {
+                            'apikey': globalSupaKey.trim(),
+                            'Authorization': `Bearer ${globalSupaKey.trim()}`,
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.length > 0 && data[0].value) {
+                            applyStateToCmsDoc(data[0].value);
+                            showNotification('Merged live content from Supabase cloud database!');
+                            console.log('✅ Successfully pulled CMS state from Supabase Cloud fallback!');
+                            loaded = true;
+                        }
+                    }
+                } catch (supaErr) {
+                    console.warn('Supabase CMS pull note:', supaErr.message || supaErr);
                 }
-            })
-            .then(async res => {
-                console.log(`[Supabase GET Response] HTTP Status: ${res.status}`);
-                if (!res.ok) {
-                    const errText = await res.text();
-                    let errMsg = errText;
-                    try {
-                        const errJson = JSON.parse(errText);
-                        errMsg = errJson.message || errText;
-                    } catch(e) {}
-                    console.error(`[Supabase GET Error] Message: ${errMsg}`);
-                    throw new Error(errMsg);
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (data && data.length > 0) {
-                    const state = data[0].value;
-                    applyStateToCmsDoc(state);
-                    showNotification('Merged live content from Supabase cloud database!');
-                }
-                populateCmsForms();
-                resolve();
-            })
-            .catch(err => {
-                console.warn('Could not sync live updates on load. Using base HTML data:', err.message || err);
-                populateCmsForms();
-                reject(err);
-            });
+            }
+
+            // 3. Populate Form fields with updated background DOM elements
+            populateCmsForms();
+            resolve();
         }, delay);
     });
 }
@@ -1009,6 +1015,11 @@ function publishCmsChanges() {
     localStorage.setItem('vsb_ece_supabase_url', supaUrl);
     localStorage.setItem('vsb_ece_supabase_key', supaKey);
 
+    const fbProj = document.getElementById('field-firebase-project-id') ? document.getElementById('field-firebase-project-id').value.trim() : '';
+    const fbKey = document.getElementById('field-firebase-api-key') ? document.getElementById('field-firebase-api-key').value.trim() : '';
+    if (fbProj) localStorage.setItem('vsb_ece_firebase_project_id', fbProj);
+    if (fbKey) localStorage.setItem('vsb_ece_firebase_api_key', fbKey);
+
     // Secure: Strip keys from index.html body attributes to prevent exposing secrets in public repo
     indexDoc.body.setAttribute('data-supabase-url', '');
     indexDoc.body.setAttribute('data-supabase-key', '');
@@ -1025,7 +1036,12 @@ function publishCmsChanges() {
     const saveConfigPromise = fetch('/save-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ supabase_url: supaUrl, supabase_key: supaKey })
+        body: JSON.stringify({ 
+            supabase_url: supaUrl, 
+            supabase_key: supaKey,
+            firebase_project_id: fbProj || 'department-of-ece-2b5d7',
+            firebase_api_key: fbKey || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s'
+        })
     }).catch(err => console.warn('Could not save credentials to local config.json file.'));
 
     // 9. Make HTTP POST request to Python Local CMS Server (Saves to index.html disk)
@@ -1037,15 +1053,19 @@ function publishCmsChanges() {
         console.warn('Local CMS Python server is offline. Publishing updates directly to Supabase cloud database.');
     });
 
-    // 10. Upsert state JSON to Supabase Cloud REST endpoint
+    // 10. Upsert state JSON to Firebase & Supabase Cloud endpoints
     const cloudPublishPromise = saveCmsToSupabase(supaUrl, supaKey, stateObj);
 
     Promise.all([saveConfigPromise, localPublishPromise, cloudPublishPromise])
-    .then(([configRes, htmlRes, supaRes]) => {
+    .then(([configRes, htmlRes, cloudRes]) => {
         return pullStateFromSupabaseAndPopulate(0).then(() => {
             let msg = 'Website CMS updates saved successfully!';
-            if (supaRes) {
-                msg += ' Supabase live cloud database updated, verified and synchronized!';
+            if (cloudRes && cloudRes.fsOk && cloudRes.supaOk) {
+                msg += '\n🔥 Synced to Firebase Firestore & ⚡ Supabase cloud databases!';
+            } else if (cloudRes && cloudRes.fsOk) {
+                msg += '\n🔥 Synced to Firebase Firestore cloud database!';
+            } else if (cloudRes && cloudRes.supaOk) {
+                msg += '\n⚡ Synced to Supabase cloud database!';
             }
             alert(msg);
         });
@@ -1323,41 +1343,107 @@ function saveToFirestore(keyName, valueData) {
     }).then(res => res.ok);
 }
 
-// Save CMS State JSON to Supabase & Firestore
+// Save CMS State JSON to both Firebase Firestore & Supabase
 function saveCmsToSupabase(url, key, state) {
-    // Sync to Firestore Cloud
-    saveToFirestore('site_data', state).catch(e => console.warn('Firestore CMS sync note:', e));
-
-    if (!url || !key) return Promise.resolve(null);
-    
-    const upsertUrl = `${url.trim()}/rest/v1/vsb_ece_state`;
-    console.log(`[Supabase POST] URL: ${url.trim()}, Table: vsb_ece_state, Type: POST (UPSERT)`);
-    return fetch(upsertUrl, {
-        method: 'POST',
-        headers: {
-            'apikey': key.trim(),
-            'Authorization': `Bearer ${key.trim()}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
-        },
-        body: JSON.stringify({
-            key: 'site_data',
-            value: state
+    // 1. Sync to Firebase Firestore Cloud
+    const firestorePromise = saveToFirestore('site_data', state)
+        .then(ok => {
+            console.log('✅ Firebase Firestore save success:', ok);
+            return !!ok;
         })
-    }).then(async res => {
-        console.log(`[Supabase POST Response] HTTP Status: ${res.status}`);
-        if (!res.ok) {
-            const errText = await res.text();
-            let errMsg = errText;
-            try {
-                const errJson = JSON.parse(errText);
-                errMsg = errJson.message || errText;
-            } catch(e) {}
-            console.error(`[Supabase POST Error] Message: ${errMsg}`);
-            throw new Error(errMsg);
+        .catch(e => {
+            console.warn('Firestore CMS sync error:', e);
+            return false;
+        });
+
+    // 2. Sync to Supabase Cloud
+    let supabasePromise = Promise.resolve(false);
+    if (url && key) {
+        const upsertUrl = `${url.trim()}/rest/v1/vsb_ece_state`;
+        console.log(`[Supabase POST] URL: ${url.trim()}, Table: vsb_ece_state, Type: POST (UPSERT)`);
+        supabasePromise = fetch(upsertUrl, {
+            method: 'POST',
+            headers: {
+                'apikey': key.trim(),
+                'Authorization': `Bearer ${key.trim()}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify({
+                key: 'site_data',
+                value: state
+            })
+        }).then(res => {
+            console.log(`[Supabase POST Response] HTTP Status: ${res.status}`);
+            return res.ok;
+        }).catch(e => {
+            console.warn('Supabase CMS sync error:', e);
+            return false;
+        });
+    }
+
+    return Promise.allSettled([firestorePromise, supabasePromise]).then(results => {
+        const fsOk = results[0].status === 'fulfilled' && results[0].value;
+        const supaOk = results[1].status === 'fulfilled' && results[1].value;
+        if (!fsOk && !supaOk) {
+            throw new Error('Both Firebase Firestore and Supabase failed to save cloud data. Check your network or credentials.');
         }
-        return res;
+        return { fsOk, supaOk };
     });
+}
+
+// Test both cloud database connections
+async function testCloudConnections() {
+    const statusEl = document.getElementById('cloud-test-status');
+    if (statusEl) statusEl.textContent = 'Testing cloud connections...';
+
+    let fsStatus = false;
+    let supaStatus = false;
+
+    // Test Firestore
+    try {
+        const fsData = await fetchFromFirestore('site_data');
+        fsStatus = !!fsData;
+    } catch (e) {
+        fsStatus = false;
+    }
+
+    // Test Supabase
+    const supaUrl = document.getElementById('field-supabase-url') ? document.getElementById('field-supabase-url').value.trim() : globalSupaUrl;
+    const supaKey = document.getElementById('field-supabase-key') ? document.getElementById('field-supabase-key').value.trim() : globalSupaKey;
+    if (supaUrl && supaKey) {
+        try {
+            const res = await fetch(`${supaUrl}/rest/v1/vsb_ece_state?key=eq.site_data`, {
+                headers: { 'apikey': supaKey, 'Authorization': `Bearer ${supaKey}` }
+            });
+            supaStatus = res.ok;
+        } catch (e) {
+            supaStatus = false;
+        }
+    }
+
+    const fsBadge = document.getElementById('badge-firebase-status');
+    if (fsBadge) {
+        fsBadge.textContent = fsStatus ? 'Connected' : 'Error / Unreachable';
+        fsBadge.style.color = fsStatus ? '#10b981' : '#ef4444';
+        fsBadge.style.borderColor = fsStatus ? '#10b981' : '#ef4444';
+    }
+
+    const supaBadge = document.getElementById('badge-supabase-status');
+    if (supaBadge) {
+        supaBadge.textContent = supaStatus ? 'Connected' : 'Error / Unreachable';
+        supaBadge.style.color = supaStatus ? '#10b981' : '#ef4444';
+        supaBadge.style.borderColor = supaStatus ? '#10b981' : '#ef4444';
+    }
+
+    if (statusEl) {
+        let msg = '';
+        if (fsStatus && supaStatus) msg = '✅ Both Firebase Firestore & Supabase are ONLINE and connected!';
+        else if (fsStatus) msg = '🔥 Firebase Firestore is ONLINE! (Supabase offline)';
+        else if (supaStatus) msg = '⚡ Supabase is ONLINE! (Firebase offline)';
+        else msg = '❌ Both cloud connections failed.';
+        statusEl.textContent = msg;
+    }
 }
 
 
@@ -2175,38 +2261,51 @@ function toggleMcqLock(year) {
 let currentRegisterLock = { isLocked: false };
 
 function fetchRegisterLockInDashboard() {
-    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
-    
-    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
-    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
-    
-    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (register_lock), Type: GET`);
-    fetch(getUrl, {
-        method: 'GET',
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data && data.length > 0) {
-            try {
-                currentRegisterLock = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
-            } catch (e) {
-                currentRegisterLock = data[0].value || currentRegisterLock;
+    // 1. Query Firestore first
+    fetchFromFirestore('register_lock')
+        .then(val => {
+            if (val !== null && val !== undefined) {
+                currentRegisterLock = typeof val === 'string' ? JSON.parse(val) : val;
+                updateRegisterLockLabels();
+            } else {
+                throw new Error('No firestore lock found');
             }
-        }
-        updateRegisterLockLabels();
-    })
-    .catch(err => {
-        console.error("Error fetching register lock:", err);
-    });
+        })
+        .catch(() => {
+            // 2. Fallback to Supabase
+            const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+            const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+            
+            const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+            const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+            
+            const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.register_lock`;
+            
+            console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (register_lock), Type: GET`);
+            fetch(getUrl, {
+                method: 'GET',
+                headers: {
+                    'apikey': key,
+                    'Authorization': `Bearer ${key}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    try {
+                        currentRegisterLock = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+                    } catch (e) {
+                        currentRegisterLock = data[0].value || currentRegisterLock;
+                    }
+                }
+                updateRegisterLockLabels();
+            })
+            .catch(err => {
+                console.error("Error fetching register lock:", err);
+            });
+        });
 }
 
 function updateRegisterLockLabels() {
@@ -2233,7 +2332,10 @@ function updateRegisterLockLabels() {
 function toggleRegisterLock() {
     currentRegisterLock.isLocked = !currentRegisterLock.isLocked;
     
-    // Save to Supabase
+    // 1. Save to Firestore
+    saveToFirestore('register_lock', currentRegisterLock).catch(e => console.warn('Firestore register_lock save error:', e));
+
+    // 2. Save to Supabase
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
     
@@ -2255,15 +2357,10 @@ function toggleRegisterLock() {
             value: currentRegisterLock
         })
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Failed to toggle register lock");
+    .finally(() => {
         const action = currentRegisterLock.isLocked ? 'LOCKED' : 'UNLOCKED';
         alert(`Successfully ${action} the Event Registration portal!`);
         updateRegisterLockLabels();
-    })
-    .catch(err => {
-        console.error("Error updating register lock:", err);
-        alert("Failed to toggle register lock state.");
     });
 }
 
@@ -2271,38 +2368,51 @@ function toggleRegisterLock() {
 let currentClubActivityStatus = { enabled: true };
 
 function fetchClubActivityStatus() {
-    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
-    
-    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
-    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
-    
-    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (club_activity_status), Type: GET`);
-    fetch(getUrl, {
-        method: 'GET',
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data && data.length > 0) {
-            try {
-                currentClubActivityStatus = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
-            } catch (e) {
-                currentClubActivityStatus = data[0].value || currentClubActivityStatus;
+    // 1. Query Firestore first
+    fetchFromFirestore('club_activity_status')
+        .then(val => {
+            if (val !== null && val !== undefined) {
+                currentClubActivityStatus = typeof val === 'string' ? JSON.parse(val) : val;
+                updateClubActivityStatusLabels();
+            } else {
+                throw new Error('No firestore club_activity_status found');
             }
-        }
-        updateClubActivityStatusLabels();
-    })
-    .catch(err => {
-        console.error("Error fetching club activity status:", err);
-    });
+        })
+        .catch(() => {
+            // 2. Fallback to Supabase
+            const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+            const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+            
+            const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+            const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+            
+            const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.club_activity_status`;
+            
+            console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (club_activity_status), Type: GET`);
+            fetch(getUrl, {
+                method: 'GET',
+                headers: {
+                    'apikey': key,
+                    'Authorization': `Bearer ${key}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    try {
+                        currentClubActivityStatus = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+                    } catch (e) {
+                        currentClubActivityStatus = data[0].value || currentClubActivityStatus;
+                    }
+                }
+                updateClubActivityStatusLabels();
+            })
+            .catch(err => {
+                console.error("Error fetching club activity status:", err);
+            });
+        });
 }
 
 function updateClubActivityStatusLabels() {
@@ -2329,7 +2439,10 @@ function updateClubActivityStatusLabels() {
 function toggleClubActivityPortalAccess() {
     currentClubActivityStatus.enabled = !currentClubActivityStatus.enabled;
     
-    // Save to Supabase
+    // 1. Save to Firestore
+    saveToFirestore('club_activity_status', currentClubActivityStatus).catch(e => console.warn('Firestore club_activity_status save error:', e));
+
+    // 2. Save to Supabase
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
     
@@ -2351,15 +2464,11 @@ function toggleClubActivityPortalAccess() {
             value: currentClubActivityStatus
         })
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Failed to toggle club activity status");
+    .finally(() => {
         const action = currentClubActivityStatus.enabled ? 'ENABLED' : 'DISABLED';
         alert(`Successfully ${action} the Club Activity portal!`);
         updateClubActivityStatusLabels();
-    })
-    .catch(err => {
-        console.error("Error updating club activity status:", err);
-        alert("Failed to toggle club activity status.");
     });
 }
+
 
