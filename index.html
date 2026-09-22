@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700;1,800&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@800;900&family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20260921_btn">
+    <link rel="stylesheet" href="style.css?v=20260922_ec_logo_px">
     <link rel="stylesheet" href="DepartmentECEHeading.css?v=20260921_v7">
 </head>
 <body data-supabase-url="" data-supabase-key="">
@@ -392,21 +392,21 @@
         <h2 class="section-title reveal-item">Club Activities</h2>
         
         <!-- Main Club Info View -->
-        <div class="events-container reveal-item" id="club-main-view" style="grid-template-columns: 1fr; max-width: 500px; margin: 0 auto;">
+        <div class="events-container reveal-item" id="club-main-view" style="grid-template-columns: 1fr; max-width: 350px; margin: 0 auto;">
             <!-- Club 1: Electronics Club Only -->
-            <div class="event-card tilt-card" style="text-align: center; align-items: center;">
+            <div class="event-card tilt-card" style="text-align: center; align-items: center; padding: 1.5rem 1.35rem; max-width: 350px;">
                 <div style="width: 100%;">
-                    <img src="assets/ece-logo.png" alt="Electronics Club Logo" class="club-official-logo">
-                    <h3 id="club-title-card">Electronics Club (EC Club)</h3>
-                    <p id="club-desc-card" style="margin-bottom: 2rem;">Official technical hub of ECE Department. Learn to design hardware circuits, test analog/digital components, manufacture custom PCBs, and participate in IoT project expos & Wokwi circuit simulation rounds.</p>
+                    <img src="assets/ec-club-logo.png" alt="Electronics Club Logo" class="club-official-logo" width="60" height="60" style="width: 60px !important; height: 60px !important; max-width: 60px !important; max-height: 60px !important; margin: 0 auto 0.75rem !important; display: block !important; object-fit: contain !important;">
+                    <h3 id="club-title-card" style="font-size: 1.1rem; margin-bottom: 0.5rem;">Electronics Club (EC Club)</h3>
+                    <p id="club-desc-card" style="font-size: 0.8rem; line-height: 1.5; margin-bottom: 1.25rem;">Official technical hub of ECE Department. Learn to design hardware circuits, test analog/digital components, manufacture custom PCBs, and participate in IoT project expos & Wokwi circuit simulation rounds.</p>
                 </div>
-                <button id="btn-club-activity-portal" class="btn-primary" style="width: 80%; cursor: pointer;" onclick="openClubActivityPortal()">Activity</button>
+                <button id="btn-club-activity-portal" class="btn-primary" style="width: auto; min-width: 140px; padding: 0.55rem 1.6rem; font-size: 0.8rem; cursor: pointer;" onclick="openClubActivityPortal()">Activity</button>
             </div>
         </div>
 
         <!-- Dynamic Rounds List View (Inside same page, hidden by default) -->
-        <div id="club-rounds-view" style="display: none; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s ease;">
-            <div class="event-card tilt-card" style="text-align: center; align-items: center; min-height: auto;">
+        <div id="club-rounds-view" style="display: none; max-width: 420px; margin: 0 auto; animation: fadeIn 0.4s ease;">
+            <div class="event-card tilt-card" style="text-align: center; align-items: center; min-height: auto; padding: 1.5rem 1.35rem;">
                 <button class="event-reg-link" onclick="closeClubActivityPortal()" style="margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important; font-family: 'Outfit'; font-weight: 700; cursor: pointer; border-radius: 30px;">
                     ← Back to Club
                 </button>
