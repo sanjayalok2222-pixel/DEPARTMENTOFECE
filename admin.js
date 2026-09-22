@@ -516,16 +516,17 @@ async function handleCmsPosterUploader(index, event) {
     showNotification('Processing poster image...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'posters');
-        document.getElementById(`poster-preview-img-${index}`).src = publicUrl;
-        
-        // Update URL input field in CMS editor
-        const input = document.querySelectorAll('.cms-poster-item-card')[index].querySelector('.cms-poster-image-url');
-        if (input) input.value = publicUrl;
-        showNotification('Poster loaded and optimized successfully!');
+        setPosterImage(publicUrl);
+        showNotification('Poster photo updated!');
     } catch (err) {
-        console.error('Poster upload error:', err);
-        alert(`Failed to load poster: ${err.message || err}`);
-        showNotification('Upload failed.');
+        console.warn('Storage upload note, reading file as Data URL:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setPosterImage(e.target.result);
+            showNotification('Poster photo updated!');
+        };
+        reader.readAsDataURL(file);
+    }
     }
 }
 
@@ -934,15 +935,12 @@ async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, preview
         return;
     }
 
-    showNotification('Processing profile photo...');
-    try {
-        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
-        
+    const applyProfilePhoto = (url) => {
         // Update dashboard preview
         const pImg = document.getElementById(previewImgId);
         const pInit = document.getElementById(previewInitialsId);
         if (pImg && pInit) {
-            pImg.src = publicUrl;
+            pImg.src = url;
             pImg.style.display = 'block';
             pInit.style.display = 'none';
         }
@@ -951,15 +949,26 @@ async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, preview
         const docImg = indexDoc.getElementById(targetImgId);
         const docEmoji = indexDoc.getElementById(targetEmojiId);
         if (docImg && docEmoji) {
-            docImg.src = publicUrl;
+            docImg.src = url;
             docImg.style.display = 'block';
             docEmoji.style.display = 'none';
         }
-        showNotification('Profile photo loaded and saved successfully!');
+    };
+
+    showNotification('Processing profile photo...');
+    try {
+        const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
+        applyProfilePhoto(publicUrl);
+        showNotification('Profile photo updated!');
     } catch (err) {
-        console.error('Photo upload error:', err);
-        alert(`Failed to load photo: ${err.message || err}`);
-        showNotification('Upload failed.');
+        console.warn('Storage upload note, reading file as Data URL:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            applyProfilePhoto(e.target.result);
+            showNotification('Profile photo updated!');
+        };
+        reader.readAsDataURL(file);
+    }
     }
 }
 

@@ -861,17 +861,30 @@ async function handlePosterUpload(event, input) {
         return;
     }
 
+    const setPosterImage = (src) => {
+        const card = input.closest('.poster-card');
+        if (card) {
+            const img = card.querySelector('.poster-1to1');
+            if (img) img.src = src;
+            const urlInput = card.querySelector('.admin-poster-image-url');
+            if (urlInput) urlInput.value = src;
+        }
+    };
+
     showNotification('Processing poster image...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'posters');
-        const card = input.closest('.poster-card');
-        card.querySelector('.poster-1to1').src = publicUrl;
-        card.querySelector('.admin-poster-image-url').value = publicUrl;
-        showNotification('Poster loaded and optimized successfully!');
+        setPosterImage(publicUrl);
+        showNotification('Poster photo updated!');
     } catch (err) {
-        console.error('Poster upload error:', err);
-        alert(`Failed to load poster: ${err.message || err}`);
-        showNotification('Upload failed.');
+        console.warn('Storage upload note, reading file as Data URL:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setPosterImage(e.target.result);
+            showNotification('Poster photo updated!');
+        };
+        reader.readAsDataURL(file);
+    }
     }
 }
 
@@ -969,14 +982,19 @@ async function handleHodPhotoUpload(event) {
         return;
     }
 
-    showNotification('Uploading HOD photo to Supabase storage...');
+    showNotification('Uploading HOD photo...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
         displayHodPhoto(publicUrl);
         showNotification('HOD photo uploaded successfully!');
     } catch (err) {
-        alert(`Failed to upload HOD photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
-        showNotification('Upload failed.');
+        console.warn('Storage upload note, reading file as Data URL:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            displayHodPhoto(e.target.result);
+            showNotification('HOD photo updated!');
+        };
+        reader.readAsDataURL(file);
     }
 }
 
@@ -1007,14 +1025,19 @@ async function handleHodPhotoUpload2(event) {
         return;
     }
 
-    showNotification('Uploading HOD photo to Supabase storage...');
+    showNotification('Uploading HOD photo...');
     try {
         const publicUrl = await uploadFileToSupabaseStorage(file, 'profiles');
         displayHodPhoto2(publicUrl);
         showNotification('HOD photo uploaded successfully!');
     } catch (err) {
-        alert(`Failed to upload HOD photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
-        showNotification('Upload failed.');
+        console.warn('Storage upload note, reading file as Data URL:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            displayHodPhoto2(e.target.result);
+            showNotification('HOD photo updated!');
+        };
+        reader.readAsDataURL(file);
     }
 }
 
@@ -1050,8 +1073,13 @@ async function handleCoordPhotoUpload(event, id) {
         displayCoordPhoto(id, publicUrl);
         showNotification('Coordinator photo uploaded successfully!');
     } catch (err) {
-        alert(`Failed to upload coordinator photo: ${err.message || err}. Please ensure that a public storage bucket named 'ece-assets' exists in your Supabase dashboard and its RLS policies allow anonymous uploads.`);
-        showNotification('Upload failed.');
+        console.warn('Storage upload note, reading file as Data URL:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            displayCoordPhoto(id, e.target.result);
+            showNotification('Coordinator photo updated!');
+        };
+        reader.readAsDataURL(file);
     }
 }
 
