@@ -201,7 +201,7 @@ function switchCmsTab(tabId) {
         'about-info': 'About & Vision Statements',
         'flyers': 'Carousel Event Flyers',
         'downloads': 'Downloads Directory Grid',
-        'faculty': 'Faculty & Coordinator Profiles',
+        'faculty': 'HOD & Coordinator Profiles',
         'quiz-results': 'Round 1 Quiz Leaderboard',
         'club-activity': 'Club Activity Management',
         'system': 'Database Configurations'
