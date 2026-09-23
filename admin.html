@@ -512,24 +512,38 @@
         }
 
         .btn-delete-list-item {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid var(--accent-red);
-            color: var(--accent-red);
-            width: 40px;
-            height: 40px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
         }
 
         .btn-delete-list-item:hover {
-            background: var(--accent-red);
-            color: white;
+            background: #ef4444;
+            border-color: #ef4444;
+            color: #ffffff;
             transform: scale(1.08);
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-delete-list-item svg {
+            width: 16px;
+            height: 16px;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-delete-list-item:hover svg {
+            transform: scale(1.12);
         }
 
         .btn-add-list-item {
@@ -1079,7 +1093,7 @@
                                 📤 Choose Profile Photo File
                                 <input type="file" id="upload-hod-photo" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')">
                             </label>
-                            <button class="btn-clear-photo" onclick="clearCmsProfilePhoto('hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')">🗑️ Reset to Initials Placeholder</button>
+                            <button class="btn-clear-photo" style="display:inline-flex; align-items:center; gap:6px;" onclick="clearCmsProfilePhoto('hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Reset to Initials Placeholder</button>
                         </div>
                     </div>
                     <div class="input-row">
@@ -1120,7 +1134,7 @@
                                 📤 Choose Profile Photo File
                                 <input type="file" id="upload-hod-photo-2" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')">
                             </label>
-                            <button class="btn-clear-photo" onclick="clearCmsProfilePhoto('hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')">🗑️ Reset to Initials Placeholder</button>
+                            <button class="btn-clear-photo" style="display:inline-flex; align-items:center; gap:6px;" onclick="clearCmsProfilePhoto('hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Reset to Initials Placeholder</button>
                         </div>
                     </div>
                     <div class="input-row">
@@ -1214,7 +1228,7 @@
                             </select>
                             <button type="button" class="btn-preview" onclick="loadQuizResultsInDashboard()">🔄 Refresh List</button>
                             <button type="button" class="btn-preview" style="background: var(--accent-cyan); color: var(--bg-dark) !important; font-weight: bold; border: none;" onclick="downloadLeaderboardPDF()">📥 Download PDF</button>
-                            <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444;" onclick="clearAllQuizResults()">🗑️ Reset Leaderboard</button>
+                            <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; display: inline-flex; align-items: center; gap: 6px;" onclick="clearAllQuizResults()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>Reset Leaderboard</button>
                         </div>
                     </div>
                     
@@ -1371,7 +1385,7 @@
                     <h3>⚙️ System Operations</h3>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                         <button type="button" class="btn-preview" onclick="testCloudConnections()">⚡ Test Both Cloud Connections</button>
-                        <button type="button" class="btn-clear-photo" style="width: auto;" onclick="resetLocalStorageConfig()">🗑️ Reset Database Config cache</button>
+                        <button type="button" class="btn-clear-photo" style="width: auto; display: inline-flex; align-items: center; gap: 6px;" onclick="resetLocalStorageConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset Database Config cache</button>
                         <span id="cloud-test-status" style="font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan);"></span>
                     </div>
             </div>

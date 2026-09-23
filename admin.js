@@ -3,6 +3,9 @@ let indexDoc = null; // Background parsed DOM document of index.html
 let activeTab = 'overview';
 let cachedResultsList = [];
 
+const CMS_DELETE_ICON_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+const CMS_DELETE_ICON_SM_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+
 // Check persistent admin session on load
 let globalSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
 let globalSupaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
@@ -511,7 +514,7 @@ function populatePostersCarouselList() {
                         </div>
                     </div>
                 </div>
-                <button class="btn-delete-list-item" title="Delete Slide" onclick="cmsDeletePosterCardSlot(${index})">🗑️</button>
+                <button class="btn-delete-list-item" title="Delete Slide" onclick="cmsDeletePosterCardSlot(${index})">${CMS_DELETE_ICON_SVG}</button>
             </div>
         `;
         listContainer.insertAdjacentHTML('beforeend', itemHtml);
@@ -629,7 +632,7 @@ function cmsAddPosterCardSlot() {
                     </div>
                 </div>
             </div>
-            <button class="btn-delete-list-item" title="Delete Slide" onclick="cmsDeletePosterCardSlot(${index})">🗑️</button>
+            <button class="btn-delete-list-item" title="Delete Slide" onclick="cmsDeletePosterCardSlot(${index})">${CMS_DELETE_ICON_SVG}</button>
         </div>
     `;
     listContainer.insertAdjacentHTML('afterbegin', itemHtml);
@@ -700,7 +703,7 @@ function populateDownloadsCmsList() {
                         </div>
                     </div>
                 </div>
-                <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(this)">🗑️</button>
+                <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(this)">${CMS_DELETE_ICON_SVG}</button>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', itemHtml);
@@ -767,7 +770,7 @@ function cmsAddDownloadFileToCategory(category) {
                     </div>
                 </div>
             </div>
-            <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(this)">🗑️</button>
+            <button class="btn-delete-list-item" title="Delete Card" onclick="cmsDeleteDownloadCardSlot(this)">${CMS_DELETE_ICON_SVG}</button>
         </div>
     `;
     container.insertAdjacentHTML('beforeend', itemHtml);
@@ -856,12 +859,12 @@ function addCoordinatorSlotMarkup(id, name='', year='', phone='', email='', init
                         📤 Photo
                         <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">
                     </label>
-                    <button type="button" class="btn-clear-photo" style="padding:0.4rem 1rem;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">🗑️ Reset</button>
+                    <button type="button" class="btn-clear-photo" style="padding:0.4rem 1rem; display:inline-flex; align-items:center; gap:4px;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> Reset</button>
                 </div>
             </div>
         </div>
         
-        <button type="button" class="btn-delete-list-item" title="Delete Coordinator" onclick="this.closest('.cms-list-item').remove()" style="position: absolute; top: 1.25rem; right: 1.25rem;">🗑️</button>
+        <button type="button" class="btn-delete-list-item" title="Delete Coordinator" onclick="this.closest('.cms-list-item').remove()" style="position: absolute; top: 1.25rem; right: 1.25rem;">${CMS_DELETE_ICON_SVG}</button>
     `;
     listContainer.appendChild(div);
 }
@@ -1264,7 +1267,7 @@ function reconstructDownloadsCmsDom() {
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <a href="${fileUrl}" download="${title}.pdf" class="btn-download" onclick="showDownloadNotify('${title}')">↓</a>
-                    ${isCustom ? `<button class="btn-admin-logout btn-admin-only-inline" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:none; align-items:center; justify-content:center;" onclick="deleteCustomDownloadCard(this)">🗑️</button>` : ''}
+                    ${isCustom ? `<button class="btn-admin-logout btn-admin-only-inline" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:none; align-items:center; justify-content:center;" onclick="deleteCustomDownloadCard(this)">${CMS_DELETE_ICON_SM_SVG}</button>` : ''}
                 </div>
             </div>
         `;
@@ -1626,7 +1629,7 @@ function addStrengthRowMarkup(year='', boys='', girls='', total='') {
             <input type="text" placeholder="Girls" class="form-control cms-strength-girls" value="${girls}">
             <input type="text" placeholder="Total" class="form-control cms-strength-total" value="${total}">
         </div>
-        <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; margin-left: 0.5rem;" onclick="this.parentElement.remove()">🗑️</button>
+        <button type="button" class="btn-delete-list-item" style="width: 35px; height: 35px; margin-left: 0.5rem;" title="Delete Row" onclick="this.parentElement.remove()">${CMS_DELETE_ICON_SM_SVG}</button>
     `;
     list.appendChild(div);
 }
@@ -1688,7 +1691,7 @@ function addMouRowMarkup(sno='', org='', date='', status='') {
             <input type="text" placeholder="Date" class="form-control cms-mou-date" value="${date}">
             <input type="text" placeholder="Status" class="form-control cms-mou-status" value="${status}">
         </div>
-        <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; margin-left: 0.5rem;" onclick="this.parentElement.remove()">🗑️</button>
+        <button type="button" class="btn-delete-list-item" style="width: 35px; height: 35px; margin-left: 0.5rem;" title="Delete Row" onclick="this.parentElement.remove()">${CMS_DELETE_ICON_SM_SVG}</button>
     `;
     list.appendChild(div);
 }
@@ -1751,7 +1754,7 @@ function addIsteRowMarkup(sno='', body='', year='', count='', expiry='') {
             <input type="text" placeholder="Count" class="form-control cms-iste-count" value="${count}">
             <input type="text" placeholder="Expiry" class="form-control cms-iste-expiry" value="${expiry}">
         </div>
-        <button type="button" class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; width: 35px; height: 35px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; margin-left: 0.5rem;" onclick="this.parentElement.remove()">🗑️</button>
+        <button type="button" class="btn-delete-list-item" style="width: 35px; height: 35px; margin-left: 0.5rem;" title="Delete Row" onclick="this.parentElement.remove()">${CMS_DELETE_ICON_SM_SVG}</button>
     `;
     list.appendChild(div);
 }
@@ -1859,7 +1862,7 @@ function renderActivityRoundSlots(roundsArray) {
                     <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700;">Round ${roundNum} Configuration</h4>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <button type="button" class="btn-delete-list-item" title="Delete Round ${roundNum}" onclick="removeSingleActivityRound(${idx})" style="width: 32px; height: 32px; font-size: 0.85rem;">🗑️</button>
+                    <button type="button" class="btn-delete-list-item" title="Delete Round ${roundNum}" onclick="removeSingleActivityRound(${idx})" style="width: 34px; height: 34px;">${CMS_DELETE_ICON_SM_SVG}</button>
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
@@ -2095,7 +2098,7 @@ function loadQuizResultsInDashboard() {
                     <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">${dateStr}</td>
                     <td style="padding: 0.75rem;">
                         <button type="button" class="btn-preview" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 0.25rem;" onclick="openEditResultModal(${originalIndex})">✏️ Edit</button>
-                        <button type="button" class="btn-admin-logout" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin: 0;" onclick="deleteMcqResult(${originalIndex})">🗑️ Delete</button>
+                        <button type="button" class="btn-admin-logout" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="deleteMcqResult(${originalIndex})">${CMS_DELETE_ICON_SM_SVG} Delete</button>
                     </td>
                 </tr>
             `;
