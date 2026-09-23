@@ -1324,21 +1324,67 @@ function loadFromCloud() {
     }
 
     const handleClubStatus = (isEnabled) => {
+        try {
+            localStorage.setItem('vsb_ece_club_activity_status', JSON.stringify({ enabled: isEnabled }));
+        } catch(e) {}
+
         const btn = document.getElementById('btn-club-activity-portal');
         if (btn) {
             if (!isEnabled) {
+                btn.setAttribute('data-locked', 'true');
                 btn.style.opacity = '0.5';
                 btn.style.cursor = 'not-allowed';
-                btn.innerText = 'Activities Locked';
+                btn.style.background = 'rgba(255, 255, 255, 0.08)';
+                btn.style.color = 'var(--text-secondary)';
+                btn.style.boxShadow = 'none';
+                btn.innerText = 'Activities Closed';
             } else {
+                btn.removeAttribute('data-locked');
                 btn.style.opacity = '1';
                 btn.style.cursor = 'pointer';
+                btn.style.background = 'var(--accent-cyan)';
+                btn.style.color = 'var(--bg-dark)';
+                btn.style.boxShadow = '';
                 btn.innerText = 'Activity';
+            }
+        }
+
+        if (!isEnabled) {
+            sessionStorage.removeItem('active_club_view');
+            const mainView = document.getElementById('club-main-view');
+            const roundsView = document.getElementById('club-rounds-view');
+            if (roundsView && roundsView.style.display === 'block') {
+                roundsView.style.display = 'none';
+                if (mainView) mainView.style.display = 'block';
             }
         }
     };
 
+    // Immediately restore cached club activity lock status
+    try {
+        const cachedClub = localStorage.getItem('vsb_ece_club_activity_status');
+        if (cachedClub) {
+            const parsedClub = JSON.parse(cachedClub);
+            if (parsedClub && typeof parsedClub.enabled === 'boolean') {
+                handleClubStatus(parsedClub.enabled);
+            }
+        }
+    } catch(e) {}
+
     const handleRoundsAutoScroll = () => {
+        const cachedClub = localStorage.getItem('vsb_ece_club_activity_status');
+        let isLocked = false;
+        if (cachedClub) {
+            try {
+                const parsed = JSON.parse(cachedClub);
+                isLocked = parsed && parsed.enabled === false;
+            } catch(e) {}
+        }
+        if (isLocked) {
+            sessionStorage.removeItem('active_club_view');
+            return;
+        }
+
         if (sessionStorage.getItem('active_club_view') === 'rounds') {
             setTimeout(() => {
                 if (typeof openClubActivityPortal === 'function') {
@@ -3783,6 +3829,27 @@ document.addEventListener('click', (e) => {
 
 
 function openClubActivityPortal(isAutoScroll = false) {
+    const btn = document.getElementById('btn-club-activity-portal');
+    if (btn && btn.getAttribute('data-locked') === 'true') {
+        sessionStorage.removeItem('active_club_view');
+        showNotification('Club Activities are currently closed by the Admin!', 'error');
+        alert('Club Activities are currently closed by the Admin!');
+        return;
+    }
+
+    try {
+        const cachedClub = localStorage.getItem('vsb_ece_club_activity_status');
+        if (cachedClub) {
+            const parsed = JSON.parse(cachedClub);
+            if (parsed && parsed.enabled === false) {
+                sessionStorage.removeItem('active_club_view');
+                showNotification('Club Activities are currently closed by the Admin!', 'error');
+                alert('Club Activities are currently closed by the Admin!');
+                return;
+            }
+        }
+    } catch (e) {}
+
     const renderRoundsUI = () => {
         sessionStorage.setItem('active_club_view', 'rounds');
         const mainView = document.getElementById('club-main-view');
@@ -3895,7 +3962,12 @@ function openClubActivityPortal(isAutoScroll = false) {
                 renderRoundsUI();
             })
             .catch(() => {
-                // Offline fallback
+                if (btn && btn.getAttribute('data-locked') === 'true') {
+                    sessionStorage.removeItem('active_club_view');
+                    showNotification('Club Activities are currently closed by the Admin!', 'error');
+                    alert('Club Activities are currently closed by the Admin!');
+                    return;
+                }
                 renderRoundsUI();
             });
         });

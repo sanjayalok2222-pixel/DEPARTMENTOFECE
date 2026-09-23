@@ -2558,6 +2558,10 @@ function updateClubActivityStatusLabels() {
 function toggleClubActivityPortalAccess() {
     currentClubActivityStatus.enabled = !currentClubActivityStatus.enabled;
     
+    try {
+        localStorage.setItem('vsb_ece_club_activity_status', JSON.stringify(currentClubActivityStatus));
+    } catch(e) {}
+    
     // 1. Save to Firestore
     saveToFirestore('club_activity_status', currentClubActivityStatus).catch(e => console.warn('Firestore club_activity_status save error:', e));
 
