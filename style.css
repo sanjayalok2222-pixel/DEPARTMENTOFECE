@@ -868,10 +868,22 @@ tr:hover td {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.coord-contact:empty {
+    display: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 .coord-phone, .coord-email {
     font-size: 0.82rem;
     margin: 0;
     line-height: 1.4;
+}
+
+.coord-phone:empty,
+.coord-email:empty {
+    display: none !important;
 }
 
 .coord-phone a {

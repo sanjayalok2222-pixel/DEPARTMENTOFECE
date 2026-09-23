@@ -386,6 +386,7 @@ function updateActiveNavLink() {
 
 window.addEventListener('DOMContentLoaded', () => {
     updateActiveNavLink();
+    cleanCoordinatorDisplay();
     
     // Add click handler for immediate active class switch on link click
     document.querySelectorAll('.nav-links li a').forEach(link => {
@@ -1117,6 +1118,43 @@ function displayCoordPhoto(id, base64Data) {
     }
 }
 
+function cleanCoordinatorDisplay(container = document.getElementById('coordinators-container')) {
+    if (!container) return;
+    const cards = container.querySelectorAll('.coord-card');
+    cards.forEach(card => {
+        // Remove legacy coord-role if present
+        card.querySelectorAll('.coord-role').forEach(r => r.remove());
+
+        // Check phone element
+        const phoneEl = card.querySelector('.coord-phone');
+        if (phoneEl) {
+            const rawPhone = phoneEl.innerText.replace('📞', '').trim();
+            if (!rawPhone) {
+                phoneEl.remove();
+            }
+        }
+
+        // Check email element
+        const emailEl = card.querySelector('.coord-email');
+        if (emailEl) {
+            const rawEmail = emailEl.innerText.replace('✉️', '').trim();
+            if (!rawEmail) {
+                emailEl.remove();
+            }
+        }
+
+        // Check coord-contact wrapper
+        const contactDiv = card.querySelector('.coord-contact');
+        if (contactDiv) {
+            const hasPhone = contactDiv.querySelector('.coord-phone');
+            const hasEmail = contactDiv.querySelector('.coord-email');
+            if (!hasPhone && !hasEmail) {
+                contactDiv.remove();
+            }
+        }
+    });
+}
+
 
 // === 10. Admin Profile Avatar System ===
 function triggerAvatarUpload() {
@@ -1550,6 +1588,9 @@ function applyFetchedState(state) {
             if (el) {
                 if (id === 'cert-portal-link') {
                     el.setAttribute('href', html);
+                } else if (id === 'coordinators-container') {
+                    el.innerHTML = html;
+                    cleanCoordinatorDisplay(el);
                 } else {
                     el.innerHTML = html;
                 }
