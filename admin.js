@@ -503,7 +503,7 @@ function populatePostersCarouselList() {
                     <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                         <label>Flyer Image source</label>
                         <div style="display:flex; gap:0.5rem; align-items:center;">
-                            <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="${imgUrl}" placeholder="Paste direct image URL" onchange="previewCmsPosterLinkUrl(${index}, this)">
+                            <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="${imgUrl}" placeholder="Paste direct image URL" onchange="previewCmsPosterLinkUrl(${index}, this)" oninput="previewCmsPosterLinkUrl(${index}, this)">
                             <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
                                 📤 Upload
                                 <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPosterUploader(${index}, event)">
@@ -526,6 +526,19 @@ async function handleCmsPosterUploader(index, event) {
         alert('File size exceeds the 15MB limit. Please upload a file smaller than 15MB.');
         return;
     }
+
+    const setPosterImage = (src) => {
+        const preview = document.getElementById(`poster-preview-img-${index}`);
+        if (preview) preview.src = src;
+        const cards = document.querySelectorAll('.cms-poster-item-card');
+        if (cards[index]) {
+            const urlInput = cards[index].querySelector('.cms-poster-image-url');
+            if (urlInput) {
+                urlInput.value = src;
+                urlInput.setAttribute('value', src);
+            }
+        }
+    };
 
     showNotification('Processing poster image...');
     try {
@@ -608,7 +621,7 @@ function cmsAddPosterCardSlot() {
                 <div class="form-group" style="grid-column: span 2; margin-bottom: 0;">
                     <label>Flyer Image source</label>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="assets/ece-logo.png" onchange="previewCmsPosterLinkUrl(${index}, this)">
+                        <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="assets/ece-logo.png" onchange="previewCmsPosterLinkUrl(${index}, this)" oninput="previewCmsPosterLinkUrl(${index}, this)">
                         <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
                             📤 Upload
                             <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPosterUploader(${index}, event)">
