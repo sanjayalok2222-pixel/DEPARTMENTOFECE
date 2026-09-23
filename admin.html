@@ -1002,7 +1002,10 @@
                         <!-- Dynamic elements populated by JS -->
                     </div>
                     
-                    <button class="btn-add-list-item" onclick="cmsAddPosterCardSlot()">➕ Add Additional Event Poster Slide</button>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                        <button class="btn-add-list-item" style="flex: 1; margin-top: 0;" onclick="cmsAddPosterCardSlot()">➕ Add Additional Event Poster Slide</button>
+                        <button class="btn-publish" style="flex: 1; padding: 0.9rem 1.75rem; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer;" onclick="publishCmsChanges()">💾 Save & Publish Event Flyers</button>
+                    </div>
                 </div>
             </div>
 

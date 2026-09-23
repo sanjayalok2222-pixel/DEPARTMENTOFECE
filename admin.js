@@ -1093,8 +1093,11 @@ function publishCmsChanges() {
     reconstructActivityRoundsCmsDom();
 
     // 5. Update Supabase variables in memory and localStorage
-    const supaUrl = document.getElementById('field-supabase-url').value.trim();
-    const supaKey = document.getElementById('field-supabase-key').value.trim();
+    const defaultSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+    const defaultSupaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+
+    const supaUrl = (document.getElementById('field-supabase-url') && document.getElementById('field-supabase-url').value.trim()) || globalSupaUrl || localStorage.getItem('vsb_ece_supabase_url') || defaultSupaUrl;
+    const supaKey = (document.getElementById('field-supabase-key') && document.getElementById('field-supabase-key').value.trim()) || globalSupaKey || localStorage.getItem('vsb_ece_supabase_key') || defaultSupaKey;
     
     globalSupaUrl = supaUrl;
     globalSupaKey = supaKey;
@@ -1102,8 +1105,8 @@ function publishCmsChanges() {
     localStorage.setItem('vsb_ece_supabase_url', supaUrl);
     localStorage.setItem('vsb_ece_supabase_key', supaKey);
 
-    const fbProj = document.getElementById('field-firebase-project-id') ? document.getElementById('field-firebase-project-id').value.trim() : '';
-    const fbKey = document.getElementById('field-firebase-api-key') ? document.getElementById('field-firebase-api-key').value.trim() : '';
+    const fbProj = (document.getElementById('field-firebase-project-id') && document.getElementById('field-firebase-project-id').value.trim()) || localStorage.getItem('vsb_ece_firebase_project_id') || 'department-of-ece-2b5d7';
+    const fbKey = (document.getElementById('field-firebase-api-key') && document.getElementById('field-firebase-api-key').value.trim()) || localStorage.getItem('vsb_ece_firebase_api_key') || 'AIzaSyBGPOKYAMZObNcinVIgm4ehUew1L9XY11s';
     if (fbProj) localStorage.setItem('vsb_ece_firebase_project_id', fbProj);
     if (fbKey) localStorage.setItem('vsb_ece_firebase_api_key', fbKey);
 
@@ -1116,6 +1119,12 @@ function publishCmsChanges() {
 
     // 7. Extract state JSON object to upsert to Supabase database
     const stateObj = extractCmsJsonState();
+
+    try {
+        localStorage.setItem('vsb_ece_cached_site_data', JSON.stringify(stateObj));
+    } catch(e) {
+        console.warn('LocalStorage caching note:', e);
+    }
 
     showNotification('Serializing DOM and publishing edits...');
 

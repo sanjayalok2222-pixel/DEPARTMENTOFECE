@@ -1348,11 +1348,25 @@ function loadFromCloud() {
         }
     };
 
+    // Instant local cache restore so changes show immediately without cloud network latency
+    try {
+        const cached = localStorage.getItem('vsb_ece_cached_site_data');
+        if (cached) {
+            const cachedState = JSON.parse(cached);
+            if (cachedState && (cachedState.edits || cachedState.postersHtml || cachedState.downloadsHtml)) {
+                applyFetchedState(cachedState);
+            }
+        }
+    } catch (cacheErr) {}
+
     // 1. Primary: Fetch live state from Firebase Firestore
     fetchFromFirestore('site_data')
         .then(state => {
             if (state && (state.edits || state.postersHtml || state.downloadsHtml)) {
                 applyFetchedState(state);
+                try {
+                    localStorage.setItem('vsb_ece_cached_site_data', JSON.stringify(state));
+                } catch(e) {}
                 console.log('✅ Successfully synced live web changes from Firebase Firestore Cloud!');
                 
                 // Fetch club activity status from Firestore
@@ -1396,6 +1410,9 @@ function loadFromCloud() {
             .then(data => {
                 if (data && data.length > 0 && data[0].value) {
                     applyFetchedState(data[0].value);
+                    try {
+                        localStorage.setItem('vsb_ece_cached_site_data', JSON.stringify(data[0].value));
+                    } catch(e) {}
                     console.log('✅ Successfully synced live web changes from Supabase Cloud fallback!');
                 }
                 
