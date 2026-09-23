@@ -124,6 +124,18 @@
             box-shadow: var(--text-glow);
         }
 
+        /* Remove default number input spinner up/down arrows */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none !important;
+            margin: 0 !important;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield !important;
+            appearance: textfield !important;
+        }
+
         .btn-submit {
             background: var(--accent-cyan);
             color: var(--bg-dark);
@@ -1265,7 +1277,7 @@
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                 <button type="button" onclick="stepRoundsCount(-1)" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,210,255,0.3); color: var(--accent-cyan); font-size: 1.3rem; font-weight: 800; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Decrease rounds count">−</button>
                                 
-                                <input type="number" id="cms-rounds-count" min="1" max="20" value="3" oninput="handleRoundsCountChange(this.value)" onchange="handleRoundsCountChange(this.value)" class="form-control" style="width: 80px; text-align: center; font-size: 1.3rem; font-weight: 800; color: var(--accent-cyan); padding: 0.5rem; border-radius: 10px; border-color: rgba(0,210,255,0.4);" placeholder="3">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="cms-rounds-count" value="3" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); handleRoundsCountChange(this.value)" onchange="handleRoundsCountChange(this.value)" class="form-control" style="width: 80px; text-align: center; font-size: 1.3rem; font-weight: 800; color: var(--accent-cyan); padding: 0.5rem; border-radius: 10px; border-color: rgba(0,210,255,0.4);" placeholder="3">
                                 
                                 <button type="button" onclick="stepRoundsCount(1)" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,210,255,0.3); color: var(--accent-cyan); font-size: 1.3rem; font-weight: 800; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Increase rounds count">+</button>
                                 
