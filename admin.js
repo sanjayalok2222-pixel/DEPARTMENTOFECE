@@ -791,11 +791,24 @@ function populateCoordinatorsCmsList() {
         const nameEl = card.querySelector('h4');
         const name = nameEl ? nameEl.innerText.trim() : '';
 
-        const roleEl = card.querySelector('.coord-role');
-        const role = roleEl ? roleEl.innerText.trim() : '';
-
         const yearEl = card.querySelector('.coord-year');
         const year = yearEl ? yearEl.innerText.trim() : '';
+
+        let phone = card.getAttribute('data-phone') || '';
+        if (!phone) {
+            const phoneEl = card.querySelector('.coord-phone');
+            if (phoneEl) {
+                phone = phoneEl.innerText.replace('📞', '').trim();
+            }
+        }
+
+        let email = card.getAttribute('data-email') || '';
+        if (!email) {
+            const emailEl = card.querySelector('.coord-email');
+            if (emailEl) {
+                email = emailEl.innerText.replace('✉️', '').trim();
+            }
+        }
 
         const imgEl = card.querySelector('.coord-avatar img');
         const emojiEl = card.querySelector('.coord-avatar .coord-initials');
@@ -804,11 +817,11 @@ function populateCoordinatorsCmsList() {
         const imgUrl = imgEl ? imgEl.getAttribute('src') : '';
         const hasPhoto = imgEl && imgEl.style.display === 'block';
 
-        addCoordinatorSlotMarkup(id, name, role, year, initialsText, imgUrl, hasPhoto);
+        addCoordinatorSlotMarkup(id, name, year, phone, email, initialsText, imgUrl, hasPhoto);
     });
 }
 
-function addCoordinatorSlotMarkup(id, name='', role='', year='', initialsText='SC', imgUrl='', hasPhoto=false) {
+function addCoordinatorSlotMarkup(id, name='', year='', phone='', email='', initialsText='SC', imgUrl='', hasPhoto=false) {
     const listContainer = document.getElementById('cms-coordinators-list');
     const div = document.createElement('div');
     div.className = 'cms-list-item coordinator-cms-widget photo-uploader-widget';
@@ -825,21 +838,25 @@ function addCoordinatorSlotMarkup(id, name='', role='', year='', initialsText='S
                 <input type="text" class="form-control cms-coord-name" value="${name}">
             </div>
             <div class="form-group" style="margin-bottom:0;">
-                <label>Coordinator Role</label>
-                <input type="text" class="form-control cms-coord-role" value="${role}">
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
                 <label>Year Group</label>
                 <input type="text" class="form-control cms-coord-year" value="${year}">
             </div>
-            <div class="form-group" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Phone Number</label>
+                <input type="tel" class="form-control cms-coord-phone" value="${phone}" placeholder="e.g. +91 9876543210">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label>Email ID</label>
+                <input type="email" class="form-control cms-coord-email" value="${email}" placeholder="e.g. coordinator@vsb.ac.in">
+            </div>
+            <div class="form-group" style="margin-bottom:0; grid-column: span 2; display:flex; flex-direction:column; justify-content:center;">
                 <label>Profile photo controls</label>
                 <div style="display:flex; gap:0.5rem;">
                     <label class="btn-upload-file" style="margin:0;">
                         📤 Photo
                         <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">
                     </label>
-                    <button class="btn-clear-photo" style="padding:0.4rem 1rem;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">🗑️ Reset</button>
+                    <button type="button" class="btn-clear-photo" style="padding:0.4rem 1rem;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">🗑️ Reset</button>
                 </div>
             </div>
         </div>
@@ -859,7 +876,7 @@ function cmsAddCoordinatorSlot() {
         }
     });
     const nextId = maxId + 1;
-    addCoordinatorSlotMarkup(nextId, '', 'Student Coordinator', 'III Year ECE', 'SC', '', false);
+    addCoordinatorSlotMarkup(nextId, '', 'III Year ECE', '', '', 'SC', '', false);
 }
 
 
@@ -1264,9 +1281,10 @@ function reconstructCoordinatorsCmsDom() {
     const widgets = document.querySelectorAll('#cms-coordinators-list .coordinator-cms-widget');
     widgets.forEach(widget => {
         const id = widget.getAttribute('data-id');
-        const name = widget.querySelector('.cms-coord-name').value.trim();
-        const role = widget.querySelector('.cms-coord-role').value.trim();
-        const year = widget.querySelector('.cms-coord-year').value.trim();
+        const name = (widget.querySelector('.cms-coord-name')?.value || '').trim();
+        const year = (widget.querySelector('.cms-coord-year')?.value || '').trim();
+        const phone = (widget.querySelector('.cms-coord-phone')?.value || '').trim();
+        const email = (widget.querySelector('.cms-coord-email')?.value || '').trim();
 
         // Get photo uploader values
         const pImg = widget.querySelector(`#preview-coord-photo-${id}`);
@@ -1285,8 +1303,17 @@ function reconstructCoordinatorsCmsDom() {
             }
         }
 
+        const phoneClean = phone.replace(/[^0-9+]/g, '');
+        const phoneLink = phone ? `<p class="coord-phone" id="coord-phone-${id}"><a href="tel:${phoneClean}">📞 ${phone}</a></p>` : '';
+        const emailLink = email ? `<p class="coord-email" id="coord-email-${id}"><a href="mailto:${email}">✉️ ${email}</a></p>` : '';
+        const contactHtml = (phoneLink || emailLink) ? `
+                <div class="coord-contact" id="coord-contact-${id}">
+                    ${phoneLink}
+                    ${emailLink}
+                </div>` : '';
+
         const coordHtml = `
-            <div class="coord-card tilt-card" id="coord-${id}">
+            <div class="coord-card tilt-card" id="coord-${id}" data-phone="${phone.replace(/"/g, '&quot;')}" data-email="${email.replace(/"/g, '&quot;')}">
                 <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
                     <img id="coord-img-${id}" src="${hasPhoto ? imgUrl : ''}" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: ${hasPhoto ? 'block' : 'none'};">
                     <span id="coord-emoji-${id}" class="coord-initials" style="display: ${hasPhoto ? 'none' : 'block'};">${initials}</span>
@@ -1294,8 +1321,8 @@ function reconstructCoordinatorsCmsDom() {
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(${id})">✏️</button>
                 </div>
                 <h4 id="coord-name-${id}">${name}</h4>
-                <p class="coord-role" id="coord-role-${id}">${role}</p>
                 <p class="coord-year" id="coord-year-${id}">${year}</p>
+                ${contactHtml}
             </div>
         `;
         container.insertAdjacentHTML('beforeend', coordHtml);

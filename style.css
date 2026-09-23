@@ -853,18 +853,56 @@ tr:hover td {
     margin-bottom: 0.25rem;
 }
 
-.coord-role {
-    color: var(--accent-cyan);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.75rem;
-}
-
 .coord-year {
     color: var(--text-secondary);
     font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.coord-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.coord-phone, .coord-email {
+    font-size: 0.82rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.coord-phone a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+}
+
+.coord-phone a:hover {
+    text-decoration: underline;
+    filter: drop-shadow(var(--text-glow));
+}
+
+.coord-email a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    word-break: break-all;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: color 0.2s ease;
+}
+
+.coord-email a:hover {
+    color: #fff;
+    text-decoration: underline;
 }
 
 /* Modals & Popups styling */
