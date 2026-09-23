@@ -5,6 +5,9 @@ let cachedResultsList = [];
 
 const CMS_DELETE_ICON_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
 const CMS_DELETE_ICON_SM_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+const CMS_UPLOAD_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+const CMS_ATTACH_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
+const CMS_PHOTO_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
 
 // Check persistent admin session on load
 let globalSupaUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
@@ -507,8 +510,9 @@ function populatePostersCarouselList() {
                         <label>Flyer Image source</label>
                         <div style="display:flex; gap:0.5rem; align-items:center;">
                             <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="${imgUrl}" placeholder="Paste direct image URL" onchange="previewCmsPosterLinkUrl(${index}, this)" oninput="previewCmsPosterLinkUrl(${index}, this)">
-                            <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
-                                📤 Upload
+                            <label class="btn-upload-file" style="margin:0;">
+                                ${CMS_UPLOAD_ICON_SVG}
+                                <span>Upload</span>
                                 <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPosterUploader(${index}, event)">
                             </label>
                         </div>
@@ -625,8 +629,9 @@ function cmsAddPosterCardSlot() {
                     <label>Flyer Image source</label>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
                         <input type="text" class="form-control cms-poster-image-url" style="flex-grow:1;" value="assets/ece-logo.png" onchange="previewCmsPosterLinkUrl(${index}, this)" oninput="previewCmsPosterLinkUrl(${index}, this)">
-                        <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
-                            📤 Upload
+                        <label class="btn-upload-file" style="margin:0;">
+                            ${CMS_UPLOAD_ICON_SVG}
+                            <span>Upload</span>
                             <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPosterUploader(${index}, event)">
                         </label>
                     </div>
@@ -696,8 +701,9 @@ function populateDownloadsCmsList() {
                         <label>Attached Document Destination</label>
                         <div style="display:flex; gap:0.5rem; align-items:center;">
                             <input type="text" class="form-control cms-download-url" id="cms-dl-url-${uniqueId}" style="flex-grow:1;" value="${dlUrl}" placeholder="Paste raw hyperlink or choose file">
-                            <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
-                                📤 Attach
+                            <label class="btn-upload-file" style="margin:0;">
+                                ${CMS_ATTACH_ICON_SVG}
+                                <span>Attach</span>
                                 <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader('${uniqueId}', event)">
                             </label>
                         </div>
@@ -763,8 +769,9 @@ function cmsAddDownloadFileToCategory(category) {
                     <label>Attached Document Destination</label>
                     <div style="display:flex; gap:0.5rem; align-items:center;">
                         <input type="text" class="form-control cms-download-url" id="cms-dl-url-${uniqueId}" style="flex-grow:1;" value="#" placeholder="Paste raw hyperlink or choose file">
-                        <label class="btn-upload-file" style="margin:0; padding: 0.6rem 1rem;">
-                            📤 Attach
+                        <label class="btn-upload-file" style="margin:0;">
+                            ${CMS_ATTACH_ICON_SVG}
+                            <span>Attach</span>
                             <input type="file" style="display:none;" onchange="handleCmsDownloadFileUploader('${uniqueId}', event)">
                         </label>
                     </div>
@@ -856,7 +863,8 @@ function addCoordinatorSlotMarkup(id, name='', year='', phone='', email='', init
                 <label>Profile photo controls</label>
                 <div style="display:flex; gap:0.5rem;">
                     <label class="btn-upload-file" style="margin:0;">
-                        📤 Photo
+                        ${CMS_PHOTO_ICON_SVG}
+                        <span>Photo</span>
                         <input type="file" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')">
                     </label>
                     <button type="button" class="btn-clear-photo" style="padding:0.4rem 1rem; display:inline-flex; align-items:center; gap:4px;" onclick="clearCmsProfilePhoto('coord-img-${id}', 'coord-emoji-${id}', 'preview-coord-photo-${id}', 'preview-coord-initials-${id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> Reset</button>
