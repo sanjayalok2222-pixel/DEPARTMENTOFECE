@@ -2542,6 +2542,18 @@ function toggleMcqLock(year, checkboxEl) {
 let currentRegisterLock = { isLocked: false };
 
 function fetchRegisterLockInDashboard() {
+    // 0. Restore instant local cache first
+    try {
+        const cached = localStorage.getItem('vsb_ece_register_lock');
+        if (cached) {
+            const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
+            if (parsed && typeof parsed.isLocked === 'boolean') {
+                currentRegisterLock = parsed;
+                updateRegisterLockLabels();
+            }
+        }
+    } catch(e) {}
+
     // 1. Query Firestore first
     fetchFromFirestore('register_lock')
         .then(val => {
@@ -2590,28 +2602,67 @@ function fetchRegisterLockInDashboard() {
 }
 
 function updateRegisterLockLabels() {
+    const isLocked = Boolean(currentRegisterLock && currentRegisterLock.isLocked);
+    const checkbox = document.getElementById('toggle-lock-register');
+    const track = document.getElementById('track-lock-register');
+    const thumb = document.getElementById('thumb-lock-register');
     const label = document.getElementById('label-lock-register');
-    const btn = document.getElementById('btn-toggle-lock-register');
     
-    if (label && btn) {
-        if (currentRegisterLock.isLocked) {
-            label.textContent = 'LOCKED';
-            label.style.color = '#f87171'; // red
-            btn.textContent = 'Unlock';
-            btn.style.background = '#22c55e'; // green
-            btn.style.color = '#fff';
+    if (checkbox) {
+        checkbox.checked = !isLocked;
+    }
+    
+    if (track && thumb) {
+        if (!isLocked) {
+            track.style.background = '#22c55e';
+            track.style.borderColor = '#4ade80';
+            track.style.boxShadow = '0 0 12px rgba(34, 197, 94, 0.4)';
+            thumb.style.transform = 'translateX(26px)';
         } else {
-            label.textContent = 'UNLOCKED';
-            label.style.color = '#4ade80'; // green
-            btn.textContent = 'Lock';
-            btn.style.background = '#ef4444'; // red
-            btn.style.color = '#fff';
+            track.style.background = '#ef4444';
+            track.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+            track.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.25)';
+            thumb.style.transform = 'translateX(0px)';
+        }
+    }
+    
+    if (label) {
+        if (!isLocked) {
+            label.textContent = '● UNLOCKED';
+            label.style.color = '#4ade80';
+        } else {
+            label.textContent = '○ LOCKED';
+            label.style.color = '#f87171';
         }
     }
 }
 
-function toggleRegisterLock() {
-    currentRegisterLock.isLocked = !currentRegisterLock.isLocked;
+function toggleRegisterLock(checkboxEl) {
+    const isCurrentlyLocked = Boolean(currentRegisterLock && currentRegisterLock.isLocked);
+    const willLock = !isCurrentlyLocked;
+    
+    // Prompt the admin to confirm before changing the mode
+    const confirmMessage = willLock
+        ? "🔒 LOCK EVENT REGISTRATION PORTAL?\n\nAre you sure you want to LOCK event registration access for students?\n\nStudents will NOT be able to open registration links."
+        : "🔓 UNLOCK EVENT REGISTRATION PORTAL?\n\nAre you sure you want to UNLOCK event registration access for students?\n\nStudents will immediately be able to register for events.";
+
+    const confirmed = window.confirm(confirmMessage);
+    if (!confirmed) {
+        if (checkboxEl) {
+            checkboxEl.checked = !isCurrentlyLocked;
+        }
+        updateRegisterLockLabels();
+        return;
+    }
+
+    currentRegisterLock.isLocked = willLock;
+    updateRegisterLockLabels();
+    
+    try {
+        localStorage.setItem('vsb_ece_register_lock', JSON.stringify(currentRegisterLock));
+    } catch(e) {}
+    
+    showNotification(`Event Registration Access updated to ${willLock ? 'LOCKED' : 'UNLOCKED'}! Syncing...`);
     
     // 1. Save to Firestore
     saveToFirestore('register_lock', currentRegisterLock).catch(e => console.warn('Firestore register_lock save error:', e));
