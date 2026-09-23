@@ -914,7 +914,7 @@ tr:hover td {
 
 .coord-email a:hover {
     color: #fff;
-    text-decoration: underline;
+    text-decoration: none !important;
 }
 
 /* Modals & Popups styling */
