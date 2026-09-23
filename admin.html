@@ -1239,10 +1239,21 @@
                                 Instantly enable or disable student access to the Club Activity portal across the entire website.
                             </p>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.03); padding: 0.75rem 1.25rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff;">Portal Access:</span>
-                            <span id="label-lock-club-activity" style="font-size: 0.9rem; font-weight: 800; color: #4ade80;">ON</span>
-                            <button type="button" id="btn-toggle-lock-club-activity" onclick="toggleClubActivityPortalAccess()" style="background: #ef4444; color: #fff; border: none; padding: 0.45rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;">Disable</button>
+                        <div style="display: flex; align-items: center; gap: 1.25rem; background: rgba(255,255,255,0.03); padding: 0.75rem 1.35rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+                            <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700;">Portal Access</span>
+                                <span id="label-lock-club-activity" style="font-size: 0.95rem; font-weight: 800; color: #4ade80; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                    ● ON
+                                </span>
+                            </div>
+
+                            <!-- Modern Interactive Toggle Switch -->
+                            <label for="toggle-lock-club-activity" style="position: relative; display: inline-block; width: 60px; height: 32px; cursor: pointer; margin: 0; user-select: none;" title="Click to toggle Club Activity Portal Access">
+                                <input type="checkbox" id="toggle-lock-club-activity" onchange="toggleClubActivityPortalAccess(this)" style="position: absolute; opacity: 0; width: 0; height: 0;">
+                                <span id="track-lock-club-activity" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 34px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 14px rgba(34, 197, 94, 0.4);">
+                                    <span id="thumb-lock-club-activity" style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 6px rgba(0,0,0,0.4); transform: translateX(28px);"></span>
+                                </span>
+                            </label>
                         </div>
                     </div>
                 </div>

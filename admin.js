@@ -2547,6 +2547,18 @@ function toggleRegisterLock() {
 let currentClubActivityStatus = { enabled: true };
 
 function fetchClubActivityStatus() {
+    // 0. Restore instant local cache first
+    try {
+        const cached = localStorage.getItem('vsb_ece_club_activity_status');
+        if (cached) {
+            const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
+            if (parsed && typeof parsed.enabled === 'boolean') {
+                currentClubActivityStatus = parsed;
+                updateClubActivityStatusLabels();
+            }
+        }
+    } catch (e) {}
+
     // 1. Query Firestore first
     fetchFromFirestore('club_activity_status')
         .then(val => {
@@ -2595,32 +2607,69 @@ function fetchClubActivityStatus() {
 }
 
 function updateClubActivityStatusLabels() {
+    const isEnabled = Boolean(currentClubActivityStatus && currentClubActivityStatus.enabled);
+    const checkbox = document.getElementById('toggle-lock-club-activity');
+    const track = document.getElementById('track-lock-club-activity');
+    const thumb = document.getElementById('thumb-lock-club-activity');
     const label = document.getElementById('label-lock-club-activity');
-    const btn = document.getElementById('btn-toggle-lock-club-activity');
     
-    if (label && btn) {
-        if (currentClubActivityStatus.enabled) {
-            label.textContent = 'ON';
-            label.style.color = '#4ade80'; // green
-            btn.textContent = 'Disable';
-            btn.style.background = '#ef4444'; // red
-            btn.style.color = '#fff';
+    if (checkbox) {
+        checkbox.checked = isEnabled;
+    }
+    
+    if (track && thumb) {
+        if (isEnabled) {
+            track.style.background = '#22c55e';
+            track.style.borderColor = '#4ade80';
+            track.style.boxShadow = '0 0 14px rgba(34, 197, 94, 0.45)';
+            thumb.style.transform = 'translateX(28px)';
         } else {
-            label.textContent = 'OFF';
-            label.style.color = '#f87171'; // red
-            btn.textContent = 'Enable';
-            btn.style.background = '#22c55e'; // green
-            btn.style.color = '#fff';
+            track.style.background = '#ef4444';
+            track.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+            track.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.25)';
+            thumb.style.transform = 'translateX(0px)';
+        }
+    }
+    
+    if (label) {
+        if (isEnabled) {
+            label.textContent = '● ON';
+            label.style.color = '#4ade80';
+        } else {
+            label.textContent = '○ OFF';
+            label.style.color = '#f87171';
         }
     }
 }
 
-function toggleClubActivityPortalAccess() {
-    currentClubActivityStatus.enabled = !currentClubActivityStatus.enabled;
+function toggleClubActivityPortalAccess(checkboxEl) {
+    const currentEnabled = Boolean(currentClubActivityStatus && currentClubActivityStatus.enabled);
+    const willEnable = !currentEnabled;
+    
+    // Prompt the admin to confirm before changing the mode
+    const confirmMessage = willEnable
+        ? "⚡ ENABLE CLUB ACTIVITY PORTAL?\n\nAre you sure you want to ENABLE student access to the Club Activity portal?\n\nStudents across the entire website will immediately be able to access the activity."
+        : "🔒 DISABLE CLUB ACTIVITY PORTAL?\n\nAre you sure you want to DISABLE student access to the Club Activity portal?\n\nStudents will NOT be able to open or access the competition activity.";
+        
+    const confirmed = window.confirm(confirmMessage);
+    
+    if (!confirmed) {
+        // Revert checkbox state if admin cancelled
+        if (checkboxEl) {
+            checkboxEl.checked = currentEnabled;
+        }
+        updateClubActivityStatusLabels();
+        return;
+    }
+    
+    currentClubActivityStatus.enabled = willEnable;
+    updateClubActivityStatusLabels();
     
     try {
         localStorage.setItem('vsb_ece_club_activity_status', JSON.stringify(currentClubActivityStatus));
     } catch(e) {}
+    
+    showNotification(`Portal access updated to ${willEnable ? 'ENABLED' : 'DISABLED'}! Syncing...`);
     
     // 1. Save to Firestore
     saveToFirestore('club_activity_status', currentClubActivityStatus).catch(e => console.warn('Firestore club_activity_status save error:', e));
