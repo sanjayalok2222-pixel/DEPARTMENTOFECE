@@ -2322,95 +2322,166 @@ function downloadLeaderboardPDF() {
 let currentMcqLocks = { secondYearLocked: false, thirdYearLocked: false };
 
 function fetchMcqLocksInDashboard() {
-    const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
-    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
-    
-    const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
-    const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    
-    const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
-    
-    console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (mcq_locks), Type: GET`);
-    fetch(getUrl, {
-        method: 'GET',
-        headers: {
-            'apikey': key,
-            'Authorization': `Bearer ${key}`,
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data && data.length > 0) {
-            try {
-                currentMcqLocks = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
-            } catch (e) {
-                currentMcqLocks = data[0].value || currentMcqLocks;
+    // 0. Instant local cache restore
+    try {
+        const cached = localStorage.getItem('vsb_ece_mcq_locks');
+        if (cached) {
+            const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
+            if (parsed && typeof parsed.secondYearLocked === 'boolean') {
+                currentMcqLocks = parsed;
+                updateMcqLockLabels();
             }
         }
-        updateMcqLockLabels();
-    })
-    .catch(err => {
-        console.error("Error fetching locks:", err);
-    });
+    } catch (e) {}
+
+    // 1. Query Firestore first
+    fetchFromFirestore('mcq_locks')
+        .then(val => {
+            if (val !== null && val !== undefined) {
+                currentMcqLocks = typeof val === 'string' ? JSON.parse(val) : val;
+                updateMcqLockLabels();
+            } else {
+                throw new Error('No firestore mcq_locks found');
+            }
+        })
+        .catch(() => {
+            // 2. Fallback to Supabase
+            const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
+            const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
+            
+            const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
+            const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
+            
+            const getUrl = `${url}/rest/v1/vsb_ece_state?key=eq.mcq_locks`;
+            
+            console.log(`[Supabase GET] URL: ${url}, Table: vsb_ece_state (mcq_locks), Type: GET`);
+            fetch(getUrl, {
+                method: 'GET',
+                headers: {
+                    'apikey': key,
+                    'Authorization': `Bearer ${key}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    try {
+                        currentMcqLocks = typeof data[0].value === 'string' ? JSON.parse(data[0].value) : data[0].value;
+                    } catch (e) {
+                        currentMcqLocks = data[0].value || currentMcqLocks;
+                    }
+                }
+                updateMcqLockLabels();
+            })
+            .catch(err => {
+                console.error("Error fetching locks:", err);
+            });
+        });
 }
 
 function updateMcqLockLabels() {
+    const is2yrOpen = !currentMcqLocks.secondYearLocked;
+    const is3yrOpen = !currentMcqLocks.thirdYearLocked;
+
+    // 2nd Year Elements
+    const check2yr = document.getElementById('toggle-lock-2yr');
+    const track2yr = document.getElementById('track-lock-2yr');
+    const thumb2yr = document.getElementById('thumb-lock-2yr');
     const label2yr = document.getElementById('label-lock-2yr');
-    const btn2yr = document.getElementById('btn-toggle-lock-2yr');
-    const label3yr = document.getElementById('label-lock-3yr');
-    const btn3yr = document.getElementById('btn-toggle-lock-3yr');
-    
-    if (label2yr && btn2yr) {
-        if (currentMcqLocks.secondYearLocked) {
-            label2yr.textContent = 'LOCKED';
-            label2yr.style.color = '#f87171'; // red
-            btn2yr.textContent = 'Unlock';
-            btn2yr.style.background = '#22c55e'; // green
-            btn2yr.style.color = '#fff';
+
+    if (check2yr) check2yr.checked = is2yrOpen;
+    if (track2yr && thumb2yr) {
+        if (is2yrOpen) {
+            track2yr.style.background = '#22c55e';
+            track2yr.style.borderColor = '#4ade80';
+            track2yr.style.boxShadow = '0 0 12px rgba(34, 197, 94, 0.4)';
+            thumb2yr.style.transform = 'translateX(26px)';
         } else {
-            label2yr.textContent = 'UNLOCKED';
-            label2yr.style.color = '#4ade80'; // green
-            btn2yr.textContent = 'Lock';
-            btn2yr.style.background = '#ef4444'; // red
-            btn2yr.style.color = '#fff';
+            track2yr.style.background = '#ef4444';
+            track2yr.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+            track2yr.style.boxShadow = '0 0 8px rgba(239, 68, 68, 0.25)';
+            thumb2yr.style.transform = 'translateX(0px)';
         }
     }
-    
-    if (label3yr && btn3yr) {
-        if (currentMcqLocks.thirdYearLocked) {
-            label3yr.textContent = 'LOCKED';
-            label3yr.style.color = '#f87171'; // red
-            btn3yr.textContent = 'Unlock';
-            btn3yr.style.background = '#22c55e'; // green
-            btn3yr.style.color = '#fff';
+    if (label2yr) {
+        label2yr.textContent = is2yrOpen ? '● UNLOCKED' : '○ LOCKED';
+        label2yr.style.color = is2yrOpen ? '#4ade80' : '#f87171';
+    }
+
+    // 3rd Year Elements
+    const check3yr = document.getElementById('toggle-lock-3yr');
+    const track3yr = document.getElementById('track-lock-3yr');
+    const thumb3yr = document.getElementById('thumb-lock-3yr');
+    const label3yr = document.getElementById('label-lock-3yr');
+
+    if (check3yr) check3yr.checked = is3yrOpen;
+    if (track3yr && thumb3yr) {
+        if (is3yrOpen) {
+            track3yr.style.background = '#22c55e';
+            track3yr.style.borderColor = '#4ade80';
+            track3yr.style.boxShadow = '0 0 12px rgba(34, 197, 94, 0.4)';
+            thumb3yr.style.transform = 'translateX(26px)';
         } else {
-            label3yr.textContent = 'UNLOCKED';
-            label3yr.style.color = '#4ade80'; // green
-            btn3yr.textContent = 'Lock';
-            btn3yr.style.background = '#ef4444'; // red
-            btn3yr.style.color = '#fff';
+            track3yr.style.background = '#ef4444';
+            track3yr.style.borderColor = 'rgba(239, 68, 68, 0.7)';
+            track3yr.style.boxShadow = '0 0 8px rgba(239, 68, 68, 0.25)';
+            thumb3yr.style.transform = 'translateX(0px)';
         }
+    }
+    if (label3yr) {
+        label3yr.textContent = is3yrOpen ? '● UNLOCKED' : '○ LOCKED';
+        label3yr.style.color = is3yrOpen ? '#4ade80' : '#f87171';
     }
 }
 
-function toggleMcqLock(year) {
-    if (year === 'Second Year') {
-        currentMcqLocks.secondYearLocked = !currentMcqLocks.secondYearLocked;
-    } else {
-        currentMcqLocks.thirdYearLocked = !currentMcqLocks.thirdYearLocked;
+function toggleMcqLock(year, checkboxEl) {
+    const isSecondYear = (year === 'Second Year');
+    const isCurrentlyLocked = isSecondYear ? currentMcqLocks.secondYearLocked : currentMcqLocks.thirdYearLocked;
+    const willLock = !isCurrentlyLocked;
+    const yearLabel = isSecondYear ? '2nd Year' : '3rd Year';
+
+    // Prompt the admin to confirm before changing the mode
+    const confirmMessage = willLock
+        ? `🔒 LOCK EXAM PORTAL FOR ${yearLabel.toUpperCase()}?\n\nAre you sure you want to LOCK exam access for ${yearLabel} students?\n\n${yearLabel} students will NOT be able to open or submit the exam.`
+        : `🔓 UNLOCK EXAM PORTAL FOR ${yearLabel.toUpperCase()}?\n\nAre you sure you want to UNLOCK exam access for ${yearLabel} students?\n\n${yearLabel} students will immediately be able to enter and take the exam.`;
+
+    const confirmed = window.confirm(confirmMessage);
+    if (!confirmed) {
+        // Revert switch visually if admin cancelled
+        if (checkboxEl) {
+            checkboxEl.checked = !isCurrentlyLocked;
+        }
+        updateMcqLockLabels();
+        return;
     }
-    
-    // Save to Supabase
+
+    if (isSecondYear) {
+        currentMcqLocks.secondYearLocked = willLock;
+    } else {
+        currentMcqLocks.thirdYearLocked = willLock;
+    }
+    updateMcqLockLabels();
+
+    try {
+        localStorage.setItem('vsb_ece_mcq_locks', JSON.stringify(currentMcqLocks));
+    } catch(e) {}
+
+    showNotification(`${yearLabel} Exam Access updated to ${willLock ? 'LOCKED' : 'UNLOCKED'}! Syncing...`);
+
+    // 1. Save to Firestore
+    saveToFirestore('mcq_locks', currentMcqLocks).catch(e => console.warn('Firestore mcq_locks error:', e));
+
+    // 2. Save to Supabase
     const defaultUrl = 'https://jbzogspalrrahkrthvmh.supabase.co';
     const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impiem9nc3BhbHJyYWhrcnRodm1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTk1NjIsImV4cCI6MjEwMDM3NTU2Mn0.b1ndU8lbQKLYF51KhkJ2Rl9IxQ7aTblUQlRN-hoIBEo';
-    
+
     const url = localStorage.getItem('vsb_ece_supabase_url') || defaultUrl;
     const key = localStorage.getItem('vsb_ece_supabase_key') || defaultKey;
-    
+
     const postUrl = `${url}/rest/v1/vsb_ece_state`;
-    
+
     fetch(postUrl, {
         method: 'POST',
         headers: {
@@ -2426,13 +2497,14 @@ function toggleMcqLock(year) {
     })
     .then(res => {
         if (!res.ok) throw new Error("Failed to toggle lock");
-        const action = (year === 'Second Year' ? currentMcqLocks.secondYearLocked : currentMcqLocks.thirdYearLocked) ? 'LOCKED' : 'UNLOCKED';
-        alert(`Successfully ${action} the exam portal for ${year}!`);
+        const action = willLock ? 'LOCKED' : 'UNLOCKED';
+        alert(`Successfully ${action} the exam portal for ${yearLabel}!`);
         updateMcqLockLabels();
     })
     .catch(err => {
         console.error("Error updating lock:", err);
         alert("Failed to toggle access lock state.");
+        updateMcqLockLabels();
     });
 }
 
