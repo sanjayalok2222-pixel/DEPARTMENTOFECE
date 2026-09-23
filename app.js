@@ -907,7 +907,6 @@ async function handlePosterUpload(event, input) {
         };
         reader.readAsDataURL(file);
     }
-    }
 }
 
 // Update Active Poster Registration Link

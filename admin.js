@@ -541,7 +541,6 @@ async function handleCmsPosterUploader(index, event) {
         };
         reader.readAsDataURL(file);
     }
-    }
 }
 
 function previewCmsPosterLinkUrl(index, input) {
@@ -982,7 +981,6 @@ async function handleCmsPhotoUploader(event, targetImgId, targetEmojiId, preview
             showNotification('Profile photo updated!');
         };
         reader.readAsDataURL(file);
-    }
     }
 }
 

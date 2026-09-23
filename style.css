@@ -75,8 +75,8 @@ body::before {
 /* Header & Navigation Styles */
 header {
     background: rgba(5, 8, 17, 0.85);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(0, 210, 255, 0.08);
     position: fixed;
     top: 0;
@@ -300,6 +300,7 @@ header.header-hidden {
     letter-spacing: -0.03em;
     background: linear-gradient(135deg, #ffffff 30%, #d2f5ff 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -366,8 +367,8 @@ section {
     border-radius: 12px;
     padding: 2.5rem;
     box-shadow: var(--card-glow);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 }
 
 .about-card p {
@@ -388,8 +389,8 @@ section {
     border-radius: 12px;
     padding: 2rem;
     box-shadow: var(--card-glow);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 }
 
 .vm-box h3 {
@@ -2062,6 +2063,7 @@ footer {
     filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.8)) drop-shadow(0 0 35px rgba(0, 136, 255, 0.5));
     animation: lightningFlicker 4s ease-in-out infinite alternate;
     pointer-events: none;
+    -webkit-user-select: none;
     user-select: none;
 }
 
