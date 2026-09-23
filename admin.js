@@ -1040,8 +1040,6 @@ function publishCmsChanges() {
     updateDocInner('about-card-text', 'field-about-text');
     updateDocInner('vision-text', 'field-vision-text');
     updateDocInner('mission-list', 'field-mission-list');
-    // Save dynamic Activity challenges rounds list
-    reconstructActivityRoundsCmsDom();
 
     // Save Certificate portal URL & card placeholder
     const certEl = indexDoc.getElementById('cert-portal-link');
@@ -1761,160 +1759,222 @@ function reconstructIsteTableCmsDom() {
     });
 }
 
-// D. Manage Club Activity Challenges & Rounds
-function populateActivityRoundsCmsList() {
-    const container = indexDoc.getElementById('club-rounds-container');
+// D. Manage Club Activity Challenges & Rounds (Dynamic Rounds by Admin)
+const DEFAULT_ACTIVITY_ROUNDS = [
+    { title: 'Round 1-Crossword puzzle', url: 'https://electroplay-quiz.vercel.app/' },
+    { title: 'Round 2-Instruction Following', url: 'https://clue-matrix.vercel.app/' },
+    { title: 'Round 3-Hardware Hunt', url: 'https://wokwi.com/projects/473662526707899393' }
+];
+
+const ACTIVITY_ROUND_ICONS = ['🧩', '⚡', '💻', '🎮', '🎯', '🚀', '🔬', '🏆', '🔥', '⚙️', '💡', '🤖'];
+
+function escapeRoundAttr(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function getCurrentActivityRoundsFromInputs() {
+    const container = document.getElementById('cms-activity-rounds-container');
+    if (!container) return [];
+    const cards = container.querySelectorAll('.cms-round-slot-card');
+    const rounds = [];
+    cards.forEach((card, idx) => {
+        const titleEl = card.querySelector('.cms-round-slot-title');
+        const urlEl = card.querySelector('.cms-round-slot-url');
+        rounds.push({
+            title: titleEl ? titleEl.value.trim() : `Round ${idx + 1}`,
+            url: urlEl ? urlEl.value.trim() : ''
+        });
+    });
+    return rounds;
+}
+
+function renderActivityRoundSlots(roundsArray) {
+    const container = document.getElementById('cms-activity-rounds-container');
+    const countInput = document.getElementById('cms-rounds-count');
+    const badge = document.getElementById('cms-rounds-badge');
+    
     if (!container) return;
-    const items = container.querySelectorAll('.activity-round-item');
-    
-    const defaults = [
-        { title: 'Round 1-Crossword puzzle', url: 'https://electroplay-quiz.vercel.app/' },
-        { title: 'Round 2-Instruction Following', url: 'https://clue-matrix.vercel.app/' },
-        { title: 'Round 3-Hardware Hunt', url: 'https://wokwi.com/projects/473662526707899393' }
-    ];
-    
-    for (let i = 1; i <= 3; i++) {
-        const item = items[i - 1];
-        const titleInput = document.getElementById(`round-${i}-title`);
-        const urlInput = document.getElementById(`round-${i}-url`);
-        
-        if (titleInput && urlInput) {
-            titleInput.value = item ? (item.getAttribute('data-title') || defaults[i-1].title) : defaults[i-1].title;
-            urlInput.value = item ? (item.getAttribute('data-url') || defaults[i-1].url) : defaults[i-1].url;
+
+    if (!Array.isArray(roundsArray) || roundsArray.length === 0) {
+        roundsArray = DEFAULT_ACTIVITY_ROUNDS.slice();
+    }
+
+    if (countInput) {
+        countInput.value = roundsArray.length;
+    }
+    if (badge) {
+        badge.textContent = `${roundsArray.length} Round${roundsArray.length === 1 ? '' : 's'} Active`;
+    }
+
+    container.innerHTML = '';
+
+    roundsArray.forEach((round, idx) => {
+        const roundNum = idx + 1;
+        const icon = ACTIVITY_ROUND_ICONS[idx % ACTIVITY_ROUND_ICONS.length];
+        const titleVal = round.title !== undefined ? round.title : `Round ${roundNum}`;
+        const urlVal = round.url || '';
+
+        const card = document.createElement('div');
+        card.className = 'cms-round-slot-card';
+        card.setAttribute('data-index', idx);
+        card.style = 'background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 14px; padding: 1.25rem 1.5rem; transition: all 0.3s ease;';
+
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <span style="font-size: 1.35rem;">${icon}</span>
+                    <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700;">Round ${roundNum} Configuration</h4>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button type="button" class="btn-delete-list-item" title="Delete Round ${roundNum}" onclick="removeSingleActivityRound(${idx})" style="width: 32px; height: 32px; font-size: 0.85rem;">🗑️</button>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700; margin-bottom: 0.4rem; display: block;">Round ${roundNum} Name / Title</label>
+                    <input type="text" class="form-control cms-round-slot-title" value="${escapeRoundAttr(titleVal)}" placeholder="e.g. Round ${roundNum} - Challenge Name">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700; margin-bottom: 0.4rem; display: block;">Redirection URL Link</label>
+                    <input type="url" class="form-control cms-round-slot-url" value="${escapeRoundAttr(urlVal)}" placeholder="https://...">
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function populateActivityRoundsCmsList() {
+    let loadedRounds = [];
+
+    if (typeof indexDoc !== 'undefined' && indexDoc) {
+        const container = indexDoc.getElementById('club-rounds-container');
+        if (container) {
+            const items = container.querySelectorAll('.activity-round-item');
+            if (items && items.length > 0) {
+                items.forEach((item, i) => {
+                    loadedRounds.push({
+                        title: item.getAttribute('data-title') || `Round ${i + 1}`,
+                        url: item.getAttribute('data-url') || ''
+                    });
+                });
+            }
         }
     }
-}
 
-function addActivityRoundSlotMarkup(index, title='', type='link', url='', cTitle='', cDesc='', cCode='', isLocked=false) {
-    const list = document.getElementById('cms-activity-rounds-list');
-    const div = document.createElement('div');
-    div.className = 'cms-list-item cms-activity-round-card';
-    div.setAttribute('data-locked', 'false');
-    div.style = 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem; position: relative;';
-    div.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; width: calc(100% - 40px);">
-            <div class="form-group" style="margin-bottom:0;">
-                <label>Round Label / Title</label>
-                <input type="text" class="form-control cms-round-title" value="${title}" placeholder="e.g. Round 1 - Play">
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-                <label>Round Type / Action</label>
-                <select class="form-control cms-round-type" onchange="toggleCmsRoundFields(this)">
-                    <option value="link" ${type === 'link' ? 'selected' : ''}>Redirect External Link</option>
-                    <option value="challenge" ${type === 'challenge' ? 'selected' : ''}>Interactive Code Challenge</option>
-                </select>
-            </div>
-        </div>
-        
-        <!-- Redirect Link Fields -->
-        <div class="cms-round-fields-link" style="display: ${type === 'link' ? 'block' : 'none'};">
-            <div class="form-group">
-                <label>Redirection URL</label>
-                <input type="text" class="form-control cms-round-url" value="${url}" placeholder="e.g. https://...">
-            </div>
-        </div>
-        
-        <!-- Code Challenge Fields -->
-        <div class="cms-round-fields-challenge" style="display: ${type === 'challenge' ? 'block' : 'none'};">
-            <div class="form-group">
-                <label>Challenge Card Header Title</label>
-                <input type="text" class="form-control cms-round-ctitle" value="${cTitle}" placeholder="e.g. 💻 Arduino Uno Code Challenge">
-            </div>
-            <div class="form-group">
-                <label>Challenge Card Instructions Text</label>
-                <textarea class="form-control cms-round-cdesc" placeholder="Enter instructions...">${cDesc}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Option D Correct Arduino Code Snippet</label>
-                <textarea class="form-control cms-round-ccode" style="font-family: monospace; min-height: 120px;" placeholder="Paste Arduino code...">${cCode}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Simulation Platform URL</label>
-                <input type="text" class="form-control cms-round-url-challenge" value="${url}" placeholder="e.g. Wokwi URL https://...">
-            </div>
-        </div>
-        
-        <button type="button" class="btn-delete-list-item" title="Delete Round" onclick="this.closest('.cms-list-item').remove()" style="position: absolute; top: 1.25rem; right: 1.25rem;">🗑️</button>
-    `;
-    list.appendChild(div);
-}
-
-function toggleCmsRoundFields(select) {
-    const card = select.closest('.cms-activity-round-card');
-    const linkDiv = card.querySelector('.cms-round-fields-link');
-    const challengeDiv = card.querySelector('.cms-round-fields-challenge');
-    
-    if (select.value === 'link') {
-        linkDiv.style.display = 'block';
-        challengeDiv.style.display = 'none';
-    } else {
-        linkDiv.style.display = 'none';
-        challengeDiv.style.display = 'block';
+    if (loadedRounds.length === 0) {
+        const docContainer = document.getElementById('club-rounds-container');
+        if (docContainer) {
+            const items = docContainer.querySelectorAll('.activity-round-item');
+            if (items && items.length > 0) {
+                items.forEach((item, i) => {
+                    loadedRounds.push({
+                        title: item.getAttribute('data-title') || `Round ${i + 1}`,
+                        url: item.getAttribute('data-url') || ''
+                    });
+                });
+            }
+        }
     }
-}
 
-function toggleCmsRoundLock(btn) {
-    const card = btn.closest('.cms-activity-round-card');
-    const label = card.querySelector('.label-round-lock-status');
-    const isCurrentlyLocked = card.getAttribute('data-locked') === 'true';
-    
-    const newLockedState = !isCurrentlyLocked;
-    card.setAttribute('data-locked', newLockedState ? 'true' : 'false');
-    
-    if (newLockedState) {
-        label.textContent = 'LOCKED 🔒';
-        label.style.color = '#f87171';
-        btn.textContent = 'Unlock';
-        btn.style.background = '#22c55e';
-    } else {
-        label.textContent = 'UNLOCKED 🔓';
-        label.style.color = '#4ade80';
-        btn.textContent = 'Lock';
-        btn.style.background = '#ef4444';
+    if (loadedRounds.length === 0) {
+        loadedRounds = DEFAULT_ACTIVITY_ROUNDS.slice();
     }
-    showNotification(`Round lock status toggled.`);
+
+    renderActivityRoundSlots(loadedRounds);
 }
 
-function cmsAddActivityRoundSlot() {
-    addActivityRoundSlotMarkup(Date.now(), 'New Round', 'link', '#', '', '', '', true);
+function handleRoundsCountChange(newCount) {
+    let currentRounds = getCurrentActivityRoundsFromInputs();
+    let count = parseInt(newCount, 10);
+
+    if (isNaN(count) || count < 1) {
+        count = 1;
+    }
+    if (count > 20) {
+        count = 20;
+    }
+
+    // Expand if count increased
+    while (currentRounds.length < count) {
+        const nextNum = currentRounds.length + 1;
+        currentRounds.push({
+            title: `Round ${nextNum}`,
+            url: ''
+        });
+    }
+
+    // Shrink if count decreased
+    if (currentRounds.length > count) {
+        currentRounds = currentRounds.slice(0, count);
+    }
+
+    renderActivityRoundSlots(currentRounds);
+}
+
+function stepRoundsCount(delta) {
+    const countInput = document.getElementById('cms-rounds-count');
+    const currentVal = countInput ? (parseInt(countInput.value, 10) || 1) : 1;
+    const newVal = Math.max(1, Math.min(20, currentVal + delta));
+    if (countInput) {
+        countInput.value = newVal;
+    }
+    handleRoundsCountChange(newVal);
+}
+
+function addSingleActivityRound() {
+    const currentRounds = getCurrentActivityRoundsFromInputs();
+    const nextNum = currentRounds.length + 1;
+    currentRounds.push({
+        title: `Round ${nextNum}`,
+        url: ''
+    });
+    renderActivityRoundSlots(currentRounds);
+    showNotification(`Round ${nextNum} slot added!`);
+}
+
+function removeSingleActivityRound(index) {
+    const currentRounds = getCurrentActivityRoundsFromInputs();
+    if (currentRounds.length <= 1) {
+        alert('At least one competition round must remain configured.');
+        return;
+    }
+    currentRounds.splice(index, 1);
+    renderActivityRoundSlots(currentRounds);
+    showNotification(`Round slot removed.`);
 }
 
 function reconstructActivityRoundsCmsDom() {
+    if (typeof indexDoc === 'undefined' || !indexDoc) return;
     const container = indexDoc.getElementById('club-rounds-container');
     if (!container) return;
-    
-    const r1El = document.getElementById('round-1-title');
-    const u1El = document.getElementById('round-1-url');
-    const r2El = document.getElementById('round-2-title');
-    const u2El = document.getElementById('round-2-url');
-    const r3El = document.getElementById('round-3-title');
-    const u3El = document.getElementById('round-3-url');
 
-    const items = container.querySelectorAll('.activity-round-item');
-    const r1Title = (r1El && r1El.value.trim()) || (items[0] ? items[0].getAttribute('data-title') : '') || 'Round 1-Crossword puzzle';
-    const r1Url = (u1El && u1El.value.trim()) || (items[0] ? items[0].getAttribute('data-url') : '') || 'https://electroplay-quiz.vercel.app/';
-    const r2Title = (r2El && r2El.value.trim()) || (items[1] ? items[1].getAttribute('data-title') : '') || 'Round 2-Instruction Following';
-    const r2Url = (u2El && u2El.value.trim()) || (items[1] ? items[1].getAttribute('data-url') : '') || 'https://clue-matrix.vercel.app/';
-    const r3Title = (r3El && r3El.value.trim()) || (items[2] ? items[2].getAttribute('data-title') : '') || 'Round 3-Hardware Hunt';
-    const r3Url = (u3El && u3El.value.trim()) || (items[2] ? items[2].getAttribute('data-url') : '') || 'https://wokwi.com/projects/473662526707899393';
-    
-    container.innerHTML = `
-        <div class="activity-round-item" data-title="${r1Title}" data-type="link" data-url="${r1Url}" data-locked="false">
+    let rounds = getCurrentActivityRoundsFromInputs();
+    if (!rounds || rounds.length === 0) {
+        const countInput = document.getElementById('cms-rounds-count');
+        const count = countInput ? (parseInt(countInput.value, 10) || 3) : 3;
+        rounds = DEFAULT_ACTIVITY_ROUNDS.slice(0, count);
+    }
+
+    let itemsHtml = '';
+    rounds.forEach((r, idx) => {
+        const roundTitle = escapeRoundAttr(r.title || `Round ${idx + 1}`);
+        const roundUrl = escapeRoundAttr(r.url || '#');
+        itemsHtml += `
+        <div class="activity-round-item" data-title="${roundTitle}" data-type="link" data-url="${roundUrl}" data-locked="false">
             <div class="challenge-title"></div>
             <div class="challenge-desc"></div>
             <pre class="challenge-code"></pre>
-        </div>
-        <div class="activity-round-item" data-title="${r2Title}" data-type="link" data-url="${r2Url}" data-locked="false">
-            <div class="challenge-title"></div>
-            <div class="challenge-desc"></div>
-            <pre class="challenge-code"></pre>
-        </div>
-        <div class="activity-round-item" data-title="${r3Title}" data-type="link" data-url="${r3Url}" data-locked="false">
-            <div class="challenge-title"></div>
-            <div class="challenge-desc"></div>
-            <pre class="challenge-code"></pre>
-        </div>
-    `;
+        </div>`;
+    });
+
+    container.innerHTML = itemsHtml;
 }
 
 // === 7. Round 1 Quiz Submissions & Leaderboard Systems ===
