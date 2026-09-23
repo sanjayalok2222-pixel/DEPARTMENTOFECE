@@ -77,14 +77,15 @@ async function handleCmsLogin(event) {
     // Master Admin Credentials check to prevent lockout
     const userClean = username.toLowerCase();
     const passClean = password;
+    const passLower = password.toLowerCase();
 
     if (
-        (userClean === 'vsbece' && (passClean === 'VSBECE123' || passClean === 'vsbece123')) ||
-        (userClean === 'eceadmin.dept@gmail.com' && password === 'ECE@1234') ||
+        (userClean === 'vsbece' && (passClean === 'VSBECE123' || passLower === 'vsbece123')) ||
+        (userClean === 'eceadmin.dept@gmail.com' && (passClean === 'ECE@1234' || passLower === 'ece@1234')) ||
         passClean === 'VSBECE123' ||
-        passClean === 'vsbece123' ||
-        passClean === 'vsbece2026' || 
-        passClean === 'admin123' || 
+        passLower === 'vsbece123' ||
+        passLower === 'vsbece2026' || 
+        passLower === 'admin123' || 
         passClean === '2026'
     ) {
         localStorage.setItem('vsb_ece_is_admin', 'true');
