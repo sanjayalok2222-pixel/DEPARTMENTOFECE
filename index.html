@@ -701,14 +701,14 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeLoginModal()">×</button>
             <h3>Admin System Login</h3>
-            <form id="adminLoginForm" onsubmit="submitAdminLogin(event)">
+            <form id="adminLoginForm" onsubmit="submitAdminLogin(event)" autocomplete="off">
                 <div class="form-group">
                     <label for="admin-user">Username</label>
-                    <input type="text" id="admin-user" required placeholder="Enter admin username">
+                    <input type="text" id="admin-user" required autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 </div>
                 <div class="form-group">
                     <label for="admin-pass">Password</label>
-                    <input type="password" id="admin-pass" required placeholder="Enter password">
+                    <input type="password" id="admin-pass" required autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
                 </div>
                 <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
             </form>
