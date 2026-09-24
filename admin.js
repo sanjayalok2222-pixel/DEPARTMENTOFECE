@@ -4,7 +4,8 @@ let activeTab = 'overview';
 let cachedResultsList = [];
 
 const CMS_DELETE_ICON_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
-const CMS_DELETE_ICON_SM_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+const CMS_DELETE_ICON_SM_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+const CMS_EDIT_ICON_SM_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
 const CMS_UPLOAD_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
 const CMS_ATTACH_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
 const CMS_PHOTO_ICON_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
@@ -2095,18 +2096,26 @@ function loadQuizResultsInDashboard() {
             
             const maxQ = res.year === 'Third Year' ? 45 : 50;
             html += `
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 0.75rem; font-weight: bold; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: var(--accent-cyan);">${studentName}</td>
-                    <td style="padding: 0.75rem; font-family: monospace;">${regnum}</td>
-                    <td style="padding: 0.75rem;">${dept} / ${res.year} (${sec})</td>
-                    <td style="padding: 0.75rem; font-size: 0.85rem; color: var(--text-secondary);">${mail}</td>
-                    <td style="padding: 0.75rem; font-weight: bold; color: #4ade80;">${res.score} / ${maxQ}</td>
-                    <td style="padding: 0.75rem; font-family: monospace;">${res.timeSpent || 'N/A'}</td>
-                    <td style="padding: 0.75rem; font-size: 0.8rem; color: var(--text-secondary);">${dateStr}</td>
-                    <td style="padding: 0.75rem;">
-                        <button type="button" class="btn-preview" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 0.25rem;" onclick="openEditResultModal(${originalIndex})">✏️ Edit</button>
-                        <button type="button" class="btn-admin-logout" style="padding: 0.25rem 0.55rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin: 0; display: inline-flex; align-items: center; gap: 4px;" onclick="deleteMcqResult(${originalIndex})">${CMS_DELETE_ICON_SM_SVG} Delete</button>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; transition: background 0.15s ease;" onmouseover="this.style.background='rgba(0,210,255,0.03)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 0.85rem 1rem; font-weight: 800; white-space: nowrap; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
+                    <td style="padding: 0.85rem 1rem; font-weight: 700; white-space: nowrap; color: var(--accent-cyan);">${studentName}</td>
+                    <td style="padding: 0.85rem 1rem; font-family: monospace; white-space: nowrap; letter-spacing: 0.5px;">${regnum}</td>
+                    <td style="padding: 0.85rem 1rem; white-space: nowrap;">${dept} / ${res.year} (${sec})</td>
+                    <td style="padding: 0.85rem 1rem; font-size: 0.85rem; white-space: nowrap; color: var(--text-secondary);">${mail}</td>
+                    <td style="padding: 0.85rem 1rem; font-weight: 800; white-space: nowrap; text-align: center; color: #4ade80;">${res.score} / ${maxQ}</td>
+                    <td style="padding: 0.85rem 1rem; font-family: monospace; white-space: nowrap; text-align: center;">${res.timeSpent || 'N/A'}</td>
+                    <td style="padding: 0.85rem 1rem; font-size: 0.8rem; white-space: nowrap; color: var(--text-secondary);">${dateStr}</td>
+                    <td style="padding: 0.85rem 1rem; white-space: nowrap; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                            <button type="button" class="btn-table-edit" title="Edit Student Record" onclick="openEditResultModal(${originalIndex})">
+                                ${CMS_EDIT_ICON_SM_SVG}
+                                <span>Edit</span>
+                            </button>
+                            <button type="button" class="btn-table-delete" title="Delete Student Record" onclick="deleteMcqResult(${originalIndex})">
+                                ${CMS_DELETE_ICON_SM_SVG}
+                                <span>Delete</span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;
