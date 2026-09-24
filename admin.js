@@ -2087,33 +2087,43 @@ function loadQuizResultsInDashboard() {
         let html = '';
         filteredResults.forEach((res, rank) => {
             const originalIndex = resultsList.indexOf(res);
-            const dateStr = res.submittedAt ? new Date(res.submittedAt).toLocaleString() : 'N/A';
+            let dateStr = 'N/A';
+            let fullDate = '';
+            if (res.submittedAt) {
+                const d = new Date(res.submittedAt);
+                if (!isNaN(d.getTime())) {
+                    fullDate = d.toLocaleString();
+                    const datePart = d.toLocaleDateString([], { month: 'numeric', day: 'numeric' });
+                    const timePart = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    dateStr = `${datePart} ${timePart}`;
+                }
+            }
             const studentName = res.studentName || res.teamName || 'N/A';
             const regnum = res.regnum || res.student1 || 'N/A';
-            const dept = res.dept || 'N/A';
-            const sec = res.section || 'N/A';
+            const dept = res.dept || 'ECE';
+            const sec = res.section || 'A';
             const mail = res.mail || 'N/A';
             
             const maxQ = res.year === 'Third Year' ? 45 : 50;
             html += `
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; transition: background 0.15s ease;" onmouseover="this.style.background='rgba(0,210,255,0.03)'" onmouseout="this.style.background='transparent'">
-                    <td style="padding: 0.85rem 1rem; font-weight: 800; white-space: nowrap; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
-                    <td style="padding: 0.85rem 1rem; font-weight: 700; white-space: nowrap; color: var(--accent-cyan);">${studentName}</td>
-                    <td style="padding: 0.85rem 1rem; font-family: monospace; white-space: nowrap; letter-spacing: 0.5px;">${regnum}</td>
-                    <td style="padding: 0.85rem 1rem; white-space: nowrap;">${dept} / ${res.year} (${sec})</td>
-                    <td style="padding: 0.85rem 1rem; font-size: 0.85rem; white-space: nowrap; color: var(--text-secondary);">${mail}</td>
-                    <td style="padding: 0.85rem 1rem; font-weight: 800; white-space: nowrap; text-align: center; color: #4ade80;">${res.score} / ${maxQ}</td>
-                    <td style="padding: 0.85rem 1rem; font-family: monospace; white-space: nowrap; text-align: center;">${res.timeSpent || 'N/A'}</td>
-                    <td style="padding: 0.85rem 1rem; font-size: 0.8rem; white-space: nowrap; color: var(--text-secondary);">${dateStr}</td>
-                    <td style="padding: 0.85rem 1rem; white-space: nowrap; text-align: center;">
-                        <div style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                    <td style="padding: 0.6rem 0.5rem; font-weight: 800; white-space: nowrap; font-size: 0.8rem; color: ${rank === 0 ? '#ffd700' : rank === 1 ? '#c0c0c0' : rank === 2 ? '#cd7f32' : 'var(--text-secondary)'};">#${rank + 1}</td>
+                    <td style="padding: 0.6rem 0.5rem; font-weight: 700; white-space: nowrap; font-size: 0.82rem; color: var(--accent-cyan); max-width: 140px; overflow: hidden; text-overflow: ellipsis;" title="${studentName}">${studentName}</td>
+                    <td style="padding: 0.6rem 0.5rem; font-family: monospace; white-space: nowrap; font-size: 0.78rem; letter-spacing: 0.5px;">${regnum}</td>
+                    <td style="padding: 0.6rem 0.5rem; white-space: nowrap; font-size: 0.8rem;">${dept} (${sec})</td>
+                    <td style="padding: 0.6rem 0.5rem; font-size: 0.78rem; white-space: nowrap; color: var(--text-secondary); max-width: 150px; overflow: hidden; text-overflow: ellipsis;" title="${mail}">${mail}</td>
+                    <td style="padding: 0.6rem 0.4rem; font-weight: 800; white-space: nowrap; text-align: center; font-size: 0.82rem; color: #4ade80;">${res.score}/${maxQ}</td>
+                    <td style="padding: 0.6rem 0.4rem; font-family: monospace; white-space: nowrap; text-align: center; font-size: 0.78rem;">${res.timeSpent || 'N/A'}</td>
+                    <td style="padding: 0.6rem 0.5rem; font-size: 0.76rem; white-space: nowrap; color: var(--text-secondary);" title="${fullDate}">${dateStr}</td>
+                    <td style="padding: 0.6rem 0.5rem; white-space: nowrap; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;">
                             <button type="button" class="btn-table-edit" title="Edit Student Record" onclick="openEditResultModal(${originalIndex})">
                                 ${CMS_EDIT_ICON_SM_SVG}
                                 <span>Edit</span>
                             </button>
                             <button type="button" class="btn-table-delete" title="Delete Student Record" onclick="deleteMcqResult(${originalIndex})">
                                 ${CMS_DELETE_ICON_SM_SVG}
-                                <span>Delete</span>
+                                <span>Del</span>
                             </button>
                         </div>
                     </td>
