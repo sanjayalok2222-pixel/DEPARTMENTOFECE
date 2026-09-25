@@ -167,8 +167,8 @@ function openClubInterface(clubType) {
             <div style="width: 100%; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
                 <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); text-align: center; font-weight: bold; letter-spacing: 0.5px;">🏆 View Leaderboard</div>
                 <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <button onclick="showPublicQuizResults('Second Year')" class="event-reg-link" style="flex: 1; text-align: center; margin: 0; padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">Second Yr</button>
-                    <button onclick="showPublicQuizResults('Third Year')" class="event-reg-link" style="flex: 1; text-align: center; margin: 0; padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">Third Yr</button>
+                    <button onclick="showPublicQuizResults('Second Year', true)" class="event-reg-link" style="flex: 1; text-align: center; margin: 0; padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">Second Yr</button>
+                    <button onclick="showPublicQuizResults('Third Year', true)" class="event-reg-link" style="flex: 1; text-align: center; margin: 0; padding: 0.5rem; font-size: 0.8rem; background: transparent; border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important;">Third Yr</button>
                 </div>
             </div>
         `;
@@ -186,13 +186,13 @@ function openClubInterface(clubType) {
 
 function openMcqExamPortal(event) {
     if (event) event.preventDefault();
-    openClubInterface('electronics');
     startTechnicalMcqSelection();
+    clubModal.classList.add('active');
 }
 
 function showPublicResultsCard(year) {
-    openClubInterface('electronics');
-    showPublicQuizResults(year);
+    showPublicQuizResults(year, false);
+    clubModal.classList.add('active');
 }
 
 function showRoundChallenge(idx) {
@@ -2953,7 +2953,7 @@ function startTechnicalMcqSelection() {
     selectedCmsYear = '';
     portalContent.innerHTML = `
         <div class="mcq-selection-container" style="display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; gap: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif; text-align: center;">
-            <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
+            <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;" onclick="closeClubModal()">← Back</button>
             <h3 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: var(--accent-cyan); margin-bottom: 0.25rem;">TECHNICAL MCQ</h3>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">Select your academic year to verify credentials and unlock the exam portal.</p>
             
@@ -3357,7 +3357,8 @@ function exitQuizAlert() {
     if (confirm("Are you sure you want to exit the quiz? Your progress will be lost!")) {
         if (quizTimerInterval) clearInterval(quizTimerInterval);
         removeProctoring();
-        openClubInterface('electronics');
+        isQuizActive = false;
+        closeClubModal();
     }
 }
 
@@ -3618,12 +3619,13 @@ function saveQuizResultToSupabase(submission) {
     });
 }
 
-function showPublicQuizResults(year) {
+function showPublicQuizResults(year, fromClub = false) {
     const selectedYear = year || 'Second Year';
+    const backAction = fromClub ? "openClubInterface('electronics')" : "closeClubModal()";
     portalContent.innerHTML = `
         <div class="quiz-container" style="display: flex; flex-direction: column; width: 100%; max-height: 480px; overflow-y: auto; padding-right: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0;" onclick="openClubInterface('electronics')">← Back to Rounds</button>
+                <button class="btn-admin-logout" style="width: fit-content; padding: 0.4rem 1.2rem; margin: 0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;" onclick="${backAction}">← Back</button>
                 <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--accent-cyan); margin: 0;">🏆 ${selectedYear} Leaderboard</h3>
             </div>
             
