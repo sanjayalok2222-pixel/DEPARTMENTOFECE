@@ -577,6 +577,7 @@
             white-space: nowrap !important;
             flex-shrink: 0 !important;
             box-shadow: 0 2px 10px rgba(0, 210, 255, 0.35) !important;
+            -webkit-user-select: none !important;
             user-select: none !important;
             margin: 0 !important;
             text-transform: none !important;
@@ -834,8 +835,6 @@
                 overflow-x: auto !important;
                 padding-bottom: 0.5rem !important;
                 gap: 0.5rem !important;
-                scrollbar-width: none;
-                -webkit-overflow-scrolling: touch;
             }
             
             .sidebar-menu::-webkit-scrollbar {
@@ -855,7 +854,7 @@
             .main-content {
                 margin-left: 0 !important;
                 padding: 1.5rem 1rem !important;
-                min-height: auto !important;
+                min-height: 0 !important;
             }
             
             .content-header {
@@ -921,24 +920,116 @@
                 align-self: flex-end !important;
             }
         }
-    </style>
+    
+/* Auto-extracted Admin Utility Classes */
+.adm-s1 { background: #090e1a; }
+.adm-s2 { background: #090e1a; border: 1px solid rgba(0, 210, 255, 0.25); box-shadow: 0 0 30px rgba(0, 210, 255, 0.15); border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; margin: 1rem; color: #fff; }
+.adm-s3 { background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.adm-s4 { background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.3); color: var(--accent-cyan); font-size: 0.85rem; font-weight: 700; padding: 0.45rem 1rem; border-radius: 20px; white-space: nowrap; }
+.adm-s5 { background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 20px; }
+.adm-s6 { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem; }
+.adm-s7 { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,210,255,0.3); color: var(--accent-cyan); font-size: 1.3rem; font-weight: 800; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+.adm-s8 { background: transparent; border: none; color: #fff; padding: 0.2rem 0.3rem; font-weight: bold; font-family: 'Space Grotesk', sans-serif; cursor: pointer; outline: none; font-size: 0.82rem; }
+.adm-s9 { border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(0, 210, 255, 0.03); color: var(--accent-cyan); font-family: 'Outfit', sans-serif; white-space: nowrap; }
+.adm-s10 { border-left: 4px solid #f59e0b; }
+.adm-s11 { border-left: 4px solid var(--accent-cyan); }
+.adm-s12 { border-left: 4px solid var(--accent-cyan); margin-bottom: 1.5rem; }
+.adm-s13 { color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; margin: 0; text-transform: uppercase; }
+.adm-s14 { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem; }
+.adm-s15 { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.35rem; margin-bottom: 0; }
+.adm-s16 { color: var(--text-secondary); font-size: 0.85rem; margin: 0; }
+.adm-s17 { color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.2rem; }
+.adm-s18 { display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.03); padding: 0.3rem 0.6rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); }
+.adm-s19 { display: flex; align-items: center; gap: 0.75rem; }
+.adm-s20 { display: flex; align-items: center; gap: 0.85rem; background: rgba(255,255,255,0.03); padding: 0.65rem 1.15rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+.adm-s21 { display: flex; align-items: center; gap: 1.25rem; background: rgba(255,255,255,0.03); padding: 0.75rem 1.35rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
+.adm-s22 { display: flex; flex-direction: column; gap: 0.15rem; }
+.adm-s23 { display: flex; flex-direction: column; gap: 0.1rem; }
+.adm-s24 { display: flex; flex-direction: column; gap: 0.25rem; }
+.adm-s25 { display: flex; flex-direction: column; gap: 1.25rem; }
+.adm-s26 { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.adm-s27 { display: flex; gap: 1rem; }
+.adm-s28 { display: flex; gap: 1rem; align-items: center; }
+.adm-s29 { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.adm-s30 { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.adm-s31 { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.adm-s32 { display: flex; justify-content: flex-end; gap: 1rem; }
+.adm-s33 { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem; }
+.adm-s34 { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.adm-s35 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.adm-s36 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+.adm-s37 { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+.adm-s38 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.adm-s39 { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.adm-s40 { display:inline-flex; align-items:center; gap:6px; }
+.adm-s41 { display:none; }
+.adm-s42 { flex-shrink:0; pointer-events:none; }
+.adm-s43 { flex: 1; margin-top: 0; }
+.adm-s44 { flex: 1; padding: 0.9rem 1.75rem; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer; }
+.adm-s45 { font-family: 'Outfit', sans-serif; color: var(--accent-cyan); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem; }
+.adm-s46 { font-size: 0.65rem; text-transform: uppercase; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px; }
+.adm-s47 { font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold; }
+.adm-s48 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700; }
+.adm-s49 { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem; }
+.adm-s50 { font-size: 0.85rem; font-weight: 800; color: #4ade80; }
+.adm-s51 { font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan); }
+.adm-s52 { font-size: 0.95rem; font-weight: 800; color: #4ade80; display: inline-flex; align-items: center; gap: 0.35rem; }
+.adm-s53 { font-size: 1.05rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+.adm-s54 { line-height: 1.6; color: var(--text-secondary); margin-bottom: 1.5rem; }
+.adm-s55 { margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; background: rgba(0, 210, 255, 0.02); border-color: rgba(0, 210, 255, 0.15); }
+.adm-s56 { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.adm-s57 { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.adm-s58 { margin-bottom: 2rem; }
+.adm-s59 { margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.adm-s60 { margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary); }
+.adm-s61 { margin: 0; }
+.adm-s62 { margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif; }
+.adm-s63 { margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.35rem; display: flex; align-items: center; gap: 0.5rem; }
+.adm-s64 { margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+.adm-s65 { margin: 0; font-size: 1.25rem; }
+.adm-s66 { margin: 0; width: auto; padding: 0.75rem 1.75rem; }
+.adm-s67 { min-height: 150px; }
+.adm-s68 { min-height: 200px; }
+.adm-s69 { overflow-x: auto; max-height: 550px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+.adm-s70 { padding: 0.65rem 0.4rem; font-size: 0.8rem; white-space: nowrap; text-align: center; }
+.adm-s71 { padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap; }
+.adm-s72 { padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap; text-align: center; }
+.adm-s73 { padding: 0.6rem 1.5rem; font-size: 0.85rem; }
+.adm-s74 { padding: 0.8rem 2.2rem; font-size: 0.95rem; }
+.adm-s75 { padding: 1.5rem 1.25rem; }
+.adm-s76 { padding: 2.5rem; text-align: center; color: var(--text-secondary); white-space: nowrap; }
+.adm-s77 { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 30px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4); }
+.adm-s78 { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 34px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 14px rgba(34, 197, 94, 0.4); }
+.adm-s79 { position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 5px rgba(0,0,0,0.4); transform: translateX(26px); }
+.adm-s80 { position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 6px rgba(0,0,0,0.4); transform: translateX(28px); }
+.adm-s81 { position: absolute; opacity: 0; width: 0; height: 0; }
+.adm-s82 { position: relative; display: inline-block; width: 56px; height: 30px; cursor: pointer; margin: 0; -webkit-user-select: none; user-select: none; }
+.adm-s83 { position: relative; display: inline-block; width: 60px; height: 32px; cursor: pointer; margin: 0; -webkit-user-select: none; user-select: none; }
+.adm-s84 { width: 100%; border-collapse: collapse; text-align: left; table-layout: auto; }
+.adm-s85 { width: 80px; margin-bottom: 1.5rem; filter: drop-shadow(var(--text-glow)); }
+.adm-s86 { width: 80px; text-align: center; font-size: 1.3rem; font-weight: 800; color: var(--accent-cyan); padding: 0.5rem; border-radius: 10px; border-color: rgba(0,210,255,0.4); }
+.adm-s87 { width: auto; display: inline-flex; align-items: center; gap: 6px; }
+.adm-s88 { width: auto; margin: 0; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #fff; }
+.adm-s89 { width: auto; margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); color: var(--bg-dark) !important; font-weight: bold; border: none; cursor: pointer; }
+.adm-s90 { width: auto; padding: 0.75rem 2rem; }
+</style>
 </head>
 <body>
 
     <!-- 1. Secure Login Overlay screen -->
     <div id="login-overlay">
         <div class="login-card">
-            <img src="assets/ece-logo.png" alt="ECE Logo" style="width: 80px; margin-bottom: 1.5rem; filter: drop-shadow(var(--text-glow));">
+            <img src="assets/ece-logo.png" alt="ECE Logo" class="adm-s85">
             <h2>VSB ECE Department</h2>
             <p>Production-Grade CMS Admin Portal</p>
             <form id="cmsLoginForm" onsubmit="handleCmsLogin(event)" autocomplete="off">
                 <div class="form-group">
                     <label for="cms-username">Admin Email Address</label>
-                    <input type="text" id="cms-username" required class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" id="cms-username" required class="form-control" autocomplete="off" autocorrect="off" spellcheck="false">
                 </div>
                 <div class="form-group">
                     <label for="cms-password">Security Password</label>
-                    <input type="password" id="cms-password" required class="form-control" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="password" id="cms-password" required class="form-control" autocomplete="new-password" autocorrect="off" spellcheck="false">
                 </div>
                 <button type="submit" class="btn-submit">Authenticate Portal</button>
             </form>
@@ -953,7 +1044,7 @@
                 <img src="assets/ece-logo.png" alt="ECE Logo">
                 <div>
                     <h1>VSB ECE CMS</h1>
-                    <span style="font-size: 0.65rem; text-transform: uppercase; color: var(--accent-cyan); font-weight: bold; letter-spacing: 0.5px;">Production Admin</span>
+                    <span class="adm-s46">Production Admin</span>
                 </div>
             </div>
 
@@ -986,7 +1077,7 @@
             <div class="content-header">
                 <div>
                     <h2 id="cms-tab-title">Dashboard Overview</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Manage and update all site elements programmatically.</p>
+                    <p class="adm-s49">Manage and update all site elements programmatically.</p>
                 </div>
                 <div class="publish-bar">
                     <button class="btn-preview" onclick="previewLiveWebsite()">👁️ Preview Site</button>
@@ -1017,9 +1108,9 @@
 
                 <div class="card">
                     <h3>📢 Quick Operations Control Panel</h3>
-                    <p style="line-height: 1.6; color: var(--text-secondary); margin-bottom: 1.5rem;">Welcome to the production grade content management system dashboard. Here you can edit titles, upload event brochures, add new downloads, change coordinator profiles, and configure your live Supabase sync variables. Changes saved here will instantly serialize back to `index.html` on your local host, sync to Supabase, and push updates to your GitHub repository.</p>
-                    <div style="display: flex; gap: 1rem;">
-                        <button class="btn-submit" style="width: auto; padding: 0.75rem 2rem;" onclick="switchCmsTab('flyers')">Manage Active Event Flyer</button>
+                    <p class="adm-s54">Welcome to the production grade content management system dashboard. Here you can edit titles, upload event brochures, add new downloads, change coordinator profiles, and configure your live Supabase sync variables. Changes saved here will instantly serialize back to `index.html` on your local host, sync to Supabase, and push updates to your GitHub repository.</p>
+                    <div class="adm-s27">
+                        <button class="btn-submit adm-s90" onclick="switchCmsTab('flyers')">Manage Active Event Flyer</button>
                         <button class="btn-preview" onclick="switchCmsTab('downloads')">Manage Downloads Directory</button>
                     </div>
                 </div>
@@ -1092,7 +1183,7 @@
                     <h3>📖 About Department Info Card</h3>
                     <div class="form-group">
                         <label for="field-about-text">About Section Text (Markdown / HTML elements allowed)</label>
-                        <textarea id="field-about-text" class="form-control" style="min-height: 200px;"></textarea>
+                        <textarea id="field-about-text" class="form-control adm-s68"></textarea>
                     </div>
                 </div>
 
@@ -1104,7 +1195,7 @@
                     </div>
                     <div class="form-group">
                         <label for="field-mission-list">🚀 Department Mission List (Paste each bullet point as HTML `<li>` tag)</label>
-                        <textarea id="field-mission-list" class="form-control" style="min-height: 150px;"></textarea>
+                        <textarea id="field-mission-list" class="form-control adm-s67"></textarea>
                     </div>
                 </div>
 
@@ -1122,7 +1213,7 @@
 
                 <div class="card">
                     <h3>🔌 Manage Club Activity Challenges & Rounds</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure the active rounds for the club activities modal. You can add infinite rounds, define them as a redirect link or an interactive code simulation challenge, and delete/reorder rounds dynamically.</p>
+                    <p class="adm-s14">Configure the active rounds for the club activities modal. You can add infinite rounds, define them as a redirect link or an interactive code simulation challenge, and delete/reorder rounds dynamically.</p>
                     
                     <div class="cms-list-grid" id="cms-activity-rounds-list">
                         <!-- Dynamic rounds list populated by JS -->
@@ -1182,21 +1273,21 @@
 
             <!-- Tab PANEL 4: Event Flyers (Carousel slot editor) -->
             <div id="panel-flyers" class="workspace-panel">
-                <div class="card" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; background: rgba(0, 210, 255, 0.02); border-color: rgba(0, 210, 255, 0.15);">
+                <div class="card adm-s55">
                     <div>
-                        <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🔒 Event Registration Access Control</h4>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Lock or unlock public event registrations for students.</p>
+                        <h4 class="adm-s62">🔒 Event Registration Access Control</h4>
+                        <p class="adm-s60">Lock or unlock public event registrations for students.</p>
                     </div>
-                    <div style="display: flex; gap: 1rem; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 0.85rem; background: rgba(255,255,255,0.03); padding: 0.65rem 1.15rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
-                            <div style="display: flex; flex-direction: column; gap: 0.1rem;">
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700;">Registration Access</span>
-                                <span id="label-lock-register" style="font-size: 0.85rem; font-weight: 800; color: #4ade80;">● UNLOCKED</span>
+                    <div class="adm-s28">
+                        <div class="adm-s20">
+                            <div class="adm-s23">
+                                <span class="adm-s48">Registration Access</span>
+                                <span id="label-lock-register" class="adm-s50">● UNLOCKED</span>
                             </div>
-                            <label for="toggle-lock-register" style="position: relative; display: inline-block; width: 56px; height: 30px; cursor: pointer; margin: 0; user-select: none;" title="Toggle Event Registration Access">
-                                <input type="checkbox" id="toggle-lock-register" onchange="toggleRegisterLock(this)" style="position: absolute; opacity: 0; width: 0; height: 0;">
-                                <span id="track-lock-register" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 30px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);">
-                                    <span id="thumb-lock-register" style="position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 5px rgba(0,0,0,0.4); transform: translateX(26px);"></span>
+                            <label for="toggle-lock-register" class="adm-s82" title="Toggle Event Registration Access">
+                                <input type="checkbox" id="toggle-lock-register" onchange="toggleRegisterLock(this)" class="adm-s81">
+                                <span id="track-lock-register" class="adm-s77">
+                                    <span id="thumb-lock-register" class="adm-s79"></span>
                                 </span>
                             </label>
                         </div>
@@ -1205,15 +1296,15 @@
 
                 <div class="card">
                     <h3>🎟️ Manage Carousel Event Flyers</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">List of active slots in the 1:1 ratio carousel. You can add infinite slides, edit text values, upload local flyer image, or paste external URL links.</p>
+                    <p class="adm-s14">List of active slots in the 1:1 ratio carousel. You can add infinite slides, edit text values, upload local flyer image, or paste external URL links.</p>
                     
                     <div class="cms-list-grid" id="cms-posters-list">
                         <!-- Dynamic elements populated by JS -->
                     </div>
                     
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                        <button class="btn-add-list-item" style="flex: 1; margin-top: 0;" onclick="cmsAddPosterCardSlot()">➕ Add Additional Event Poster Slide</button>
-                        <button class="btn-publish" style="flex: 1; padding: 0.9rem 1.75rem; border-radius: 12px; font-size: 0.95rem; font-weight: 800; cursor: pointer;" onclick="publishCmsChanges()">💾 Save & Publish Event Flyers</button>
+                    <div class="adm-s31">
+                        <button class="btn-add-list-item adm-s43" onclick="cmsAddPosterCardSlot()">➕ Add Additional Event Poster Slide</button>
+                        <button class="btn-publish adm-s44" onclick="publishCmsChanges()">💾 Save & Publish Event Flyers</button>
                     </div>
                 </div>
             </div>
@@ -1221,9 +1312,9 @@
             <!-- Tab PANEL 5: Downloads Grid -->
             <div id="panel-downloads" class="workspace-panel">
                 <!-- Curriculum Syllabus Section -->
-                <div class="card" style="margin-bottom: 2rem;">
+                <div class="card adm-s58">
                     <h3>📄 Curriculum Syllabus Files</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Curriculum Syllabus' topic.</p>
+                    <p class="adm-s14">Manage documents for the 'Curriculum Syllabus' topic.</p>
                     <div class="cms-list-grid" id="cms-dl-list-syllabus">
                         <!-- Dynamic syllabus elements populated by JS -->
                     </div>
@@ -1231,9 +1322,9 @@
                 </div>
 
                 <!-- Department Newsletter Section -->
-                <div class="card" style="margin-bottom: 2rem;">
+                <div class="card adm-s58">
                     <h3>📰 Department Newsletter Files</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Department Newsletter' topic.</p>
+                    <p class="adm-s14">Manage documents for the 'Department Newsletter' topic.</p>
                     <div class="cms-list-grid" id="cms-dl-list-newsletter">
                         <!-- Dynamic newsletter elements populated by JS -->
                     </div>
@@ -1241,9 +1332,9 @@
                 </div>
 
                 <!-- Academic Planning Section -->
-                <div class="card" style="margin-bottom: 2rem;">
+                <div class="card adm-s58">
                     <h3>📊 Academic Planning Files</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Academic Planning' topic.</p>
+                    <p class="adm-s14">Manage documents for the 'Academic Planning' topic.</p>
                     <div class="cms-list-grid" id="cms-dl-list-academic">
                         <!-- Dynamic academic elements populated by JS -->
                     </div>
@@ -1251,9 +1342,9 @@
                 </div>
 
                 <!-- Previous ECE Events Section -->
-                <div class="card" style="margin-bottom: 2rem;">
+                <div class="card adm-s58">
                     <h3>🏆 Previous ECE Events Files</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage documents for the 'Previous ECE Events' topic.</p>
+                    <p class="adm-s14">Manage documents for the 'Previous ECE Events' topic.</p>
                     <div class="cms-list-grid" id="cms-dl-list-events">
                         <!-- Dynamic events elements populated by JS -->
                     </div>
@@ -1268,16 +1359,16 @@
                     <h3>👨‍🏫 Primary Head of Department (HOD 1)</h3>
                     <div class="photo-uploader-widget">
                         <div class="photo-preview-circle">
-                            <img id="preview-hod-photo" src="" alt="HOD Photo" style="display:none;">
+                            <img id="preview-hod-photo" src="" alt="HOD Photo" class="adm-s41">
                             <span id="preview-hod-initials" class="photo-preview-initials">PA</span>
                         </div>
                         <div class="photo-upload-controls">
                             <label class="btn-upload-file">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="adm-s42"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                 <span>Upload Photo</span>
-                                <input type="file" id="upload-hod-photo" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')">
+                                <input type="file" id="upload-hod-photo" accept="image/*" class="adm-s41" onchange="handleCmsPhotoUploader(event, 'hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')">
                             </label>
-                            <button class="btn-clear-photo" style="display:inline-flex; align-items:center; gap:6px;" onclick="clearCmsProfilePhoto('hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Reset to Initials Placeholder</button>
+                            <button class="btn-clear-photo adm-s40" onclick="clearCmsProfilePhoto('hod-photo-img', 'hod-avatar-emoji', 'preview-hod-photo', 'preview-hod-initials')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Reset to Initials Placeholder</button>
                         </div>
                     </div>
                     <div class="input-row">
@@ -1310,16 +1401,16 @@
                     <h3>👩‍🏫 Head of Department Slot 2 (HOD 2)</h3>
                     <div class="photo-uploader-widget">
                         <div class="photo-preview-circle">
-                            <img id="preview-hod-photo-2" src="" alt="HOD Photo" style="display:none;">
+                            <img id="preview-hod-photo-2" src="" alt="HOD Photo" class="adm-s41">
                             <span id="preview-hod-initials-2" class="photo-preview-initials">VJ</span>
                         </div>
                         <div class="photo-upload-controls">
                             <label class="btn-upload-file">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; pointer-events:none;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="adm-s42"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                 <span>Upload Photo</span>
-                                <input type="file" id="upload-hod-photo-2" accept="image/*" style="display:none;" onchange="handleCmsPhotoUploader(event, 'hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')">
+                                <input type="file" id="upload-hod-photo-2" accept="image/*" class="adm-s41" onchange="handleCmsPhotoUploader(event, 'hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')">
                             </label>
-                            <button class="btn-clear-photo" style="display:inline-flex; align-items:center; gap:6px;" onclick="clearCmsProfilePhoto('hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Reset to Initials Placeholder</button>
+                            <button class="btn-clear-photo adm-s40" onclick="clearCmsProfilePhoto('hod-photo-img-2', 'hod-avatar-emoji-2', 'preview-hod-photo-2', 'preview-hod-initials-2')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Reset to Initials Placeholder</button>
                         </div>
                     </div>
                     <div class="input-row">
@@ -1351,7 +1442,7 @@
                 <!-- Student Coordinators Section -->
                 <div class="card">
                     <h3>👥 Student Coordinators Manager</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Manage dynamic student coordinators. You can edit names, year groups, phone numbers, email IDs, upload custom photos, or delete/add new coordinators dynamically.</p>
+                    <p class="adm-s14">Manage dynamic student coordinators. You can edit names, year groups, phone numbers, email IDs, upload custom photos, or delete/add new coordinators dynamically.</p>
                     
                     <div class="cms-list-grid" id="cms-coordinators-list">
                         <!-- Dynamic coordinator widgets populated by JS -->
@@ -1363,54 +1454,54 @@
 
             <!-- Tab PANEL 7: Quiz Leaderboard Results -->
             <div id="panel-quiz-results" class="workspace-panel">
-                <div class="card" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; background: rgba(0, 210, 255, 0.02); border-color: rgba(0, 210, 255, 0.15);">
+                <div class="card adm-s55">
                     <div>
-                        <h4 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif;">🔒 Exam Portal Access Control</h4>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: var(--text-secondary);">Independently lock or unlock academic year exam entry doors.</p>
+                        <h4 class="adm-s62">🔒 Exam Portal Access Control</h4>
+                        <p class="adm-s60">Independently lock or unlock academic year exam entry doors.</p>
                     </div>
-                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <div class="adm-s29">
                         <!-- 2nd Year Lock / Unlock Switch -->
-                        <div style="display: flex; align-items: center; gap: 0.85rem; background: rgba(255,255,255,0.03); padding: 0.65rem 1.15rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
-                            <div style="display: flex; flex-direction: column; gap: 0.1rem;">
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700;">2nd Year Access</span>
-                                <span id="label-lock-2yr" style="font-size: 0.85rem; font-weight: 800; color: #4ade80;">● UNLOCKED</span>
+                        <div class="adm-s20">
+                            <div class="adm-s23">
+                                <span class="adm-s48">2nd Year Access</span>
+                                <span id="label-lock-2yr" class="adm-s50">● UNLOCKED</span>
                             </div>
-                            <label for="toggle-lock-2yr" style="position: relative; display: inline-block; width: 56px; height: 30px; cursor: pointer; margin: 0; user-select: none;" title="Toggle 2nd Year Exam Portal Access">
-                                <input type="checkbox" id="toggle-lock-2yr" onchange="toggleMcqLock('Second Year', this)" style="position: absolute; opacity: 0; width: 0; height: 0;">
-                                <span id="track-lock-2yr" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 30px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);">
-                                    <span id="thumb-lock-2yr" style="position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 5px rgba(0,0,0,0.4); transform: translateX(26px);"></span>
+                            <label for="toggle-lock-2yr" class="adm-s82" title="Toggle 2nd Year Exam Portal Access">
+                                <input type="checkbox" id="toggle-lock-2yr" onchange="toggleMcqLock('Second Year', this)" class="adm-s81">
+                                <span id="track-lock-2yr" class="adm-s77">
+                                    <span id="thumb-lock-2yr" class="adm-s79"></span>
                                 </span>
                             </label>
                         </div>
 
                         <!-- 3rd Year Lock / Unlock Switch -->
-                        <div style="display: flex; align-items: center; gap: 0.85rem; background: rgba(255,255,255,0.03); padding: 0.65rem 1.15rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
-                            <div style="display: flex; flex-direction: column; gap: 0.1rem;">
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700;">3rd Year Access</span>
-                                <span id="label-lock-3yr" style="font-size: 0.85rem; font-weight: 800; color: #4ade80;">● UNLOCKED</span>
+                        <div class="adm-s20">
+                            <div class="adm-s23">
+                                <span class="adm-s48">3rd Year Access</span>
+                                <span id="label-lock-3yr" class="adm-s50">● UNLOCKED</span>
                             </div>
-                            <label for="toggle-lock-3yr" style="position: relative; display: inline-block; width: 56px; height: 30px; cursor: pointer; margin: 0; user-select: none;" title="Toggle 3rd Year Exam Portal Access">
-                                <input type="checkbox" id="toggle-lock-3yr" onchange="toggleMcqLock('Third Year', this)" style="position: absolute; opacity: 0; width: 0; height: 0;">
-                                <span id="track-lock-3yr" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 30px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);">
-                                    <span id="thumb-lock-3yr" style="position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 5px rgba(0,0,0,0.4); transform: translateX(26px);"></span>
+                            <label for="toggle-lock-3yr" class="adm-s82" title="Toggle 3rd Year Exam Portal Access">
+                                <input type="checkbox" id="toggle-lock-3yr" onchange="toggleMcqLock('Third Year', this)" class="adm-s81">
+                                <span id="track-lock-3yr" class="adm-s77">
+                                    <span id="thumb-lock-3yr" class="adm-s79"></span>
                                 </span>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <div class="card" style="padding: 1.5rem 1.25rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div class="card adm-s75">
+                    <div class="adm-s36">
                         <div>
-                            <h3 style="margin: 0; font-size: 1.25rem;">🏆 TECHNICAL MCQ Submissions</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.2rem;">Live student score tracking and proctoring metrics.</p>
+                            <h3 class="adm-s65">🏆 TECHNICAL MCQ Submissions</h3>
+                            <p class="adm-s17">Live student score tracking and proctoring metrics.</p>
                         </div>
-                        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.03); padding: 0.3rem 0.6rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);">
-                                <label style="color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; margin: 0; text-transform: uppercase;">Year:</label>
-                                <select id="leaderboard-year-filter" onchange="loadQuizResultsInDashboard()" style="background: transparent; border: none; color: #fff; padding: 0.2rem 0.3rem; font-weight: bold; font-family: 'Space Grotesk', sans-serif; cursor: pointer; outline: none; font-size: 0.82rem;">
-                                    <option value="Second Year" style="background: #090e1a;">Second Year</option>
-                                    <option value="Third Year" style="background: #090e1a;">Third Year</option>
+                        <div class="adm-s26">
+                            <div class="adm-s18">
+                                <label class="adm-s13">Year:</label>
+                                <select id="leaderboard-year-filter" onchange="loadQuizResultsInDashboard()" class="adm-s8">
+                                    <option value="Second Year" class="adm-s1">Second Year</option>
+                                    <option value="Third Year" class="adm-s1">Third Year</option>
                                 </select>
                             </div>
                             <button type="button" class="btn-mcq-top-action" onclick="loadQuizResultsInDashboard()" title="Refresh List">
@@ -1428,24 +1519,24 @@
                         </div>
                     </div>
                     
-                    <div class="table-container" style="overflow-x: auto; max-height: 550px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
-                        <table style="width: 100%; border-collapse: collapse; text-align: left; table-layout: auto;">
+                    <div class="table-container adm-s69">
+                        <table class="adm-s84">
                             <thead>
-                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(0, 210, 255, 0.03); color: var(--accent-cyan); font-family: 'Outfit', sans-serif; white-space: nowrap;">
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap;">#</th>
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap;">Student Name</th>
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap;">Reg No</th>
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap;">Dept / Sec</th>
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap;">Email</th>
-                                    <th style="padding: 0.65rem 0.4rem; font-size: 0.8rem; white-space: nowrap; text-align: center;">Score</th>
-                                    <th style="padding: 0.65rem 0.4rem; font-size: 0.8rem; white-space: nowrap; text-align: center;">Time</th>
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap;">Submitted</th>
-                                    <th style="padding: 0.65rem 0.5rem; font-size: 0.8rem; white-space: nowrap; text-align: center;">Actions</th>
+                                <tr class="adm-s9">
+                                    <th class="adm-s71">#</th>
+                                    <th class="adm-s71">Student Name</th>
+                                    <th class="adm-s71">Reg No</th>
+                                    <th class="adm-s71">Dept / Sec</th>
+                                    <th class="adm-s71">Email</th>
+                                    <th class="adm-s70">Score</th>
+                                    <th class="adm-s70">Time</th>
+                                    <th class="adm-s71">Submitted</th>
+                                    <th class="adm-s72">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="quiz-results-tbody">
                                 <tr>
-                                    <td colspan="9" style="padding: 2.5rem; text-align: center; color: var(--text-secondary); white-space: nowrap;">Click Refresh to load results.</td>
+                                    <td colspan="9" class="adm-s76">Click Refresh to load results.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1456,29 +1547,29 @@
             <!-- Tab PANEL: Club Activity & Competition Rounds -->
             <div id="panel-club-activity" class="workspace-panel">
                 <!-- Lock / Unlock Access Card -->
-                <div class="card" style="border-left: 4px solid var(--accent-cyan); margin-bottom: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div class="card adm-s12">
+                    <div class="adm-s34">
                         <div>
-                            <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <h3 class="adm-s64">
                                 🔌 Club Activity Portal Master Access Control
                             </h3>
-                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.35rem; margin-bottom: 0;">
+                            <p class="adm-s15">
                                 Instantly enable or disable student access to the Club Activity portal across the entire website.
                             </p>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 1.25rem; background: rgba(255,255,255,0.03); padding: 0.75rem 1.35rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
-                            <div style="display: flex; flex-direction: column; gap: 0.15rem;">
-                                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700;">Portal Access</span>
-                                <span id="label-lock-club-activity" style="font-size: 0.95rem; font-weight: 800; color: #4ade80; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <div class="adm-s21">
+                            <div class="adm-s22">
+                                <span class="adm-s48">Portal Access</span>
+                                <span id="label-lock-club-activity" class="adm-s52">
                                     ● ON
                                 </span>
                             </div>
 
                             <!-- Modern Interactive Toggle Switch -->
-                            <label for="toggle-lock-club-activity" style="position: relative; display: inline-block; width: 60px; height: 32px; cursor: pointer; margin: 0; user-select: none;" title="Click to toggle Club Activity Portal Access">
-                                <input type="checkbox" id="toggle-lock-club-activity" onchange="toggleClubActivityPortalAccess(this)" style="position: absolute; opacity: 0; width: 0; height: 0;">
-                                <span id="track-lock-club-activity" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #22c55e; border: 1.5px solid #4ade80; border-radius: 34px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 14px rgba(34, 197, 94, 0.4);">
-                                    <span id="thumb-lock-club-activity" style="position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 6px rgba(0,0,0,0.4); transform: translateX(28px);"></span>
+                            <label for="toggle-lock-club-activity" class="adm-s83" title="Click to toggle Club Activity Portal Access">
+                                <input type="checkbox" id="toggle-lock-club-activity" onchange="toggleClubActivityPortalAccess(this)" class="adm-s81">
+                                <span id="track-lock-club-activity" class="adm-s78">
+                                    <span id="thumb-lock-club-activity" class="adm-s80"></span>
                                 </span>
                             </label>
                         </div>
@@ -1487,39 +1578,39 @@
 
                 <!-- Dynamic Rounds Configuration Card -->
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div class="adm-s37">
                         <div>
-                            <h3 style="margin: 0; color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.35rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <h3 class="adm-s63">
                                 🎮 Activity Competition Rounds
                             </h3>
-                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.35rem; margin-bottom: 0;">
+                            <p class="adm-s15">
                                 First specify how many rounds are conducted, then insert the round name and redirection link for each round.
                             </p>
                         </div>
-                        <button type="button" class="btn-publish" onclick="publishCmsChanges()" style="padding: 0.6rem 1.5rem; font-size: 0.85rem;">
+                        <button type="button" class="btn-publish adm-s73" onclick="publishCmsChanges()">
                             💾 Save Rounds & Sync Web
                         </button>
                     </div>
 
                     <!-- Step 1: Ask the admin how many rounds are conducted -->
-                    <div style="background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
+                    <div class="adm-s3">
+                        <div class="adm-s33">
                             <div>
-                                <label for="cms-rounds-count" style="font-size: 1.05rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                <label for="cms-rounds-count" class="adm-s53">
                                     <span>🎯 How many rounds are conducted?</span>
                                 </label>
-                                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">
+                                <p class="adm-s16">
                                     Enter or adjust the total number of competition rounds. Dynamic configuration slots will appear below.
                                 </p>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <button type="button" onclick="stepRoundsCount(-1)" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,210,255,0.3); color: var(--accent-cyan); font-size: 1.3rem; font-weight: 800; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Decrease rounds count">−</button>
+                            <div class="adm-s19">
+                                <button type="button" onclick="stepRoundsCount(-1)" class="adm-s7" title="Decrease rounds count">−</button>
                                 
-                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="cms-rounds-count" value="3" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); handleRoundsCountChange(this.value)" onchange="handleRoundsCountChange(this.value)" class="form-control" style="width: 80px; text-align: center; font-size: 1.3rem; font-weight: 800; color: var(--accent-cyan); padding: 0.5rem; border-radius: 10px; border-color: rgba(0,210,255,0.4);" placeholder="3">
+                                <input type="text" inputmode="numeric" pattern="[0-9]*" id="cms-rounds-count" value="3" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, ''); handleRoundsCountChange(this.value)" onchange="handleRoundsCountChange(this.value)" class="form-control adm-s86" placeholder="3">
                                 
-                                <button type="button" onclick="stepRoundsCount(1)" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,210,255,0.3); color: var(--accent-cyan); font-size: 1.3rem; font-weight: 800; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Increase rounds count">+</button>
+                                <button type="button" onclick="stepRoundsCount(1)" class="adm-s7" title="Increase rounds count">+</button>
                                 
-                                <span id="cms-rounds-badge" style="background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.3); color: var(--accent-cyan); font-size: 0.85rem; font-weight: 700; padding: 0.45rem 1rem; border-radius: 20px; white-space: nowrap;">
+                                <span id="cms-rounds-badge" class="adm-s4">
                                     3 Rounds Active
                                 </span>
                             </div>
@@ -1527,16 +1618,16 @@
                     </div>
 
                     <!-- Step 2: Dynamic Space for Inserting Round Name and Link -->
-                    <div id="cms-activity-rounds-container" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div id="cms-activity-rounds-container" class="adm-s25">
                         <!-- Dynamically populated by admin.js based on admin's input -->
                     </div>
 
                     <!-- Actions: Add One More Round & Save Changes -->
-                    <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                        <button type="button" class="btn-add-list-item" onclick="addSingleActivityRound()" style="margin: 0; width: auto; padding: 0.75rem 1.75rem;">
+                    <div class="adm-s59">
+                        <button type="button" class="btn-add-list-item adm-s66" onclick="addSingleActivityRound()">
                             ➕ Add One More Round
                         </button>
-                        <button type="button" class="btn-publish" onclick="publishCmsChanges()" style="padding: 0.8rem 2.2rem; font-size: 0.95rem;">
+                        <button type="button" class="btn-publish adm-s74" onclick="publishCmsChanges()">
                             💾 Save All Changes to Live Website
                         </button>
                     </div>
@@ -1545,12 +1636,12 @@
 
             <!-- Tab PANEL 8: Database & System Configurations -->
             <div id="panel-system" class="workspace-panel">
-                <div class="card" style="border-left: 4px solid #f59e0b;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <h3 style="margin: 0;">🔥 Firebase Firestore Cloud Configuration (Active)</h3>
-                        <span id="badge-firebase-status" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 20px;">Connected</span>
+                <div class="card adm-s10">
+                    <div class="adm-s35">
+                        <h3 class="adm-s61">🔥 Firebase Firestore Cloud Configuration (Active)</h3>
+                        <span id="badge-firebase-status" class="adm-s5">Connected</span>
                     </div>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure live Google Cloud Firestore REST endpoints. Dynamic items (coordinators, event flyers, download documents, and rounds) synchronize globally across student browsers in real time.</p>
+                    <p class="adm-s14">Configure live Google Cloud Firestore REST endpoints. Dynamic items (coordinators, event flyers, download documents, and rounds) synchronize globally across student browsers in real time.</p>
                     <div class="form-group">
                         <label for="field-firebase-project-id">Firebase Project ID</label>
                         <input type="text" id="field-firebase-project-id" class="form-control" value="department-of-ece-2b5d7">
@@ -1561,12 +1652,12 @@
                     </div>
                 </div>
 
-                <div class="card" style="border-left: 4px solid var(--accent-cyan);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <h3 style="margin: 0;">⚡ Supabase Cloud Database Configuration (Mirror)</h3>
-                        <span id="badge-supabase-status" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.75rem; border-radius: 20px;">Connected</span>
+                <div class="card adm-s11">
+                    <div class="adm-s35">
+                        <h3 class="adm-s61">⚡ Supabase Cloud Database Configuration (Mirror)</h3>
+                        <span id="badge-supabase-status" class="adm-s5">Connected</span>
                     </div>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">Configure live REST endpoints for Supabase. Edits published will synchronize to Supabase as an active dual-cloud backup mirror.</p>
+                    <p class="adm-s14">Configure live REST endpoints for Supabase. Edits published will synchronize to Supabase as an active dual-cloud backup mirror.</p>
                     <div class="form-group">
                         <label for="field-supabase-url">Supabase Rest URL API Endpoint</label>
                         <input type="text" id="field-supabase-url" class="form-control" placeholder="e.g. https://xyz.supabase.co">
@@ -1579,56 +1670,56 @@
 
                 <div class="card">
                     <h3>⚙️ System Operations</h3>
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                    <div class="adm-s30">
                         <button type="button" class="btn-preview" onclick="testCloudConnections()">⚡ Test Both Cloud Connections</button>
-                        <button type="button" class="btn-clear-photo" style="width: auto; display: inline-flex; align-items: center; gap: 6px;" onclick="resetLocalStorageConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset Database Config cache</button>
-                        <span id="cloud-test-status" style="font-size: 0.85rem; font-weight: bold; color: var(--accent-cyan);"></span>
+                        <button type="button" class="btn-clear-photo adm-s87" onclick="resetLocalStorageConfig()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset Database Config cache</button>
+                        <span id="cloud-test-status" class="adm-s51"></span>
                     </div>
             </div>
         </div>
     </div>
 
     <!-- Edit Quiz Result Modal -->
-    <div id="editResultModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
-        <div style="background: #090e1a; border: 1px solid rgba(0, 210, 255, 0.25); box-shadow: 0 0 30px rgba(0, 210, 255, 0.15); border-radius: 16px; padding: 2rem; width: 100%; max-width: 500px; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; margin: 1rem; color: #fff;">
-            <h3 style="font-family: 'Outfit', sans-serif; color: var(--accent-cyan); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem;">✏️ Edit MCQ Result</h3>
+    <div id="editResultModal" class="adm-s39">
+        <div class="adm-s2">
+            <h3 class="adm-s45">✏️ Edit MCQ Result</h3>
             <form id="edit-result-form" onsubmit="saveEditedMcqResult(event)">
                 <input type="hidden" id="edit-result-index">
-                <div class="form-group" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">STUDENT NAME</label>
-                    <input type="text" id="edit-student-name" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                <div class="form-group adm-s57">
+                    <label class="adm-s47">STUDENT NAME</label>
+                    <input type="text" id="edit-student-name" class="form-control adm-s6" required>
                 </div>
-                <div class="form-group" style="margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">REGISTER NUMBER</label>
-                    <input type="text" id="edit-regnum" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                <div class="form-group adm-s57">
+                    <label class="adm-s47">REGISTER NUMBER</label>
+                    <input type="text" id="edit-regnum" class="form-control adm-s6" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">DEPARTMENT</label>
-                        <input type="text" id="edit-dept" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                <div class="adm-s38">
+                    <div class="form-group adm-s24">
+                        <label class="adm-s47">DEPARTMENT</label>
+                        <input type="text" id="edit-dept" class="form-control adm-s6" required>
                     </div>
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">SECTION</label>
-                        <input type="text" id="edit-section" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">SCORE</label>
-                        <input type="number" id="edit-score" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
-                    </div>
-                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
-                        <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">TIME SPENT</label>
-                        <input type="text" id="edit-time-spent" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" placeholder="MM:SS" required>
+                    <div class="form-group adm-s24">
+                        <label class="adm-s47">SECTION</label>
+                        <input type="text" id="edit-section" class="form-control adm-s6" required>
                     </div>
                 </div>
-                <div class="form-group" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: bold;">MAIL</label>
-                    <input type="email" id="edit-mail" class="form-control" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem; color: #fff; font-size: 0.9rem;" required>
+                <div class="adm-s38">
+                    <div class="form-group adm-s24">
+                        <label class="adm-s47">SCORE</label>
+                        <input type="number" id="edit-score" class="form-control adm-s6" required>
+                    </div>
+                    <div class="form-group adm-s24">
+                        <label class="adm-s47">TIME SPENT</label>
+                        <input type="text" id="edit-time-spent" class="form-control adm-s6" placeholder="MM:SS" required>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
-                    <button type="button" class="btn-admin-logout" style="width: auto; margin: 0; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #fff;" onclick="closeEditResultModal()">Cancel</button>
-                    <button type="submit" class="event-reg-link" style="width: auto; margin: 0; padding: 0.6rem 2rem; background: var(--accent-cyan); color: var(--bg-dark) !important; font-weight: bold; border: none; cursor: pointer;">Save Changes</button>
+                <div class="form-group adm-s56">
+                    <label class="adm-s47">MAIL</label>
+                    <input type="email" id="edit-mail" class="form-control adm-s6" required>
+                </div>
+                <div class="adm-s32">
+                    <button type="button" class="btn-admin-logout adm-s88" onclick="closeEditResultModal()">Cancel</button>
+                    <button type="submit" class="event-reg-link adm-s89">Save Changes</button>
                 </div>
             </form>
         </div>

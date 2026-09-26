@@ -1,0 +1,28 @@
+{
+  "html.validate.styles": false,
+  "css.lint.compatibleVendorPrefixes": "ignore",
+  "css.lint.vendorPrefix": "ignore",
+  "htmlhint.options": {
+    "inline-style-disabled": false
+  },
+  "sonarlint.rules": {
+    "Web:S107": {
+      "level": "off"
+    },
+    "html:S107": {
+      "level": "off"
+    },
+    "Web:S5256": {
+      "level": "off"
+    },
+    "html:S5256": {
+      "level": "off"
+    },
+    "css:S4661": {
+      "level": "off"
+    },
+    "css:S4664": {
+      "level": "off"
+    }
+  }
+}

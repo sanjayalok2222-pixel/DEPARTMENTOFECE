@@ -74,7 +74,7 @@
             <img src="assets/ece-logo.png" alt="ECE Logo" class="hero-logo">
             <h2 id="hero-title">Shaping Tomorrow with ECE Innovations</h2>
             <p id="hero-subtitle">Welcome to the Department of Electronics and Communication Engineering at VSB Engineering College. Established in 2002, we empower students to explore, create, and engineer the future.</p>
-            <a href="#dept-info" class="btn-primary" style="text-decoration: none;">Get Started</a>
+            <a href="#dept-info" class="btn-primary" >Get Started</a>
         </div>
     </div>
 
@@ -306,7 +306,7 @@
                                 <!-- 1:1 Poster Image (Crack & Act) -->
                                 <img class="poster-1to1" src="assets/crack-and-act.jpg" alt="Crack & Act Poster">
                                 <!-- Admin Edit Image Trigger -->
-                                <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
+                                <input type="file" class="admin-poster-upload-input" accept="image/*" onchange="handlePosterUpload(event, this)">
                                 <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
                             </div>
                             <div class="poster-details">
@@ -316,9 +316,9 @@
                                 <div class="link-action-container">
                                     <a class="event-reg-link" href="https://event-portal-hmiz66o7f-sivasradeep06s-projects.vercel.app/" target="_blank" rel="noopener noreferrer">Register Now</a>
                                     <!-- Editable fields shown only to admin -->
-                                    <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
-                                        <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
-                                        <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://event-portal-hmiz66o7f-sivasradeep06s-projects.vercel.app/" onchange="updateActivePosterLink(this)">
+                                    <div class="admin-input-group">
+                                        <label>Poster Controls (Admin)</label>
+                                        <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" value="https://event-portal-hmiz66o7f-sivasradeep06s-projects.vercel.app/" onchange="updateActivePosterLink(this)">
                                         <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/crack-and-act.jpg" onchange="updateActivePosterImageByUrl(this)">
                                     </div>
                                 </div>
@@ -330,7 +330,7 @@
                                 <!-- 1:1 Poster Image (ArduFusion) -->
                                 <img class="poster-1to1" src="assets/ardufusion-poster.jpg" alt="ArduFusion Poster">
                                 <!-- Admin Edit Image Trigger -->
-                                <input type="file" class="admin-poster-upload-input" accept="image/*" style="display:none;" onchange="handlePosterUpload(event, this)">
+                                <input type="file" class="admin-poster-upload-input" accept="image/*" onchange="handlePosterUpload(event, this)">
                                 <button class="btn-admin-overlay" onclick="triggerPosterUpload(this)">📷 Change Image</button>
                             </div>
                             <div class="poster-details">
@@ -340,9 +340,9 @@
                                 <div class="link-action-container">
                                     <a class="event-reg-link" href="https://forms.gle/MBd6YtJUSsTDWSfs6" target="_blank" rel="noopener noreferrer">Register Now</a>
                                     <!-- Editable fields shown only to admin -->
-                                    <div class="admin-input-group" style="display:none; margin-top: 1rem; width: 100%;">
-                                        <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:0.3rem; display:block;">Poster Controls (Admin)</label>
-                                        <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" style="margin-bottom:0.5rem;" value="https://forms.gle/MBd6YtJUSsTDWSfs6" onchange="updateActivePosterLink(this)">
+                                    <div class="admin-input-group">
+                                        <label>Poster Controls (Admin)</label>
+                                        <input type="text" class="admin-link-url" placeholder="Paste Registration Form URL" value="https://forms.gle/MBd6YtJUSsTDWSfs6" onchange="updateActivePosterLink(this)">
                                         <input type="text" class="admin-poster-image-url" placeholder="Paste Image URL directly" value="assets/ardufusion-poster.jpg" onchange="updateActivePosterImageByUrl(this)">
                                     </div>
                                 </div>
@@ -354,9 +354,9 @@
             </div>
             
             <!-- Infinite Poster dynamic add button (Admin only) -->
-            <div class="admin-only-block" id="admin-poster-add-container" style="display:none; margin-top: 2rem; text-align: center;">
+            <div class="admin-only-block" id="admin-poster-add-container">
                 <button class="btn-primary btn-add-poster" onclick="addNewPosterSlot()">➕ Add Additional Poster Slot</button>
-                <button class="btn-admin-logout" style="background: rgba(239, 68, 68, 0.1); border-color: #ef4444; color: #ef4444; margin-left: 1rem; display: inline-flex; align-items: center; gap: 6px;" onclick="deleteActivePoster()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>Delete Active Poster</button>
+                <button class="btn-admin-logout btn-delete-active-poster" onclick="deleteActivePoster()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>Delete Active Poster</button>
             </div>
         </div>
     </section>
@@ -365,21 +365,21 @@
     <section id="technical-mcq">
         <h2 class="section-title reveal-item">TECHNICAL MCQ</h2>
         
-        <div class="mcq-portal-wrapper reveal-item" style="max-width: 500px; margin: 0 auto;">
-            <div class="event-card tilt-card" style="text-align: center; align-items: center; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="width: 100%;">
+        <div class="mcq-portal-wrapper reveal-item">
+            <div class="event-card tilt-card mcq-card">
+                <div class="mcq-header-box">
                     <div class="event-icon">📝</div>
-                    <h3 style="font-family: 'Outfit'; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">Core Technical Exam</h3>
-                    <p style="margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">Access the exam portal for Electronic Devices, Digital Circuits, and Microcontroller concept evaluations.</p>
+                    <h3 class="mcq-exam-title">Core Technical Exam</h3>
+                    <p class="mcq-exam-desc">Access the exam portal for Electronic Devices, Digital Circuits, and Microcontroller concept evaluations.</p>
                 </div>
-                <div style="width: 100%; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                    <button class="btn-primary" style="width: 80%; font-weight: bold; background: var(--accent-cyan); border: none; color: var(--bg-dark);" onclick="openMcqExamPortal(event)">Start MCQ Test</button>
+                <div class="mcq-actions-col">
+                    <button class="btn-primary mcq-start-btn" onclick="openMcqExamPortal(event)">Start MCQ Test</button>
                     
-                    <div style="width: 80%; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; letter-spacing: 0.5px; display: block; margin-bottom: 0.5rem;">🏆 View Leaderboard Results</span>
-                        <div style="display: flex; gap: 0.5rem; width: 100%;">
-                            <button class="event-reg-link" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; margin: 0; background: transparent; border: 1px solid rgba(0, 210, 255, 0.4); color: var(--accent-cyan) !important; cursor: pointer;" onclick="showPublicResultsCard('Second Year')">2nd Year</button>
-                            <button class="event-reg-link" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; margin: 0; background: transparent; border: 1px solid rgba(0, 210, 255, 0.4); color: var(--accent-cyan) !important; cursor: pointer;" onclick="showPublicResultsCard('Third Year')">3rd Year</button>
+                    <div class="mcq-leaderboard-section">
+                        <span class="mcq-leaderboard-title">🏆 View Leaderboard Results</span>
+                        <div class="mcq-year-btn-row">
+                            <button class="event-reg-link mcq-year-btn" onclick="showPublicResultsCard('Second Year')">2nd Year</button>
+                            <button class="event-reg-link mcq-year-btn" onclick="showPublicResultsCard('Third Year')">3rd Year</button>
                         </div>
                     </div>
                 </div>
@@ -392,28 +392,28 @@
         <h2 class="section-title reveal-item">Club Activities</h2>
         
         <!-- Main Club Info View -->
-        <div class="events-container reveal-item" id="club-main-view" style="grid-template-columns: 1fr; max-width: 500px; margin: 0 auto;">
+        <div class="events-container reveal-item" id="club-main-view">
             <!-- Club 1: Electronics Club Only -->
-            <div class="event-card tilt-card" style="text-align: center; align-items: center; display: flex; flex-direction: column; justify-content: space-between; max-width: 500px;">
-                <div style="width: 100%;">
-                    <img src="assets/ec-club-logo.png" alt="Electronics Club Logo" class="club-official-logo" width="70" height="70" style="width: 70px; height: 70px; margin: 0 auto 1.25rem; display: block; object-fit: contain;">
-                    <h3 id="club-title-card" style="font-family: 'Outfit'; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem; font-size: 1.35rem;">Electronics Club (EC Club)</h3>
-                    <p id="club-desc-card" style="margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">Official technical hub of ECE Department. Learn to design hardware circuits, test analog/digital components, manufacture custom PCBs, and participate in IoT project expos & Wokwi circuit simulation rounds.</p>
+            <div class="event-card tilt-card club-event-card">
+                <div class="club-inner-box">
+                    <img src="assets/ec-club-logo.png" alt="Electronics Club Logo" class="club-official-logo" width="70" height="70">
+                    <h3 id="club-title-card">Electronics Club (EC Club)</h3>
+                    <p id="club-desc-card">Official technical hub of ECE Department. Learn to design hardware circuits, test analog/digital components, manufacture custom PCBs, and participate in IoT project expos & Wokwi circuit simulation rounds.</p>
                 </div>
-                <div style="width: 100%; display: flex; justify-content: center;">
-                    <button id="btn-club-activity-portal" class="btn-primary" style="width: 80%; font-weight: bold; background: var(--accent-cyan); border: none; color: var(--bg-dark); cursor: pointer;" onclick="openClubActivityPortal()">Activity</button>
+                <div class="club-btn-wrapper">
+                    <button id="btn-club-activity-portal" class="btn-primary" onclick="openClubActivityPortal()">Activity</button>
                 </div>
             </div>
         </div>
 
         <!-- Dynamic Rounds List View (Inside same page, hidden by default) -->
-        <div id="club-rounds-view" style="display: none; max-width: 960px; width: 100%; margin: 0 auto; animation: fadeIn 0.4s ease;">
-            <div class="event-card tilt-card" style="text-align: center; align-items: center; min-height: auto; padding: 2rem 1.5rem;">
-                <button class="event-reg-link" onclick="closeClubActivityPortal()" style="margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.2rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important; font-family: 'Outfit'; font-weight: 700; cursor: pointer; border-radius: 30px;">
+        <div id="club-rounds-view">
+            <div class="event-card tilt-card club-rounds-card">
+                <button class="event-reg-link btn-back-to-club" onclick="closeClubActivityPortal()">
                     ← Back to Club
                 </button>
-                <h3 style="color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.8rem; margin-bottom: 1.5rem;">🔌 Electronics Club Rounds</h3>
-                <div id="club-rounds-list-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; width: 100%; text-align: center;">
+                <h3 class="club-rounds-heading">🔌 Electronics Club Rounds</h3>
+                <div id="club-rounds-list-container">
                     <!-- Dynamic rounds rendering -->
                 </div>
             </div>
@@ -426,7 +426,7 @@
         
         <!-- 1. Topic Selection Grid View -->
         <div class="download-grid reveal-item" id="downloads-topics-grid">
-            <div class="download-card tilt-card" onclick="openDownloadTopic('syllabus')" style="cursor: pointer; position: relative;">
+            <div class="download-card tilt-card download-card-interactive" onclick="openDownloadTopic('syllabus')">
                 <div class="file-info">
                     <div class="file-icon">📄</div>
                     <div class="file-details">
@@ -434,10 +434,10 @@
                         <p>View curriculum schemes and syllabi</p>
                     </div>
                 </div>
-                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+                <div class="download-card-arrow">➔</div>
             </div>
 
-            <div class="download-card tilt-card" onclick="openDownloadTopic('newsletter')" style="cursor: pointer; position: relative;">
+            <div class="download-card tilt-card download-card-interactive" onclick="openDownloadTopic('newsletter')">
                 <div class="file-info">
                     <div class="file-icon">📰</div>
                     <div class="file-details">
@@ -445,10 +445,10 @@
                         <p>Read ECE news and newsletters</p>
                     </div>
                 </div>
-                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+                <div class="download-card-arrow">➔</div>
             </div>
 
-            <div class="download-card tilt-card" onclick="openDownloadTopic('academic')" style="cursor: pointer; position: relative;">
+            <div class="download-card tilt-card download-card-interactive" onclick="openDownloadTopic('academic')">
                 <div class="file-info">
                     <div class="file-icon">📊</div>
                     <div class="file-details">
@@ -456,10 +456,10 @@
                         <p>View academic schedules and planners</p>
                     </div>
                 </div>
-                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+                <div class="download-card-arrow">➔</div>
             </div>
 
-            <div class="download-card tilt-card" onclick="openDownloadTopic('events')" style="cursor: pointer; position: relative;">
+            <div class="download-card tilt-card download-card-interactive" onclick="openDownloadTopic('events')">
                 <div class="file-info">
                     <div class="file-icon">🏆</div>
                     <div class="file-details">
@@ -467,23 +467,23 @@
                         <p>Explore event summaries and archives</p>
                     </div>
                 </div>
-                <div style="font-size: 1.25rem; color: var(--accent-cyan); font-weight: bold; margin-left: auto; padding-right: 0.5rem;">➔</div>
+                <div class="download-card-arrow">➔</div>
             </div>
         </div>
 
         <!-- 2. Dynamically Rendered Files List View (Inside same page) -->
-        <div id="downloads-files-view" style="display: none; animation: fadeIn 0.4s ease;">
-            <button class="event-reg-link" onclick="closeDownloadTopic()" style="margin-bottom: 2rem; width: auto; padding: 0.6rem 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-cyan); color: var(--accent-cyan) !important; font-family: 'Outfit'; font-weight: 700; cursor: pointer; border-radius: 30px;">
+        <div id="downloads-files-view">
+            <button class="event-reg-link btn-back-to-topics" onclick="closeDownloadTopic()">
                 ← Back to Topics
             </button>
-            <h3 id="downloads-topic-title" style="color: var(--accent-cyan); font-family: 'Outfit', sans-serif; font-size: 1.8rem; margin-bottom: 1.5rem;">📂 Category Files</h3>
+            <h3 id="downloads-topic-title">📂 Category Files</h3>
             <div class="download-grid" id="downloads-topic-files-grid">
                 <!-- Clicked topic files clone here in client browser -->
             </div>
         </div>
 
         <!-- Hidden database container for actual uploaded files -->
-        <div id="download-grid-container" style="display: none;">
+        <div id="download-grid-container">
             <!-- Default downloads are hardcoded so they are natively available globally -->
             <div class="download-card tilt-card" data-category="syllabus">
                 <div class="file-info">
@@ -531,7 +531,7 @@
         </div>
 
         <!-- Admin Add File Control (visible only in admin mode) -->
-        <div class="admin-only-block" id="admin-download-controls" style="display:none; margin-top: 3rem; text-align: center;">
+        <div class="admin-only-block" id="admin-download-controls">
             <button class="btn-primary" onclick="openAddFileModal()">➕ Add New Download File</button>
         </div>
     </section>
@@ -544,12 +544,12 @@
                 <div class="certificate-toy-model">
                     <div class="cert-college">V.S.B. ENGINEERING COLLEGE</div>
                     <div class="cert-dept">Department of Electronics & Communication Engineering</div>
-                    <div class="cert-title" style="font-size: 1.45rem;">To Generate The Participate Certificate</div>
+                    <div class="cert-title cert-title-lg">To Generate The Participate Certificate</div>
                     <!-- Placeholder changed to USE THIS PORTAL -->
                     <div class="cert-name" id="cert-placeholder-text">USE THIS PORTAL</div>
                     <div class="cert-badge-gold">🎖️</div>
                 </div>
-                <a id="cert-portal-link" href="https://vsbeccertificate.vercel.app/" target="_blank" rel="noopener noreferrer" class="event-reg-link" style="margin-top: 0;">Generate Certificate</a>
+                <a id="cert-portal-link" href="https://vsbeccertificate.vercel.app/" target="_blank" rel="noopener noreferrer" class="event-reg-link">Generate Certificate</a>
             </div>
         </div>
     </section>
@@ -562,12 +562,12 @@
             <!-- HOD 1: Mr. P. Anandhakumar -->
             <div class="hod-container tilt-card">
                 <div class="hod-profile-wrapper">
-                    <div class="coord-avatar" id="hod-avatar-container" style="width: 180px; height: 180px; font-size: 1.8rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <div class="coord-avatar hod-avatar-lg" id="hod-avatar-container">
                         <!-- Real Photo element -->
-                        <img id="hod-photo-img" src="" alt="HOD Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <img id="hod-photo-img" src="" alt="HOD Photo" class="hod-photo-real">
                         <span id="hod-avatar-emoji" class="coord-initials">PA</span>
                         <!-- Photo change file input trigger -->
-                        <input type="file" id="admin-hod-upload" accept="image/*" style="display:none;" onchange="handleHodPhotoUpload(event)">
+                        <input type="file" id="admin-hod-upload" accept="image/*" onchange="handleHodPhotoUpload(event)">
                         <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerHodUpload()">✏️</button>
                     </div>
                 </div>
@@ -593,12 +593,12 @@
             <!-- HOD 2: Dr. V. Jamuna -->
             <div class="hod-container tilt-card">
                 <div class="hod-profile-wrapper">
-                    <div class="coord-avatar" id="hod-avatar-container-2" style="width: 180px; height: 180px; font-size: 1.8rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <div class="coord-avatar hod-avatar-lg" id="hod-avatar-container-2">
                         <!-- Real Photo element -->
-                        <img id="hod-photo-img-2" src="" alt="HOD Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        <img id="hod-photo-img-2" src="" alt="HOD Photo" class="hod-photo-real">
                         <span id="hod-avatar-emoji-2" class="coord-initials">VJ</span>
                         <!-- Photo change file input trigger -->
-                        <input type="file" id="admin-hod-upload-2" accept="image/*" style="display:none;" onchange="handleHodPhotoUpload2(event)">
+                        <input type="file" id="admin-hod-upload-2" accept="image/*" onchange="handleHodPhotoUpload2(event)">
                         <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerHodUpload2()">✏️</button>
                     </div>
                 </div>
@@ -629,10 +629,10 @@
         
         <div class="coordinators-grid reveal-item" id="coordinators-container">
             <div class="coord-card tilt-card" id="coord-1" data-phone="" data-email="">
-                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img id="coord-img-1" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <div class="coord-avatar" >
+                    <img id="coord-img-1" src="" alt="Coordinator Photo" >
                     <span id="coord-emoji-1" class="coord-initials">SB</span>
-                    <input type="file" id="admin-coord-upload-1" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 1)">
+                    <input type="file" id="admin-coord-upload-1" accept="image/*"  onchange="handleCoordPhotoUpload(event, 1)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(1)">✏️</button>
                 </div>
                 <h4 id="coord-name-1">Sanjay B</h4>
@@ -640,10 +640,10 @@
             </div>
 
             <div class="coord-card tilt-card" id="coord-2" data-phone="" data-email="">
-                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img id="coord-img-2" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <div class="coord-avatar" >
+                    <img id="coord-img-2" src="" alt="Coordinator Photo" >
                     <span id="coord-emoji-2" class="coord-initials">RS</span>
-                    <input type="file" id="admin-coord-upload-2" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 2)">
+                    <input type="file" id="admin-coord-upload-2" accept="image/*"  onchange="handleCoordPhotoUpload(event, 2)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(2)">✏️</button>
                 </div>
                 <h4 id="coord-name-2">Ragul S</h4>
@@ -651,10 +651,10 @@
             </div>
 
             <div class="coord-card tilt-card" id="coord-3" data-phone="" data-email="">
-                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img id="coord-img-3" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <div class="coord-avatar" >
+                    <img id="coord-img-3" src="" alt="Coordinator Photo" >
                     <span id="coord-emoji-3" class="coord-initials">SS</span>
-                    <input type="file" id="admin-coord-upload-3" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 3)">
+                    <input type="file" id="admin-coord-upload-3" accept="image/*"  onchange="handleCoordPhotoUpload(event, 3)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(3)">✏️</button>
                 </div>
                 <h4 id="coord-name-3">Sivasradeep S</h4>
@@ -662,10 +662,10 @@
             </div>
 
             <div class="coord-card tilt-card" id="coord-4" data-phone="" data-email="">
-                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img id="coord-img-4" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <div class="coord-avatar" >
+                    <img id="coord-img-4" src="" alt="Coordinator Photo" >
                     <span id="coord-emoji-4" class="coord-initials">KT</span>
-                    <input type="file" id="admin-coord-upload-4" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 4)">
+                    <input type="file" id="admin-coord-upload-4" accept="image/*"  onchange="handleCoordPhotoUpload(event, 4)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(4)">✏️</button>
                 </div>
                 <h4 id="coord-name-4">Kishorekumar K T</h4>
@@ -673,10 +673,10 @@
             </div>
 
             <div class="coord-card tilt-card" id="coord-5" data-phone="" data-email="">
-                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img id="coord-img-5" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <div class="coord-avatar" >
+                    <img id="coord-img-5" src="" alt="Coordinator Photo" >
                     <span id="coord-emoji-5" class="coord-initials">RP</span>
-                    <input type="file" id="admin-coord-upload-5" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 5)">
+                    <input type="file" id="admin-coord-upload-5" accept="image/*"  onchange="handleCoordPhotoUpload(event, 5)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(5)">✏️</button>
                 </div>
                 <h4 id="coord-name-5">Rubahan P</h4>
@@ -684,10 +684,10 @@
             </div>
 
             <div class="coord-card tilt-card" id="coord-6" data-phone="" data-email="">
-                <div class="coord-avatar" style="overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img id="coord-img-6" src="" alt="Coordinator Photo" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                <div class="coord-avatar" >
+                    <img id="coord-img-6" src="" alt="Coordinator Photo" >
                     <span id="coord-emoji-6" class="coord-initials">NS</span>
-                    <input type="file" id="admin-coord-upload-6" accept="image/*" style="display:none;" onchange="handleCoordPhotoUpload(event, 6)">
+                    <input type="file" id="admin-coord-upload-6" accept="image/*"  onchange="handleCoordPhotoUpload(event, 6)">
                     <button class="btn-avatar-edit btn-admin-only-inline" onclick="triggerCoordUpload(6)">✏️</button>
                 </div>
                 <h4 id="coord-name-6">Nivetha S</h4>
@@ -704,13 +704,13 @@
             <form id="adminLoginForm" onsubmit="submitAdminLogin(event)" autocomplete="off">
                 <div class="form-group">
                     <label for="admin-user">Username</label>
-                    <input type="text" id="admin-user" required autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="text" id="admin-user" required autocomplete="off" autocorrect="off" spellcheck="false">
                 </div>
                 <div class="form-group">
                     <label for="admin-pass">Password</label>
-                    <input type="password" id="admin-pass" required autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
+                    <input type="password" id="admin-pass" required autocomplete="new-password" autocorrect="off" spellcheck="false">
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
+                <button type="submit" class="btn-primary btn-form-block">Login</button>
             </form>
         </div>
     </div>
@@ -731,7 +731,7 @@
                 </div>
                 <div class="form-group">
                     <label for="new-file-category">Topic Category</label>
-                    <select id="new-file-category" class="admin-text-field" style="width: 100%; background: #090e1a; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 0.8rem; border-radius: 8px; font-weight: bold;">
+                    <select id="new-file-category" class="admin-text-field" >
                         <option value="syllabus">Curriculum Syllabus</option>
                         <option value="newsletter">Department Newsletter</option>
                         <option value="academic">Academic Planning</option>
@@ -742,13 +742,13 @@
                     <label for="new-file-upload">Upload File (Optional - Mock link created automatically)</label>
                     <input type="file" id="new-file-upload" class="admin-text-field" onchange="handleNewFileUpload(event)">
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">Add File</button>
+                <button type="submit" class="btn-primary btn-form-block-lg">Add File</button>
             </form>
         </div>
     </div>
 
     <!-- Hidden configuration slots for dynamic Club Activity Rounds (customizable via Admin Dashboard) -->
-    <div id="club-rounds-container" style="display: none;">
+    <div id="club-rounds-container">
         <div class="activity-round-item" data-title="Round 1-Crossword puzzle" data-type="link" data-url="https://electroplay-quiz.vercel.app/">
             <div class="challenge-title"></div>
             <div class="challenge-desc"></div>
@@ -768,7 +768,7 @@
 
     <!-- Club Detail Overlay Interface (Dynamic Inner Portal) -->
     <div id="clubInterfaceModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content modal-content-lg">
             <button class="modal-close" onclick="closeClubModal()">×</button>
             <div id="club-portal-content">
                 <!-- Dynamically populated by app.js -->
@@ -778,7 +778,7 @@
 
 
     <!-- Notification Toast for Downloads -->
-    <div id="toast-notify" style="display:none; position:fixed; bottom: 2rem; right: 2rem; background: #00d2ff; color: #070a13; padding: 1rem 2rem; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 5px 15px rgba(0,210,255,0.4); transition: all 0.3s ease;">
+    <div id="toast-notify">
         File download started!
     </div>
 
@@ -786,7 +786,7 @@
     <div id="admin-controls-bar" class="admin-controls-panel">
         <div class="admin-profile-avatar-container">
             <img id="admin-profile-pic" src="assets/ece-logo.png" alt="Admin Avatar" class="admin-avatar-circle">
-            <input type="file" id="admin-avatar-upload" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+            <input type="file" id="admin-avatar-upload" accept="image/*" onchange="handleAvatarUpload(event)">
             <button class="btn-avatar-edit" onclick="triggerAvatarUpload()">✏️</button>
         </div>
         <div class="admin-badge-indicator">
@@ -795,15 +795,15 @@
         </div>
         
         <!-- Supabase config container (hidden by default inside the panel) -->
-        <div class="admin-supabase-config" style="display: none; gap: 0.5rem; align-items: center; margin-left: 1rem;">
-            <input type="text" id="admin-supabase-url" placeholder="Supabase URL" class="admin-text-field" style="width: 150px; border-color: rgba(255,255,255,0.15);" value="">
-            <input type="password" id="admin-supabase-key" placeholder="Supabase Anon Key" class="admin-text-field" style="width: 150px; border-color: rgba(255,255,255,0.15);" value="">
+        <div class="admin-supabase-config">
+            <input type="text" id="admin-supabase-url" placeholder="Supabase URL" class="admin-text-field admin-supabase-url-field" value="">
+            <input type="password" id="admin-supabase-key" placeholder="Supabase Anon Key" class="admin-text-field admin-supabase-key-field" value="">
         </div>
 
         <div class="admin-actions-btns">
             <!-- Gear toggler button -->
             <button class="btn-admin-gear" onclick="toggleSupabaseSettings()" title="Supabase Cloud Settings">⚙️</button>
-            <button class="btn-preview" onclick="window.open('admin.html', '_blank')" style="background:rgba(0, 210, 255, 0.1); border:1px solid var(--accent-cyan); color:var(--accent-cyan); padding:0.5rem 1.25rem; border-radius:30px; font-family:'Outfit'; font-weight:700; font-size:0.85rem; cursor:pointer; margin-right: 0.25rem;">Dashboard 📊</button>
+            <button class="btn-preview btn-preview-dashboard" onclick="window.open('admin.html', '_blank')">Dashboard 📊</button>
             <button class="btn-save-changes" onclick="saveWebChanges()">Save & Sync Changes</button>
             <button class="btn-admin-logout" onclick="logoutAdmin()">Logout</button>
         </div>
@@ -814,7 +814,7 @@
         <div class="footer-content">
             <div class="footer-info">
                 <p id="footer-copyright-text">© 2026 VSB Engineering College Karur | Department of Electronics and Communication Engineering.</p>
-                <p id="footer-creators-text" style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; margin-top: 0.25rem;"></p>
+                <p id="footer-creators-text"></p>
             </div>
             <ul class="footer-links">
                 <li><a href="#dept-info">About</a></li>
